@@ -18,7 +18,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
@@ -98,7 +98,7 @@ class CleanupRemoteStorages extends Command {
 
 	public function countFiles($numericId, OutputInterface $output) {
 		$queryBuilder = $this->connection->getQueryBuilder();
-		$queryBuilder->select($queryBuilder->createFunction('COUNT(' . $queryBuilder->getColumnName('fileid') . ')'))
+		$queryBuilder->select($queryBuilder->func()->count('fileid'))
 			->from('filecache')
 			->where($queryBuilder->expr()->eq(
 				'storage',

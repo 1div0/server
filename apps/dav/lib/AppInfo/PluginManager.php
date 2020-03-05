@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud GmbH.
  *
  * @author Julius Härtl <jus@bitgrid.net>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Vincent Petry <pvince81@owncloud.com>
  *
  * @license AGPL-3.0
@@ -17,13 +18,15 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
+
 namespace OCA\DAV\AppInfo;
 
-use OCP\App\IAppManager;
 use OC\ServerContainer;
+use OCA\DAV\CalDAV\Integration\ICalendarProvider;
+use OCP\App\IAppManager;
 use OCP\AppFramework\QueryException;
 
 /**
@@ -55,6 +58,13 @@ class PluginManager {
 	 * @var array
 	 */
 	private $collections = null;
+
+	/**
+	 * Calendar plugins
+	 *
+	 * @var array
+	 */
+	private $calendarPlugins = null;
 
 	/**
 	 * Contstruct a PluginManager
@@ -92,10 +102,23 @@ class PluginManager {
 	}
 
 	/**
+	 * Returns an array of app-registered calendar plugins
+	 *
+	 * @return array
+	 */
+	public function getCalendarPlugins():array {
+		if (null === $this->calendarPlugins) {
+			$this->populate();
+		}
+		return $this->calendarPlugins;
+	}
+
+	/**
 	 * Retrieve plugin and collection list and populate attributes
 	 */
 	private function populate() {
 		$this->plugins = [];
+		$this->calendarPlugins = [];
 		$this->collections = [];
 		foreach ($this->appManager->getInstalledApps() as $app) {
 			// load plugins and collections from info.xml
@@ -103,11 +126,9 @@ class PluginManager {
 			if (!isset($info['types']) || !in_array('dav', $info['types'], true)) {
 				continue;
 			}
-			// FIXME: switch to public API once available
-			// load app to make sure its classes are available
-			\OC_App::loadApp($app);
 			$this->loadSabrePluginsFromInfoXml($this->extractPluginList($info));
 			$this->loadSabreCollectionsFromInfoXml($this->extractCollectionList($info));
+			$this->loadSabreCalendarPluginsFromInfoXml($this->extractCalendarPluginList($info));
 		}
 	}
 
@@ -131,6 +152,21 @@ class PluginManager {
 			if (isset($array['sabre']['collections']) && is_array($array['sabre']['collections'])) {
 				if (isset($array['sabre']['collections']['collection'])) {
 					$items = $array['sabre']['collections']['collection'];
+					if (!is_array($items)) {
+						$items = [$items];
+					}
+					return $items;
+				}
+			}
+		}
+		return [];
+	}
+
+	private function extractCalendarPluginList(array $array):array {
+		if (isset($array['sabre']) && is_array($array['sabre'])) {
+			if (isset($array['sabre']['calendar-plugins']) && is_array($array['sabre']['calendar-plugins'])) {
+				if (isset($array['sabre']['calendar-plugins']['plugin'])) {
+					$items = $array['sabre']['calendar-plugins']['plugin'];
 					if (!is_array($items)) {
 						$items = [$items];
 					}
@@ -166,6 +202,26 @@ class PluginManager {
 					throw new \Exception("Sabre collection class '$collection' is unknown and could not be loaded");
 				}
 			}
+		}
+	}
+
+	private function loadSabreCalendarPluginsFromInfoXml(array $calendarPlugins):void {
+		foreach ($calendarPlugins as $calendarPlugin) {
+			try {
+				$instantiatedCalendarPlugin = $this->container->query($calendarPlugin);
+			} catch (QueryException $e) {
+				if (class_exists($calendarPlugin)) {
+					$instantiatedCalendarPlugin = new $calendarPlugin();
+				} else {
+					throw new \Exception("Sabre calendar-plugin class '$calendarPlugin' is unknown and could not be loaded");
+				}
+			}
+
+			if (!($instantiatedCalendarPlugin instanceof ICalendarProvider)) {
+				throw new \Exception("Sabre calendar-plugin class '$calendarPlugin' does not implement ICalendarProvider interface");
+			}
+
+			$this->calendarPlugins[] = $instantiatedCalendarPlugin;
 		}
 	}
 

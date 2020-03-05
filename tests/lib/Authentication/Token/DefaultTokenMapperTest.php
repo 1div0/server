@@ -46,7 +46,7 @@ class DefaultTokenMapperTest extends TestCase {
 	private $dbConnection;
 	private $time;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->dbConnection = OC::$server->getDatabaseConnection();
@@ -93,7 +93,7 @@ class DefaultTokenMapperTest extends TestCase {
 
 	private function getNumberOfTokens() {
 		$qb = $this->dbConnection->getQueryBuilder();
-		$result = $qb->select($qb->createFunction('count(*) as `count`'))
+		$result = $qb->select($qb->func()->count('*', 'count'))
 			->from('authtoken')
 			->execute()
 			->fetch();
@@ -145,10 +145,10 @@ class DefaultTokenMapperTest extends TestCase {
 		$this->assertEquals($token, $dbToken);
 	}
 
-	/**
-	 * @expectedException \OCP\AppFramework\Db\DoesNotExistException
-	 */
+	
 	public function testGetInvalidToken() {
+		$this->expectException(\OCP\AppFramework\Db\DoesNotExistException::class);
+
 		$token = 'thisisaninvalidtokenthatisnotinthedatabase';
 
 		$this->mapper->getToken($token);
@@ -175,17 +175,17 @@ class DefaultTokenMapperTest extends TestCase {
 		$this->assertEquals($token, $dbToken);
 	}
 
-	/**
-	 * @expectedException \OCP\AppFramework\Db\DoesNotExistException
-	 */
+	
 	public function testGetTokenByIdNotFound() {
+		$this->expectException(\OCP\AppFramework\Db\DoesNotExistException::class);
+
 		$this->mapper->getTokenById(-1);
 	}
 
-	/**
-	 * @expectedException \OCP\AppFramework\Db\DoesNotExistException
-	 */
+	
 	public function testGetInvalidTokenById() {
+		$this->expectException(\OCP\AppFramework\Db\DoesNotExistException::class);
+
 		$id = 42;
 
 		$this->mapper->getToken($id);

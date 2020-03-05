@@ -5,6 +5,7 @@
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
  * @license AGPL-3.0
@@ -19,14 +20,16 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
 namespace OCA\DAV\Tests\unit\CalDAV;
 
 use OCA\DAV\CalDAV\CalDavBackend;
+use OCA\DAV\CalDAV\Proxy\ProxyMapper;
 use OCA\DAV\Connector\Sabre\Principal;
+use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\ILogger;
@@ -35,6 +38,7 @@ use OCP\IUserSession;
 use OCP\Security\ISecureRandom;
 use OCP\Share\IManager as ShareManager;
 use Sabre\CalDAV\Xml\Property\SupportedCalendarComponentSet;
+use Sabre\DAV\Xml\Property\Href;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Test\TestCase;
 
@@ -69,7 +73,7 @@ abstract class AbstractCalDavBackend extends TestCase {
 	const UNIT_TEST_GROUP = 'principals/groups/caldav-unit-test-group';
 	const UNIT_TEST_GROUP2 = 'principals/groups/caldav-unit-test-group2';
 
-	public function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->userManager = $this->createMock(IUserManager::class);
@@ -81,6 +85,8 @@ abstract class AbstractCalDavBackend extends TestCase {
 				$this->groupManager,
 				$this->createMock(ShareManager::class),
 				$this->createMock(IUserSession::class),
+				$this->createMock(IAppManager::class),
+				$this->createMock(ProxyMapper::class),
 				$this->createMock(IConfig::class),
 			])
 			->setMethods(['getPrincipalByPath', 'getGroupMembership'])
@@ -102,7 +108,7 @@ abstract class AbstractCalDavBackend extends TestCase {
 		$this->cleanUpBackend();
 	}
 
-	public function tearDown() {
+	protected function tearDown(): void {
 		$this->cleanUpBackend();
 		parent::tearDown();
 	}
@@ -146,6 +152,20 @@ abstract class AbstractCalDavBackend extends TestCase {
 		$this->assertEquals('#1C4587FF', $color);
 		$this->assertEquals('Example', $calendars[0]['uri']);
 		$this->assertEquals('Example', $calendars[0]['{DAV:}displayname']);
+		$calendarId = $calendars[0]['id'];
+
+		return $calendarId;
+	}
+
+	protected function createTestSubscription() {
+		$this->backend->createSubscription(self::UNIT_TEST_USER, 'Example', [
+			'{http://apple.com/ns/ical/}calendar-color' => '#1C4587FF',
+			'{http://calendarserver.org/ns/}source' => new Href(['foo']),
+		]);
+		$calendars = $this->backend->getSubscriptionsForUser(self::UNIT_TEST_USER);
+		$this->assertEquals(1, count($calendars));
+		$this->assertEquals(self::UNIT_TEST_USER, $calendars[0]['principaluri']);
+		$this->assertEquals('Example', $calendars[0]['uri']);
 		$calendarId = $calendars[0]['id'];
 
 		return $calendarId;

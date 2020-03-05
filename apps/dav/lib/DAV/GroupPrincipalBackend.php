@@ -3,9 +3,10 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright Copyright (c) 2018, Georg Ehrke
  *
+ * @author Georg Ehrke <oc.list@georgehrke.com>
+ * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Georg Ehrke <oc.list@georgehrke.com>
  *
  * @license AGPL-3.0
  *
@@ -19,19 +20,19 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
+
 namespace OCA\DAV\DAV;
 
 use OCP\IGroup;
 use OCP\IGroupManager;
+use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\IManager as IShareManager;
-use OCP\IL10N;
-use OCP\IUser;
 use Sabre\DAV\Exception;
-use \Sabre\DAV\PropPatch;
+use Sabre\DAV\PropPatch;
 use Sabre\DAVACL\PrincipalBackend\BackendInterface;
 
 class GroupPrincipalBackend implements BackendInterface {
@@ -47,23 +48,17 @@ class GroupPrincipalBackend implements BackendInterface {
 	/** @var IShareManager */
 	private $shareManager;
 
-	/** @var IL10N */
-	private $l10n;
-
 	/**
 	 * @param IGroupManager $IGroupManager
 	 * @param IUserSession $userSession
 	 * @param IShareManager $shareManager
-	 * @param IL10N $l10n
 	 */
 	public function __construct(IGroupManager $IGroupManager,
 								IUserSession $userSession,
-								IShareManager $shareManager,
-								IL10N $l10n) {
+								IShareManager $shareManager) {
 		$this->groupManager = $IGroupManager;
 		$this->userSession = $userSession;
 		$this->shareManager = $shareManager;
-		$this->l10n = $l10n;
 	}
 
 	/**
@@ -229,6 +224,13 @@ class GroupPrincipalBackend implements BackendInterface {
 					}, []);
 					break;
 
+				case '{urn:ietf:params:xml:ns:caldav}calendar-user-address-set':
+					// If you add support for more search properties that qualify as a user-address,
+					// please also add them to the array below
+					$results[] = $this->searchPrincipals(self::PRINCIPAL_PREFIX, [
+					], 'anyof');
+					break;
+
 				default:
 					$results[] = [];
 					break;
@@ -293,10 +295,12 @@ class GroupPrincipalBackend implements BackendInterface {
 	 */
 	protected function groupToPrincipal($group) {
 		$groupId = $group->getGID();
+		// getDisplayName returns UID if none
+		$displayName = $group->getDisplayName();
 
 		return [
 			'uri' => 'principals/groups/' . urlencode($groupId),
-			'{DAV:}displayname' => $this->l10n->t('%s (group)', [$groupId]),
+			'{DAV:}displayname' => $displayName,
 			'{urn:ietf:params:xml:ns:caldav}calendar-user-type' => 'GROUP',
 		];
 	}
@@ -307,11 +311,12 @@ class GroupPrincipalBackend implements BackendInterface {
 	 */
 	protected function userToPrincipal($user) {
 		$userId = $user->getUID();
+		// getDisplayName returns UID if none
 		$displayName = $user->getDisplayName();
 
 		$principal = [
 			'uri' => 'principals/users/' . $userId,
-			'{DAV:}displayname' => is_null($displayName) ? $userId : $displayName,
+			'{DAV:}displayname' => $displayName,
 			'{urn:ietf:params:xml:ns:caldav}calendar-user-type' => 'INDIVIDUAL',
 		];
 

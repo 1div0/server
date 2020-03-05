@@ -3,9 +3,14 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
+ * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
+ * @author Thomas Citharel <tcit@tcit.fr>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
+ * @author Tobia De Koninck <tobia@ledfan.be>
  *
  * @license AGPL-3.0
  *
@@ -19,15 +24,19 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
 use OCA\DAV\AppInfo\Application;
+use OCA\DAV\CalDAV\WebcalCaching\RefreshWebcalService;
 use OCA\DAV\CardDAV\CardDavBackend;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-$app = new Application();
+\OC_App::loadApps(['dav']);
+
+/** @var Application $app */
+$app = \OC::$server->query(Application::class);
 $app->registerHooks();
 
 \OC::$server->registerService('CardDAVSyncService', function() use ($app) {
@@ -45,6 +54,41 @@ $eventDispatcher->addListener('OCP\Federation\TrustedServerEvent::remove',
 		if (!is_null($addressBook)) {
 			$cardDavBackend->deleteAddressBook($addressBook['id']);
 		}
+	}
+);
+
+$eventDispatcher->addListener('\OCA\DAV\CalDAV\CalDavBackend::createSubscription',
+	function(GenericEvent $event) use ($app) {
+		$jobList = $app->getContainer()->getServer()->getJobList();
+		$subscriptionData = $event->getArgument('subscriptionData');
+
+		/**
+		 * Initial subscription refetch
+		 * @var RefreshWebcalService $refreshWebcalService
+		 */
+		$refreshWebcalService = $app->getContainer()->query(RefreshWebcalService::class);
+		$refreshWebcalService->refreshSubscription($subscriptionData['principaluri'], $subscriptionData['uri']);
+
+		$jobList->add(\OCA\DAV\BackgroundJob\RefreshWebcalJob::class, [
+			'principaluri' => $subscriptionData['principaluri'],
+			'uri' => $subscriptionData['uri']
+		]);
+	}
+);
+
+$eventDispatcher->addListener('\OCA\DAV\CalDAV\CalDavBackend::deleteSubscription',
+	function(GenericEvent $event) use ($app) {
+		$jobList = $app->getContainer()->getServer()->getJobList();
+		$subscriptionData = $event->getArgument('subscriptionData');
+
+		$jobList->remove(\OCA\DAV\BackgroundJob\RefreshWebcalJob::class, [
+			'principaluri' => $subscriptionData['principaluri'],
+			'uri' => $subscriptionData['uri']
+		]);
+
+		/** @var \OCA\DAV\CalDAV\CalDavBackend $calDavBackend */
+		$calDavBackend = $app->getContainer()->query(\OCA\DAV\CalDAV\CalDavBackend::class);
+		$calDavBackend->purgeAllCachedEventsForSubscription($subscriptionData['id']);
 	}
 );
 
@@ -78,3 +122,6 @@ $calendarManager->register(function() use ($calendarManager, $app) {
 		$app->setupCalendarProvider($calendarManager, $user->getUID());
 	}
 });
+
+$app->registerNotifier();
+$app->registerCalendarReminders();

@@ -4,6 +4,7 @@
  *
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
  * @license AGPL-3.0
@@ -18,7 +19,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
@@ -46,9 +47,6 @@ class DownloadTest extends RequestTestCase {
 		$this->assertEquals(stream_get_contents($response->getBody()), 'bar');
 	}
 
-	/**
-	 * @expectedException \OCA\DAV\Connector\Sabre\Exception\FileLocked
-	 */
 	public function testDownloadWriteLocked() {
 		$user = $this->getUniqueID();
 		$view = $this->setupUser($user, 'pass');
@@ -57,7 +55,8 @@ class DownloadTest extends RequestTestCase {
 
 		$view->lockFile('/foo.txt', ILockingProvider::LOCK_EXCLUSIVE);
 
-		$this->request($view, $user, 'pass', 'GET', '/foo.txt', 'asd');
+		$result = $this->request($view, $user, 'pass', 'GET', '/foo.txt', 'asd');
+		$this->assertEquals(Http::STATUS_LOCKED, $result->getStatus());
 	}
 
 	public function testDownloadReadLocked() {

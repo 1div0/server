@@ -31,6 +31,7 @@ OC.L10N.register(
     "Can not decrypt this file, probably this is a shared file. Please ask the file owner to reshare the file with you." : "無法解密這個檔案，也許這是分享的檔案。請詢問檔案所有人重新分享檔案給您。",
     "Can not read this file, probably this is a shared file. Please ask the file owner to reshare the file with you." : "無法檢視這個檔案，或許這是分享的檔案，請詢問這個檔案的擁有者並請他重新分享給您。",
     "Default encryption module" : "預設加密模組",
+    "Default encryption module for server-side encryption" : "伺服器端的預設加密模組",
     "Hey there,\n\nthe admin enabled server-side-encryption. Your files were encrypted using the password '%s'.\n\nPlease login to the web interface, go to the section 'basic encryption module' of your personal settings and update your encryption password by entering this password into the 'old log-in password' field and your current login-password.\n\n" : "嗨，請看這裡，\n\n系管理員啟用了伺服器端的加密功能，您的檔案將會使用密碼 '%s' 加密\n\n請從網頁登入，到 'basic encryption module' 設置您的個人設定並透過更新加密密碼，將這個組密碼設定在 'old log-in password'  以及您的目前登入密碼\n",
     "The share will expire on %s." : "這個分享將會於 %s 過期",
     "Cheers!" : "太棒了！",
@@ -58,7 +59,6 @@ OC.L10N.register(
     "Enable password recovery:" : "啟用密碼還原:",
     "Enabling this option will allow you to reobtain access to your encrypted files in case of password loss" : "啟用這個選項將會允許您因忘記密碼但需要存取您的加密檔案",
     "Enabled" : "已啓用",
-    "Disabled" : "已停用",
-    "You need to migrate your encryption keys from the old encryption (ownCloud <= 8.0) to the new one. Please run 'occ encryption:migrate' or contact your administrator" : "您需要搬移您的加密鑰匙從舊版的加密 (ownCloud <= 8.0) 到新版，請執行 'occ encryption:migrate' 或是聯絡系統管理員"
+    "Disabled" : "已停用"
 },
 "nplurals=1; plural=0;");

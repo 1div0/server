@@ -3,8 +3,10 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Individual IT Services <info@individual-it.net>
+ * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
+ * @author Ole Ostergaard <ole.c.ostergaard@gmail.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -20,12 +22,13 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
 namespace OC\Lock;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OC\DB\QueryBuilder\Literal;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -130,10 +133,13 @@ class DBLockingProvider extends AbstractLockingProvider {
 	 * @param int $lock
 	 * @return int number of inserted rows
 	 */
-
 	protected function initLockField(string $path, int $lock = 0): int {
 		$expire = $this->getExpireTime();
-		return $this->connection->insertIfNotExist('*PREFIX*file_locks', ['key' => $path, 'lock' => $lock, 'ttl' => $expire], ['key']);
+		return $this->connection->insertIgnoreConflict('file_locks', [
+			'key' => $path,
+			'lock' => $lock,
+			'ttl' => $expire
+		]);
 	}
 
 	/**
@@ -303,7 +309,7 @@ class DBLockingProvider extends AbstractLockingProvider {
 			$builder = $this->connection->getQueryBuilder();
 
 			$query = $builder->update('file_locks')
-				->set('lock', $builder->createFunction('`lock` -1'))
+				->set('lock', $builder->func()->subtract('lock', $builder->expr()->literal(1)))
 				->where($builder->expr()->in('key', $builder->createNamedParameter($chunk, IQueryBuilder::PARAM_STR_ARRAY)))
 				->andWhere($builder->expr()->gt('lock', new Literal(0)));
 

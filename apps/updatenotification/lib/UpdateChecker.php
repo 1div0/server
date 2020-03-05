@@ -1,8 +1,11 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -19,7 +22,7 @@ declare(strict_types=1);
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
@@ -51,7 +54,8 @@ class UpdateChecker {
 
 		if (isset($data['version']) && $data['version'] !== '' && $data['version'] !== []) {
 			$result['updateAvailable'] = true;
-			$result['updateVersion'] = $data['versionstring'];
+			$result['updateVersion'] = $data['version'];
+			$result['updateVersionString'] = $data['versionstring'];
 			$result['updaterEnabled'] = $data['autoupdater'] === '1';
 			$result['versionIsEol'] = $data['eol'] === '1';
 			if (strpos($data['web'], 'https://') === 0) {
@@ -80,7 +84,7 @@ class UpdateChecker {
 	public function populateJavaScriptVariables(array $data) {
 		$data['array']['oc_updateState'] =  json_encode([
 			'updateAvailable' => true,
-			'updateVersion' => $this->getUpdateState()['updateVersion'],
+			'updateVersion' => $this->getUpdateState()['updateVersionString'],
 			'updateLink' => $this->getUpdateState()['updateLink'] ?? '',
 		]);
 	}

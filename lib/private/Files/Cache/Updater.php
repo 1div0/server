@@ -21,7 +21,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
@@ -224,12 +224,15 @@ class Updater implements IUpdater {
 	private function updateStorageMTimeOnly($internalPath) {
 		$fileId = $this->cache->getId($internalPath);
 		if ($fileId !== -1) {
-			$this->cache->update(
-				$fileId, [
-					'mtime' => null, // this magic tells it to not overwrite mtime
-					'storage_mtime' => $this->storage->filemtime($internalPath)
-				]
-			);
+			$mtime = $this->storage->filemtime($internalPath);
+			if ($mtime !== false) {
+				$this->cache->update(
+					$fileId, [
+						'mtime' => null, // this magic tells it to not overwrite mtime
+						'storage_mtime' => $mtime
+					]
+				);
+			}
 		}
 	}
 

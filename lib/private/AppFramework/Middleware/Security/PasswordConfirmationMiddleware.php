@@ -2,6 +2,7 @@
 /**
  * @copyright 2018, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -17,9 +18,10 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 namespace OC\AppFramework\Middleware\Security;
 
 use OC\AppFramework\Middleware\Security\Exceptions\NotConfirmedException;
@@ -29,6 +31,7 @@ use OCP\AppFramework\Middleware;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\ISession;
 use OCP\IUserSession;
+use OCP\User\Backend\IPasswordConfirmationBackend;
 
 class PasswordConfirmationMiddleware extends Middleware {
 	/** @var ControllerMethodReflector */
@@ -70,6 +73,13 @@ class PasswordConfirmationMiddleware extends Middleware {
 			$user = $this->userSession->getUser();
 			$backendClassName = '';
 			if ($user !== null) {
+				$backend = $user->getBackend();
+				if ($backend instanceof IPasswordConfirmationBackend) {
+					if (!$backend->canConfirmPassword($user->getUID())) {
+						return;
+					}
+				}
+
 				$backendClassName = $user->getBackendClassName();
 			}
 

@@ -4,6 +4,8 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Joas Schilling <coding@schilljs.com>
+ * @author Morris Jobke <hey@morrisjobke.de>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -18,7 +20,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -62,7 +64,7 @@ class NotifierTest extends TestCase {
 	/** @var string */
 	protected $lc = 'tlh_KX';
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->l10nFactory = $this->createMock(IFactory::class);
@@ -93,13 +95,15 @@ class NotifierTest extends TestCase {
 	public function testPrepareSuccess() {
 		$fileName = 'Gre\'thor.odp';
 		$displayName = 'Huraga';
-		$message = 'Huraga mentioned you in a comment on “Gre\'thor.odp”';
+		$message = '@Huraga mentioned you in a comment on “Gre\'thor.odp”';
 
 		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->once())
 			->method('getDisplayName')
 			->willReturn($displayName);
+		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $you */
+		$you = $this->createMock(IUser::class);
 
 		/** @var Node|\PHPUnit_Framework_MockObject_MockObject $node */
 		$node = $this->createMock(Node::class);
@@ -107,6 +111,10 @@ class NotifierTest extends TestCase {
 			->expects($this->atLeastOnce())
 			->method('getName')
 			->willReturn($fileName);
+		$node
+			->expects($this->atLeastOnce())
+			->method('getPath')
+			->willReturn('/you/files/' . $fileName);
 
 		$userFolder = $this->createMock(Folder::class);
 		$this->folder->expects($this->once())
@@ -118,7 +126,7 @@ class NotifierTest extends TestCase {
 			->with('678')
 			->willReturn([$node]);
 
-		$this->notification->expects($this->once())
+		$this->notification->expects($this->exactly(2))
 			->method('getUser')
 			->willReturn('you');
 		$this->notification
@@ -142,6 +150,16 @@ class NotifierTest extends TestCase {
 			->expects($this->once())
 			->method('setRichSubject')
 			->with('{user} mentioned you in a comment on “{file}”', $this->anything())
+			->willReturnSelf();
+		$this->notification
+			->expects($this->once())
+			->method('setRichMessage')
+			->with('Hi {mention-user1}!', ['mention-user1' => ['type' => 'user', 'id' => 'you', 'name' => 'Your name']])
+			->willReturnSelf();
+		$this->notification
+			->expects($this->once())
+			->method('setParsedMessage')
+			->with('Hi @Your name!')
 			->willReturnSelf();
 		$this->notification
 			->expects($this->once())
@@ -171,17 +189,35 @@ class NotifierTest extends TestCase {
 			->expects($this->any())
 			->method('getActorType')
 			->willReturn('users');
+		$this->comment
+			->expects($this->any())
+			->method('getMessage')
+			->willReturn('Hi @you!');
+		$this->comment
+			->expects($this->any())
+			->method('getMentions')
+			->willReturn([['type' => 'user', 'id' => 'you']]);
+		$this->comment->expects($this->atLeastOnce())
+			->method('getId')
+			->willReturn('1234');
 
 		$this->commentsManager
 			->expects($this->once())
 			->method('get')
 			->willReturn($this->comment);
+		$this->commentsManager
+			->expects($this->once())
+			->method('resolveDisplayName')
+			->with('user', 'you')
+			->willReturn('Your name');
 
 		$this->userManager
-			->expects($this->once())
+			->expects($this->exactly(2))
 			->method('get')
-			->with('huraga')
-			->willReturn($user);
+			->willReturnMap([
+				['huraga', $user],
+				['you', $you],
+			]);
 
 		$this->notifier->prepare($this->notification, $this->lc);
 	}
@@ -190,12 +226,19 @@ class NotifierTest extends TestCase {
 		$fileName = 'Gre\'thor.odp';
 		$message = 'You were mentioned on “Gre\'thor.odp”, in a comment by a user that has since been deleted';
 
+		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $you */
+		$you = $this->createMock(IUser::class);
+
 		/** @var Node|\PHPUnit_Framework_MockObject_MockObject $node */
 		$node = $this->createMock(Node::class);
 		$node
 			->expects($this->atLeastOnce())
 			->method('getName')
 			->willReturn($fileName);
+		$node
+			->expects($this->atLeastOnce())
+			->method('getPath')
+			->willReturn('/you/files/' . $fileName);
 
 		$userFolder = $this->createMock(Folder::class);
 		$this->folder->expects($this->once())
@@ -207,7 +250,7 @@ class NotifierTest extends TestCase {
 			->with('678')
 			->willReturn([$node]);
 
-		$this->notification->expects($this->once())
+		$this->notification->expects($this->exactly(2))
 			->method('getUser')
 			->willReturn('you');
 		$this->notification
@@ -231,6 +274,16 @@ class NotifierTest extends TestCase {
 			->expects($this->once())
 			->method('setRichSubject')
 			->with('You were mentioned on “{file}”, in a comment by a user that has since been deleted', $this->anything())
+			->willReturnSelf();
+		$this->notification
+			->expects($this->once())
+			->method('setRichMessage')
+			->with('Hi {mention-user1}!', ['mention-user1' => ['type' => 'user', 'id' => 'you', 'name' => 'Your name']])
+			->willReturnSelf();
+		$this->notification
+			->expects($this->once())
+			->method('setParsedMessage')
+			->with('Hi @Your name!')
 			->willReturnSelf();
 		$this->notification
 			->expects($this->once())
@@ -260,23 +313,38 @@ class NotifierTest extends TestCase {
 			->expects($this->any())
 			->method('getActorType')
 			->willReturn(ICommentsManager::DELETED_USER);
+		$this->comment
+			->expects($this->any())
+			->method('getMessage')
+			->willReturn('Hi @you!');
+		$this->comment
+			->expects($this->any())
+			->method('getMentions')
+			->willReturn([['type' => 'user', 'id' => 'you']]);
 
 		$this->commentsManager
 			->expects($this->once())
 			->method('get')
 			->willReturn($this->comment);
+		$this->commentsManager
+			->expects($this->once())
+			->method('resolveDisplayName')
+			->with('user', 'you')
+			->willReturn('Your name');
 
 		$this->userManager
-			->expects($this->never())
-			->method('get');
+			->expects($this->once())
+			->method('get')
+			->with('you')
+			->willReturn($you);
 
 		$this->notifier->prepare($this->notification, $this->lc);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
+	
 	public function testPrepareDifferentApp() {
+		$this->expectException(\InvalidArgumentException::class);
+
 		$this->folder
 			->expects($this->never())
 			->method('getById');
@@ -310,10 +378,10 @@ class NotifierTest extends TestCase {
 		$this->notifier->prepare($this->notification, $this->lc);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
+	
 	public function testPrepareNotFound() {
+		$this->expectException(\InvalidArgumentException::class);
+
 		$this->folder
 			->expects($this->never())
 			->method('getById');
@@ -348,10 +416,10 @@ class NotifierTest extends TestCase {
 		$this->notifier->prepare($this->notification, $this->lc);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
+	
 	public function testPrepareDifferentSubject() {
+		$this->expectException(\InvalidArgumentException::class);
+
 		$displayName = 'Huraga';
 
 		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */
@@ -411,10 +479,10 @@ class NotifierTest extends TestCase {
 		$this->notifier->prepare($this->notification, $this->lc);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
+	
 	public function testPrepareNotFiles() {
+		$this->expectException(\InvalidArgumentException::class);
+
 		$displayName = 'Huraga';
 
 		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */
@@ -475,10 +543,10 @@ class NotifierTest extends TestCase {
 		$this->notifier->prepare($this->notification, $this->lc);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
+	
 	public function testPrepareUnresolvableFileID() {
+		$this->expectException(\OCP\Notification\AlreadyProcessedException::class);
+
 		$displayName = 'Huraga';
 
 		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */

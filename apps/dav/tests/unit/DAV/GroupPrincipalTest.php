@@ -3,10 +3,11 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright Copyright (c) 2018, Georg Ehrke
  *
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
+ * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Georg Ehrke <oc.list@georgehrke.com>
  *
  * @license AGPL-3.0
  *
@@ -20,7 +21,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
@@ -30,11 +31,10 @@ use OC\Group\Group;
 use OCA\DAV\DAV\GroupPrincipalBackend;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\IManager;
-use \Sabre\DAV\PropPatch;
+use Sabre\DAV\PropPatch;
 
 class GroupPrincipalTest extends \Test\TestCase {
 
@@ -47,23 +47,18 @@ class GroupPrincipalTest extends \Test\TestCase {
 	/** @var IManager | \PHPUnit_Framework_MockObject_MockObject */
 	private $shareManager;
 
-	/** @var IL10N | \PHPUnit_Framework_MockObject_MockObject */
-	private $l10n;
-
 	/** @var GroupPrincipalBackend */
 	private $connector;
 
-	public function setUp() {
+	protected function setUp(): void {
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->shareManager = $this->createMock(IManager::class);
-		$this->l10n = $this->createMock(IL10N::class);
 
 		$this->connector = new GroupPrincipalBackend(
 			$this->groupManager,
 			$this->userSession,
-			$this->shareManager,
-			$this->l10n);
+			$this->shareManager);
 		parent::setUp();
 	}
 
@@ -81,25 +76,15 @@ class GroupPrincipalTest extends \Test\TestCase {
 			->with('')
 			->will($this->returnValue([$group1, $group2]));
 
-		$this->l10n->expects($this->at(0))
-			->method('t')
-			->with('%s (group)', ['foo'])
-			->will($this->returnValue('foo (Gruppe)'));
-
-		$this->l10n->expects($this->at(1))
-			->method('t')
-			->with('%s (group)', ['bar'])
-			->will($this->returnValue('bar (Gruppe)'));
-
 		$expectedResponse = [
 			0 => [
 				'uri' => 'principals/groups/foo',
-				'{DAV:}displayname' => 'foo (Gruppe)',
+				'{DAV:}displayname' => 'Group foo',
 				'{urn:ietf:params:xml:ns:caldav}calendar-user-type' => 'GROUP',
 			],
 			1 => [
 				'uri' => 'principals/groups/bar',
-				'{DAV:}displayname' => 'bar (Gruppe)',
+				'{DAV:}displayname' => 'Group bar',
 				'{urn:ietf:params:xml:ns:caldav}calendar-user-type' => 'GROUP',
 			]
 		];
@@ -126,14 +111,9 @@ class GroupPrincipalTest extends \Test\TestCase {
 			->with('foo')
 			->will($this->returnValue($group1));
 
-		$this->l10n->expects($this->at(0))
-			->method('t')
-			->with('%s (group)', ['foo'])
-			->will($this->returnValue('foo (Gruppe)'));
-
 		$expectedResponse = [
 			'uri' => 'principals/groups/foo',
-			'{DAV:}displayname' => 'foo (Gruppe)',
+			'{DAV:}displayname' => 'Group foo',
 			'{urn:ietf:params:xml:ns:caldav}calendar-user-type' => 'GROUP',
 		];
 		$response = $this->connector->getPrincipalByPath('principals/groups/foo');
@@ -148,14 +128,9 @@ class GroupPrincipalTest extends \Test\TestCase {
 			->with('foo')
 			->will($this->returnValue($fooUser));
 
-		$this->l10n->expects($this->at(0))
-			->method('t')
-			->with('%s (group)', ['foo'])
-			->will($this->returnValue('foo (Gruppe)'));
-
 		$expectedResponse = [
 			'uri' => 'principals/groups/foo',
-			'{DAV:}displayname' => 'foo (Gruppe)',
+			'{DAV:}displayname' => 'Group foo',
 			'{urn:ietf:params:xml:ns:caldav}calendar-user-type' => 'GROUP',
 		];
 		$response = $this->connector->getPrincipalByPath('principals/groups/foo');
@@ -181,14 +156,9 @@ class GroupPrincipalTest extends \Test\TestCase {
 			->with('foo/bar')
 			->will($this->returnValue($group1));
 
-		$this->l10n->expects($this->at(0))
-			->method('t')
-			->with('%s (group)', ['foo/bar'])
-			->will($this->returnValue('foo/bar (Gruppe)'));
-
 		$expectedResponse = [
 			'uri' => 'principals/groups/foo%2Fbar',
-			'{DAV:}displayname' => 'foo/bar (Gruppe)',
+			'{DAV:}displayname' => 'Group foo/bar',
 			'{urn:ietf:params:xml:ns:caldav}calendar-user-type' => 'GROUP',
 		];
 		$response = $this->connector->getPrincipalByPath('principals/groups/foo/bar');
@@ -205,11 +175,11 @@ class GroupPrincipalTest extends \Test\TestCase {
 		$this->assertSame([], $response);
 	}
 
-	/**
-	 * @expectedException \Sabre\DAV\Exception
-	 * @expectedExceptionMessage Setting members of the group is not supported yet
-	 */
+	
 	public function testSetGroupMembership() {
+		$this->expectException(\Sabre\DAV\Exception::class);
+		$this->expectExceptionMessage('Setting members of the group is not supported yet');
+
 		$this->connector->setGroupMemberSet('principals/groups/foo', ['foo']);
 	}
 
@@ -348,7 +318,11 @@ class GroupPrincipalTest extends \Test\TestCase {
 		$fooGroup
 			->expects($this->exactly(1))
 			->method('getGID')
-			->will($this->returnValue($gid));
+			->willReturn($gid);
+		$fooGroup
+			->expects($this->exactly(1))
+			->method('getDisplayName')
+			->willReturn('Group '.$gid);
 		return $fooGroup;
 	}
 }

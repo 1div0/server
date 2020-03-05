@@ -6,6 +6,7 @@
  * @author Rello <Rello@users.noreply.github.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license AGPL-3.0
  *
@@ -19,15 +20,15 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
 namespace OC\Files\Type;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCP\Files\IMimeTypeLoader;
 use OCP\IDBConnection;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 /**
  * Mimetype database loader
@@ -169,7 +170,7 @@ class Loader implements IMimeTypeLoader {
 				'mimetype', $update->createNamedParameter($folderMimeTypeId)
 			))
 			->andWhere($update->expr()->like(
-				$update->createFunction('LOWER(' . $update->getColumnName('name') . ')'),
+				$update->func()->lower('name'),
 				$update->createNamedParameter('%' . $this->dbConnection->escapeLikeParameter('.' . $ext))
 			));
 		return $update->execute();

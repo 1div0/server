@@ -4,6 +4,7 @@
  *
  * @author Aaron Wood <aaronjwood@gmail.com>
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  *
  * @license AGPL-3.0
@@ -18,7 +19,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
@@ -311,7 +312,7 @@ abstract class AbstractMapping {
 	 */
 	public function count() {
 		$qb = $this->dbc->getQueryBuilder();
-		$query = $qb->select($qb->createFunction('COUNT(' . $qb->getColumnName('ldap_dn') . ')'))
+		$query = $qb->select($qb->func()->count('ldap_dn'))
 			->from($this->getTableName());
 		$res = $query->execute();
 		$count = $res->fetchColumn();

@@ -2,16 +2,16 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bernhard Reiter <ockham@raz.or.at>
  * @author derkostka <sebastian.kostka@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
+ * @author Julius Härtl <jus@bitgrid.net>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
  * @author Thomas Tanghus <thomas@tanghus.net>
  * @author Vincent Petry <pvince81@owncloud.com>
  *
@@ -27,7 +27,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
@@ -48,8 +48,9 @@ use OC\Tagging\Tag;
 use OC\Tagging\TagMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\ILogger;
+use OCP\ITags;
 
-class Tags implements \OCP\ITags {
+class Tags implements ITags {
 
 	/**
 	 * Tags
@@ -111,8 +112,6 @@ class Tags implements \OCP\ITags {
 
 	const TAG_TABLE = '*PREFIX*vcategory';
 	const RELATION_TABLE = '*PREFIX*vcategory_to_object';
-
-	const TAG_FAVORITE = '_$!<Favorite>!$_';
 
 	/**
 	* Constructor.
@@ -186,7 +185,7 @@ class Tags implements \OCP\ITags {
 		$tagMap = array();
 
 		foreach($this->tags as $tag) {
-			if($tag->getName() !== self::TAG_FAVORITE) {
+			if($tag->getName() !== ITags::TAG_FAVORITE) {
 				$tagMap[] = $this->tagMap($tag);
 			}
 		}
@@ -624,12 +623,12 @@ class Tags implements \OCP\ITags {
 	* @return array|false An array of object ids.
 	*/
 	public function getFavorites() {
-		if(!$this->userHasTag(self::TAG_FAVORITE, $this->user)) {
+		if(!$this->userHasTag(ITags::TAG_FAVORITE, $this->user)) {
 			return [];
 		}
 
 		try {
-			return $this->getIdsForTag(self::TAG_FAVORITE);
+			return $this->getIdsForTag(ITags::TAG_FAVORITE);
 		} catch(\Exception $e) {
 			\OC::$server->getLogger()->logException($e, [
 				'message' => __METHOD__,
@@ -647,10 +646,10 @@ class Tags implements \OCP\ITags {
 	* @return boolean
 	*/
 	public function addToFavorites($objid) {
-		if(!$this->userHasTag(self::TAG_FAVORITE, $this->user)) {
-			$this->add(self::TAG_FAVORITE);
+		if(!$this->userHasTag(ITags::TAG_FAVORITE, $this->user)) {
+			$this->add(ITags::TAG_FAVORITE);
 		}
-		return $this->tagAs($objid, self::TAG_FAVORITE);
+		return $this->tagAs($objid, ITags::TAG_FAVORITE);
 	}
 
 	/**
@@ -660,7 +659,7 @@ class Tags implements \OCP\ITags {
 	* @return boolean
 	*/
 	public function removeFromFavorites($objid) {
-		return $this->unTag($objid, self::TAG_FAVORITE);
+		return $this->unTag($objid, ITags::TAG_FAVORITE);
 	}
 
 	/**

@@ -3,10 +3,15 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Blaok <i@blaok.me>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Daniel Kesselberg <mail@danielkesselberg.de>
+ * @author Joel S <joel.devbox@protonmail.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author martin.mattel@diemattels.at <martin.mattel@diemattels.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  * @author Vincent Petry <pvince81@owncloud.com>
  *
@@ -22,7 +27,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
@@ -32,16 +37,17 @@ use Doctrine\DBAL\Connection;
 use OC\Core\Command\Base;
 use OC\Core\Command\InterruptedException;
 use OC\ForbiddenException;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Mount\IMountPoint;
 use OCP\Files\NotFoundException;
 use OCP\Files\StorageNotAvailableException;
 use OCP\IDBConnection;
 use OCP\IUserManager;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\Table;
 
 class Scan extends Base {
 
@@ -77,18 +83,6 @@ class Scan extends Base {
 				'limit rescan to this path, eg. --path="/alice/files/Music", the user_id is determined by the path and the user_id parameter and --all are ignored'
 			)
 			->addOption(
-				'quiet',
-				'q',
-				InputOption::VALUE_NONE,
-				'suppress any output'
-			)
-			->addOption(
-				'verbose',
-				'-v|vv|vvv',
-				InputOption::VALUE_NONE,
-				'verbose the output'
-			)
-			->addOption(
 				'all',
 				null,
 				InputOption::VALUE_NONE,
@@ -120,39 +114,32 @@ class Scan extends Base {
 		}
 	}
 
-	protected function scanFiles($user, $path, $verbose, OutputInterface $output, $backgroundScan = false, $recursive = true, $homeOnly = false) {
+	protected function scanFiles($user, $path, OutputInterface $output, $backgroundScan = false, $recursive = true, $homeOnly = false) {
 		$connection = $this->reconnectToDatabase($output);
-		$scanner = new \OC\Files\Utils\Scanner($user, $connection, \OC::$server->getLogger());
+		$scanner = new \OC\Files\Utils\Scanner($user, $connection, \OC::$server->query(IEventDispatcher::class), \OC::$server->getLogger());
+
 		# check on each file/folder if there was a user interrupt (ctrl-c) and throw an exception
-		# printout and count
-		if ($verbose) {
-			$scanner->listen('\OC\Files\Utils\Scanner', 'scanFile', function ($path) use ($output) {
-				$output->writeln("\tFile   <info>$path</info>");
-				$this->filesCounter += 1;
-				$this->abortIfInterrupted();
-			});
-			$scanner->listen('\OC\Files\Utils\Scanner', 'scanFolder', function ($path) use ($output) {
-				$output->writeln("\tFolder <info>$path</info>");
-				$this->foldersCounter += 1;
-				$this->abortIfInterrupted();
-			});
-			$scanner->listen('\OC\Files\Utils\Scanner', 'StorageNotAvailable', function (StorageNotAvailableException $e) use ($output) {
-				$output->writeln('Error while scanning, storage not available (' . $e->getMessage() . ')');
-			});
-			# count only
-		} else {
-			$scanner->listen('\OC\Files\Utils\Scanner', 'scanFile', function () use ($output) {
-				$this->filesCounter += 1;
-				$this->abortIfInterrupted();
-			});
-			$scanner->listen('\OC\Files\Utils\Scanner', 'scanFolder', function () use ($output) {
-				$this->foldersCounter += 1;
-				$this->abortIfInterrupted();
-			});
-		}
+
+		$scanner->listen('\OC\Files\Utils\Scanner', 'scanFile', function ($path) use ($output) {
+			$output->writeln("\tFile\t<info>$path</info>", OutputInterface::VERBOSITY_VERBOSE);
+			++$this->filesCounter;
+			$this->abortIfInterrupted();
+		});
+
+		$scanner->listen('\OC\Files\Utils\Scanner', 'scanFolder', function ($path) use ($output) {
+			$output->writeln("\tFolder\t<info>$path</info>", OutputInterface::VERBOSITY_VERBOSE);
+			++$this->foldersCounter;
+			$this->abortIfInterrupted();
+		});
+
+		$scanner->listen('\OC\Files\Utils\Scanner', 'StorageNotAvailable', function (StorageNotAvailableException $e) use ($output) {
+			$output->writeln('Error while scanning, storage not available (' . $e->getMessage() . ')', OutputInterface::VERBOSITY_VERBOSE);
+		});
+
 		$scanner->listen('\OC\Files\Utils\Scanner', 'scanFile', function ($path) use ($output) {
 			$this->checkScanWarning($path, $output);
 		});
+
 		$scanner->listen('\OC\Files\Utils\Scanner', 'scanFolder', function ($path) use ($output) {
 			$this->checkScanWarning($path, $output);
 		});
@@ -194,32 +181,16 @@ class Scan extends Base {
 			$users = $input->getArgument('user_id');
 		}
 
-		# no messaging level option means: no full printout but statistics
-		# $quiet   means no print at all
-		# $verbose means full printout including statistics
-		# -q	-v	full	stat
-		#  0	 0	no	yes
-		#  0	 1	yes	yes
-		#  1	--	no	no  (quiet overrules verbose)
-		$verbose = $input->getOption('verbose');
-		$quiet = $input->getOption('quiet');
 		# restrict the verbosity level to VERBOSITY_VERBOSE
 		if ($output->getVerbosity() > OutputInterface::VERBOSITY_VERBOSE) {
 			$output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
-		}
-		if ($quiet) {
-			$verbose = false;
 		}
 
 		# check quantity of users to be process and show it on the command line
 		$users_total = count($users);
 		if ($users_total === 0) {
-			$output->writeln("<error>Please specify the user id to scan, \"--all\" to scan for all users or \"--path=...\"</error>");
+			$output->writeln('<error>Please specify the user id to scan, --all to scan for all users or --path=...</error>');
 			return;
-		} else {
-			if ($users_total > 1) {
-				$output->writeln("\nScanning files for $users_total users");
-			}
 		}
 
 		$this->initTools();
@@ -230,30 +201,24 @@ class Scan extends Base {
 				$user = $user->getUID();
 			}
 			$path = $inputPath ? $inputPath : '/' . $user;
-			$user_count += 1;
+			++$user_count;
 			if ($this->userManager->userExists($user)) {
-				# add an extra line when verbose is set to optical separate users
-				if ($verbose) {
-					$output->writeln("");
-				}
 				$output->writeln("Starting scan for user $user_count out of $users_total ($user)");
-				# full: printout data if $verbose was set
-				$this->scanFiles($user, $path, $verbose, $output, $input->getOption('unscanned'), ! $input->getOption('shallow'), $input->getOption('home-only'));
+				$this->scanFiles($user, $path, $output, $input->getOption('unscanned'), !$input->getOption('shallow'), $input->getOption('home-only'));
+				$output->writeln('', OutputInterface::VERBOSITY_VERBOSE);
 			} else {
 				$output->writeln("<error>Unknown user $user_count $user</error>");
+				$output->writeln('', OutputInterface::VERBOSITY_VERBOSE);
 			}
 
 			try {
 				$this->abortIfInterrupted();
-			} catch(InterruptedException $e) {
+			} catch (InterruptedException $e) {
 				break;
 			}
 		}
 
-		# stat: printout statistics if $quiet was not set
-		if (!$quiet) {
-			$this->presentStats($output);
-		}
+		$this->presentStats($output);
 	}
 
 	/**
@@ -292,7 +257,6 @@ class Scan extends Base {
 	protected function presentStats(OutputInterface $output) {
 		// Stop the timer
 		$this->execTime += microtime(true);
-		$output->writeln("");
 
 		$headers = [
 			'Folders', 'Files', 'Elapsed time'
@@ -331,10 +295,9 @@ class Scan extends Base {
 	 * @return string
 	 */
 	protected function formatExecTime() {
-		list($secs, ) = explode('.', sprintf("%.1f", $this->execTime));
-
-		# if you want to have microseconds add this:   . '.' . $tens;
-		return date('H:i:s', $secs);
+		$secs = round($this->execTime);
+		# convert seconds into HH:MM:SS form
+		return sprintf('%02d:%02d:%02d', ($secs/3600), ($secs/60%60), $secs%60);
 	}
 
 	/**

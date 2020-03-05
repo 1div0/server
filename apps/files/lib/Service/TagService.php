@@ -18,13 +18,12 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
 namespace OCA\Files\Service;
 
-use OC\Tags;
 use OCA\Files\Activity\FavoriteProvider;
 use OCP\Activity\IManager;
 use OCP\Files\Folder;
@@ -92,14 +91,14 @@ class TagService {
 
 		$newTags = array_diff($tags, $currentTags);
 		foreach ($newTags as $tag) {
-			if ($tag === Tags::TAG_FAVORITE) {
+			if ($tag === ITags::TAG_FAVORITE) {
 				$this->addActivity(true, $fileId, $path);
 			}
 			$this->tagger->tagAs($fileId, $tag);
 		}
 		$deletedTags = array_diff($currentTags, $tags);
 		foreach ($deletedTags as $tag) {
-			if ($tag === Tags::TAG_FAVORITE) {
+			if ($tag === ITags::TAG_FAVORITE) {
 				$this->addActivity(false, $fileId, $path);
 			}
 			$this->tagger->unTag($fileId, $tag);
@@ -146,4 +145,3 @@ class TagService {
 		}
 	}
 }
-

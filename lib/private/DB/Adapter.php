@@ -6,6 +6,8 @@
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jonny007-MKD <1-23-4-5@web.de>
  * @author Morris Jobke <hey@morrisjobke.de>
+ * @author Ole Ostergaard <ole.c.ostergaard@gmail.com>
+ * @author Ole Ostergaard <ole.ostergaard@knime.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -21,11 +23,13 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
 
 namespace OC\DB;
+
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 /**
  * This handles the way we use to write queries, into something that can be
@@ -79,7 +83,9 @@ class Adapter {
 	}
 
 	/**
-	 * Insert a row if the matching row does not exists.
+	 * Insert a row if the matching row does not exists. To accomplish proper race condition avoidance
+	 * it is needed that there is also a unique constraint on the values. Then this method will
+	 * catch the exception and return 0.
 	 *
 	 * @param string $table The table name (will replace *PREFIX* with the actual prefix)
 	 * @param array $input data that should be inserted into the table  (column name => value)
@@ -88,6 +94,7 @@ class Adapter {
 	 *				Please note: text fields (clob) must not be used in the compare array
 	 * @return int number of inserted rows
 	 * @throws \Doctrine\DBAL\DBALException
+	 * @deprecated 15.0.0 - use unique index and "try { $db->insert() } catch (UniqueConstraintViolationException $e) {}" instead, because it is more reliable and does not have the risk for deadlocks - see https://github.com/nextcloud/server/pull/12371
 	 */
 	public function insertIfNotExist($table, $input, array $compare = null) {
 		if (empty($compare)) {
@@ -111,6 +118,30 @@ class Adapter {
 		$query = substr($query, 0, -5);
 		$query .= ' HAVING COUNT(*) = 0';
 
-		return $this->conn->executeUpdate($query, $inserts);
+		try {
+			return $this->conn->executeUpdate($query, $inserts);
+		} catch (UniqueConstraintViolationException $e) {
+			// if this is thrown then a concurrent insert happened between the insert and the sub-select in the insert, that should have avoided it
+			// it's fine to ignore this then
+			//
+			// more discussions about this can be found at https://github.com/nextcloud/server/pull/12315
+			return 0;
+		}
+	}
+
+	/**
+	 * @suppress SqlInjectionChecker
+	 */
+	public function insertIgnoreConflict(string $table,array $values) : int {
+		try {
+			$builder = $this->conn->getQueryBuilder();
+			$builder->insert($table);
+			foreach($values as $key => $value) {
+				$builder->setValue($key, $builder->createNamedParameter($value));
+			}
+			return $builder->execute();
+		} catch(UniqueConstraintViolationException $e) {
+			return 0;
+		}
 	}
 }
