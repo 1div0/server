@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Julius Härtl <jus@bitgrid.net>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Härtl <jus@bitgrid.net>
  *
  * @license GNU AGPL version 3 or any later version
@@ -28,4 +29,5 @@ namespace OCP\Capabilities;
  *
  * @since 13.0.0
  */
-interface IPublicCapability extends ICapability {}
+interface IPublicCapability extends ICapability {
+}

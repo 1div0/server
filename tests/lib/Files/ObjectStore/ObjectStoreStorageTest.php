@@ -20,7 +20,6 @@
 
 namespace Test\Files\ObjectStore;
 
-use OC\Files\ObjectStore\ObjectStoreStorage;
 use OC\Files\ObjectStore\StorageObjectStore;
 use OC\Files\Storage\Temporary;
 use OCP\Files\ObjectStore\IObjectStore;
@@ -57,7 +56,6 @@ class ObjectStoreStorageTest extends Storage {
 	}
 
 	public function testStat() {
-
 		$textFile = \OC::$SERVERROOT . '/tests/data/lorem.txt';
 		$ctimeStart = time();
 		$this->instance->file_put_contents('/lorem.txt', file_get_contents($textFile));

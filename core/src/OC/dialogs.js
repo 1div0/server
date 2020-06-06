@@ -1,4 +1,3 @@
-/* global alert */
 /* eslint-disable */
 /*
  * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -787,12 +786,12 @@ const Dialogs = {
 			$conflict.data('data', data)
 
 			$conflict.find('.filename').text(original.name)
-			$originalDiv.find('.size').text(humanFileSize(original.size))
-			$originalDiv.find('.mtime').text(formatDate(original.mtime))
+			$originalDiv.find('.size').text(OC.Util.humanFileSize(original.size))
+			$originalDiv.find('.mtime').text(OC.Util.formatDate(original.mtime))
 			// ie sucks
 			if (replacement.size && replacement.lastModifiedDate) {
-				$replacementDiv.find('.size').text(humanFileSize(replacement.size))
-				$replacementDiv.find('.mtime').text(formatDate(replacement.lastModifiedDate))
+				$replacementDiv.find('.size').text(OC.Util.humanFileSize(replacement.size))
+				$replacementDiv.find('.mtime').text(OC.Util.formatDate(replacement.lastModifiedDate))
 			}
 			var path = original.directory + '/' + original.name
 			var urlSpec = {
@@ -1164,7 +1163,7 @@ const Dialogs = {
 				entry.icon = OC.MimeType.getIconUrl(entry.mimetype)
 				var simpleSize, sizeColor
 				if (typeof (entry.size) !== 'undefined' && entry.size >= 0) {
-					simpleSize = humanFileSize(parseInt(entry.size, 10), true)
+					simpleSize = OC.Util.humanFileSize(parseInt(entry.size, 10), true)
 					sizeColor = Math.round(160 - Math.pow((entry.size / (1024 * 1024)), 2))
 				} else {
 					simpleSize = t('files', 'Pending')
@@ -1219,8 +1218,12 @@ const Dialogs = {
 	 * fills the tree list with directories
 	 */
 	_fillSlug: function() {
+		var addButton = this.$dirTree.find('.actions.creatable').detach()
 		this.$dirTree.empty()
 		var self = this
+
+		self.$dirTree.append(addButton)
+
 		var dir
 		var path = this.$filePicker.data('path')
 		var $template = $('<div data-dir="{dir}"><a>{name}</a></div>').addClass('crumb')
@@ -1237,10 +1240,12 @@ const Dialogs = {
 				}))
 			})
 		}
+
 		$template.octemplate({
 			dir: '',
 			name: '' // Ugly but works ;)
 		}, { escapeFunction: null }).prependTo(this.$dirTree)
+		
 	},
 	/**
 	 * handle selection made in the tree list

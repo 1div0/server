@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -36,4 +37,5 @@ namespace OCP\Files;
  * Exception for too large entity
  * @since 6.0.0
  */
-class EntityTooLargeException extends \Exception {}
+class EntityTooLargeException extends \Exception {
+}

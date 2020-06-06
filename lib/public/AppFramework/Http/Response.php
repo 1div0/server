@@ -49,16 +49,16 @@ class Response {
 	 * Headers - defaults to ['Cache-Control' => 'no-cache, no-store, must-revalidate']
 	 * @var array
 	 */
-	private $headers = array(
+	private $headers = [
 		'Cache-Control' => 'no-cache, no-store, must-revalidate'
-	);
+	];
 
 
 	/**
 	 * Cookies that will be need to be constructed as header
 	 * @var array
 	 */
-	private $cookies = array();
+	private $cookies = [];
 
 
 	/**
@@ -105,12 +105,11 @@ class Response {
 	 * @return $this
 	 * @since 6.0.0 - return value was added in 7.0.0
 	 */
-	public function cacheFor(int $cacheSeconds) {
-		if($cacheSeconds > 0) {
-			$this->addHeader('Cache-Control', 'max-age=' . $cacheSeconds . ', must-revalidate');
-
-			// Old scool prama caching
-			$this->addHeader('Pragma', 'public');
+	public function cacheFor(int $cacheSeconds, bool $public = false) {
+		if ($cacheSeconds > 0) {
+			$pragma = $public ? 'public' : 'private';
+			$this->addHeader('Cache-Control', $pragma . ', max-age=' . $cacheSeconds . ', must-revalidate');
+			$this->addHeader('Pragma', $pragma);
 
 			// Set expires header
 			$expires = new \DateTime();
@@ -138,7 +137,7 @@ class Response {
 	 * @since 8.0.0
 	 */
 	public function addCookie($name, $value, \DateTime $expireDate = null) {
-		$this->cookies[$name] = array('value' => $value, 'expireDate' => $expireDate);
+		$this->cookies[$name] = ['value' => $value, 'expireDate' => $expireDate];
 		return $this;
 	}
 
@@ -173,7 +172,7 @@ class Response {
 	 * @since 8.0.0
 	 */
 	public function invalidateCookies(array $cookieNames) {
-		foreach($cookieNames as $cookieName) {
+		foreach ($cookieNames as $cookieName) {
 			$this->invalidateCookie($cookieName);
 		}
 		return $this;
@@ -198,10 +197,10 @@ class Response {
 	 */
 	public function addHeader($name, $value) {
 		$name = trim($name);  // always remove leading and trailing whitespace
-		                      // to be able to reliably check for security
-		                      // headers
+		// to be able to reliably check for security
+		// headers
 
-		if(is_null($value)) {
+		if (is_null($value)) {
 			unset($this->headers[$name]);
 		} else {
 			$this->headers[$name] = $value;
@@ -232,7 +231,7 @@ class Response {
 	public function getHeaders() {
 		$mergeWith = [];
 
-		if($this->lastModified) {
+		if ($this->lastModified) {
 			$mergeWith['Last-Modified'] =
 				$this->lastModified->format(\DateTime::RFC2822);
 		}
@@ -240,7 +239,7 @@ class Response {
 		$this->headers['Content-Security-Policy'] = $this->getContentSecurityPolicy()->buildPolicy();
 		$this->headers['Feature-Policy'] = $this->getFeaturePolicy()->buildPolicy();
 
-		if($this->ETag) {
+		if ($this->ETag) {
 			$mergeWith['ETag'] = '"' . $this->ETag . '"';
 		}
 

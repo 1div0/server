@@ -27,7 +27,8 @@
 </template>
 
 <script>
-import { Multiselect } from '@nextcloud/vue/dist/Components/Multiselect'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import { showWarning } from '@nextcloud/dialogs'
 
 export default {
 	name: 'Event',
@@ -57,7 +58,7 @@ export default {
 	methods: {
 		updateEvent(events) {
 			if (events.length === 0) {
-				window.OCP.Toast.warning(t('workflowengine', 'At least one event must be selected'))
+				showWarning(t('workflowengine', 'At least one event must be selected'))
 				return
 			}
 			const existingEntity = this.rule.entity

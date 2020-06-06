@@ -4,6 +4,7 @@
  *
  * @author Axel Helmert <axel.helmert@luka.de>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Kyle Fazzari <kyrofa@ubuntu.com>
@@ -82,7 +83,7 @@ class CSSResourceLocator extends ResourceLocator {
 		// turned into cwd.
 		$app_path = realpath($app_path);
 
-		if(!$this->cacheAndAppendScssIfExist($app_path, $style.'.scss', $app)) {
+		if (!$this->cacheAndAppendScssIfExist($app_path, $style.'.scss', $app)) {
 			$this->append($app_path, $style.'.css', $app_url);
 		}
 	}
@@ -106,9 +107,8 @@ class CSSResourceLocator extends ResourceLocator {
 	 */
 	protected function cacheAndAppendScssIfExist($root, $file, $app = 'core') {
 		if (is_file($root.'/'.$file)) {
-			if($this->scssCacher !== null) {
-				if($this->scssCacher->process($root, $file, $app)) {
-
+			if ($this->scssCacher !== null) {
+				if ($this->scssCacher->process($root, $file, $app)) {
 					$this->append($root, $this->scssCacher->getCachedSCSS($app, $file), \OC::$WEBROOT, true, true);
 					return true;
 				} else {
@@ -145,7 +145,7 @@ class CSSResourceLocator extends ResourceLocator {
 				}
 			}
 
-			$this->resources[] = array($webRoot? : \OC::$WEBROOT, $webRoot, $file);
+			$this->resources[] = [$webRoot? : \OC::$WEBROOT, $webRoot, $file];
 		}
 	}
 }

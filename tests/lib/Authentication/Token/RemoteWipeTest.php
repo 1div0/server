@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -67,30 +69,20 @@ class RemoteWipeTest extends TestCase {
 
 	public function testMarkNonWipableTokenForWipe(): void {
 		$token = $this->createMock(IToken::class);
-		$this->tokenProvider->expects($this->once())
-			->method('getTokenById')
-			->with(123)
-			->willReturn($token);
-
-		$result = $this->remoteWipe->markTokenForWipe(123);
-
+		$result = $this->remoteWipe->markTokenForWipe($token);
 		$this->assertFalse($result);
 	}
 
 	public function testMarkTokenForWipe(): void {
 		$token = $this->createMock(IWipeableToken::class);
-		$this->tokenProvider->expects($this->once())
-			->method('getTokenById')
-			->with(123)
-			->willReturn($token);
 		$token->expects($this->once())
 			->method('wipe');
+
 		$this->tokenProvider->expects($this->once())
 			->method('updateToken')
 			->with($token);
 
-		$result = $this->remoteWipe->markTokenForWipe(123);
-
+		$result = $this->remoteWipe->markTokenForWipe($token);
 		$this->assertTrue($result);
 	}
 
@@ -195,5 +187,4 @@ class RemoteWipeTest extends TestCase {
 
 		$this->assertTrue($result);
 	}
-
 }

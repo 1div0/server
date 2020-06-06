@@ -158,6 +158,7 @@ OC.L10N.register(
     "Transfer {path} to {userid}" : "Transférer {path} à {userid}",
     "Invalid path selected" : "Chemin sélectionné non valide",
     "Ownership transfer request sent" : "Requête de transfert de propriété envoyée",
+    "Cannot transfer ownership of a file or folder you don't own" : "Impossible de transférer la propriété d’un fichier ou d’un dossier dont vous n'êtes pas le propriétaire",
     "Tags" : "Étiquettes",
     "Error while loading the file data" : "Erreur lors du chargement du fichier de données",
     "Unable to change the favourite state of the file" : "Impossible de modifier l'état favori du fichier",
@@ -167,7 +168,7 @@ OC.L10N.register(
     "Settings" : "Paramètres",
     "Show hidden files" : "Afficher les fichiers masqués",
     "WebDAV" : "WebDAV",
-    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Utilisez cette adresse pour <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">accéder à vos fichiers par WebDAV</a>",
+    "Use this address to access your Files via WebDAV" : "Utilisez cette adresse pour accéder à vos fichiers via WebDAV",
     "Toggle grid view" : "Activer/Désactiver l'affichage mosaïque",
     "No files in here" : "Aucun fichier",
     "Upload some content or sync with your devices!" : "Déposez du contenu ou synchronisez vos appareils !",
@@ -186,7 +187,7 @@ OC.L10N.register(
     "Pending shares" : "Partages en attente",
     "Text file" : "Fichier texte",
     "New text file.txt" : "Nouveau fichier texte.txt",
-    "%s of %s used" : "%s de %s utilisé",
-    "%1$s%% of %2$s used" : "%1$s%% de %2$s utilisés"
+    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Utilisez cette adresse pour <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">accéder à vos fichiers par WebDAV</a>",
+    "Cannot transfter ownership of a file or folder you don't own" : "Impossible de transférer la propriété d’un fichier ou d’un dossier que vous ne possédez pas"
 },
 "nplurals=2; plural=(n > 1);");

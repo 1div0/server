@@ -1,10 +1,10 @@
 <?php
 
 /**
- * 
+ *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
  * @copyright Copyright (c) 2018, John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
- * 
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@
 use Behat\Behat\Context\Context;
 
 class AppSettingsContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 
 	/**
@@ -90,7 +89,7 @@ class AppSettingsContext implements Context, ActorAwareInterface {
 		}
 
 		$this->actor->find($locator)->click();
-	}	
+	}
 
 	/**
 	 * @Then I see that the settings are opened
@@ -98,5 +97,4 @@ class AppSettingsContext implements Context, ActorAwareInterface {
 	public function iSeeThatTheSettingsAreOpened() {
 		WaitFor::elementToBeEventuallyShown($this->actor, self::appSettingsContent());
 	}
-
 }

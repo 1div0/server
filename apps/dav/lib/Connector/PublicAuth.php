@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Maxence Lange <maxence@artificial-owl.com>
@@ -98,13 +99,12 @@ class PublicAuth extends AbstractBasic {
 
 		// check if the share is password protected
 		if ($share->getPassword() !== null) {
-
 			if ($share->getShareType() === IShare::TYPE_LINK
 				|| $share->getShareType() === IShare::TYPE_EMAIL
 				|| $share->getShareType() === IShare::TYPE_CIRCLE) {
 				if ($this->shareManager->checkPassword($share, $password)) {
 					return true;
-				} else if ($this->session->exists('public_link_authenticated')
+				} elseif ($this->session->exists('public_link_authenticated')
 					&& $this->session->get('public_link_authenticated') === (string)$share->getId()) {
 					return true;
 				} else {
@@ -116,7 +116,7 @@ class PublicAuth extends AbstractBasic {
 					}
 					return false;
 				}
-			} else if ($share->getShareType() === IShare::TYPE_REMOTE) {
+			} elseif ($share->getShareType() === IShare::TYPE_REMOTE) {
 				return true;
 			} else {
 				return false;

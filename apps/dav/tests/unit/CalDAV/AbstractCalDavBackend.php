@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -68,10 +69,10 @@ abstract class AbstractCalDavBackend extends TestCase {
 	/** @var ILogger */
 	private $logger;
 
-	const UNIT_TEST_USER = 'principals/users/caldav-unit-test';
-	const UNIT_TEST_USER1 = 'principals/users/caldav-unit-test1';
-	const UNIT_TEST_GROUP = 'principals/groups/caldav-unit-test-group';
-	const UNIT_TEST_GROUP2 = 'principals/groups/caldav-unit-test-group2';
+	public const UNIT_TEST_USER = 'principals/users/caldav-unit-test';
+	public const UNIT_TEST_USER1 = 'principals/users/caldav-unit-test1';
+	public const UNIT_TEST_GROUP = 'principals/groups/caldav-unit-test-group';
+	public const UNIT_TEST_GROUP2 = 'principals/groups/caldav-unit-test-group2';
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -172,7 +173,6 @@ abstract class AbstractCalDavBackend extends TestCase {
 	}
 
 	protected function createEvent($calendarId, $start = '20130912T130000Z', $end = '20130912T140000Z') {
-
 		$randomPart = self::getUniqueID();
 
 		$calData = <<<EOD
@@ -203,7 +203,7 @@ EOD;
 	}
 
 	protected function assertAcl($principal, $privilege, $acl) {
-		foreach($acl as $a) {
+		foreach ($acl as $a) {
 			if ($a['principal'] === $principal && $a['privilege'] === $privilege) {
 				$this->addToAssertionCount(1);
 				return;
@@ -213,7 +213,7 @@ EOD;
 	}
 
 	protected function assertNotAcl($principal, $privilege, $acl) {
-		foreach($acl as $a) {
+		foreach ($acl as $a) {
 			if ($a['principal'] === $principal && $a['privilege'] === $privilege) {
 				$this->fail("ACL contains $principal / $privilege");
 				return;

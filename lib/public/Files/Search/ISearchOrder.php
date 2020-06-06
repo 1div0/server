@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Robin Appelman <robin@icewind.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -27,8 +28,8 @@ namespace OCP\Files\Search;
  * @since 12.0.0
  */
 interface ISearchOrder {
-	const DIRECTION_ASCENDING = 'asc';
-	const DIRECTION_DESCENDING = 'desc';
+	public const DIRECTION_ASCENDING = 'asc';
+	public const DIRECTION_DESCENDING = 'desc';
 
 	/**
 	 * The direction to sort in, either ISearchOrder::DIRECTION_ASCENDING or ISearchOrder::DIRECTION_DESCENDING

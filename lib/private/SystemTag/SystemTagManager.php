@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -44,9 +45,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * Manager class for system tags
  */
 class SystemTagManager implements ISystemTagManager {
-
-	const TAG_TABLE = 'systemtag';
-	const TAG_GROUP_TABLE = 'systemtag_group';
+	public const TAG_TABLE = 'systemtag';
+	public const TAG_GROUP_TABLE = 'systemtag_group';
 
 	/** @var IDBConnection */
 	protected $connection;

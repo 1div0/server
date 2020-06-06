@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Vinicius Cubas Brand <vinicius@eita.org.br>
@@ -74,12 +75,12 @@ class IntegrationTestPaging extends AbstractIntegrationTest {
 		// the result will be 4, because the highest possible paging size
 		// is 2 (as configured).
 		// But also with more than one search base, the limit can be outpaced.
-		if(count($result) !== 4) {
+		if (count($result) !== 4) {
 			return false;
 		}
 
 		$result = $this->access->searchUsers($filter, $attributes);
-		if(count($result) !== 7) {
+		if (count($result) !== 7) {
 			return false;
 		}
 

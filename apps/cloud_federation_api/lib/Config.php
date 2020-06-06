@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2018 Bjoern Schiessle <bjoern@schiessle.org>
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -22,9 +23,8 @@
  */
 
 namespace OCA\CloudFederationAPI;
+
 use OCP\Federation\ICloudFederationProviderManager;
-use OCP\GlobalScale\IConfig as IGsConfig;
-use OCP\IConfig;
 
 /**
  * Class config
@@ -56,5 +56,4 @@ class Config {
 			return [];
 		}
 	}
-
 }

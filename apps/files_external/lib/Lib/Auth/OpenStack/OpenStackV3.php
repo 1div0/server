@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Robin Appelman <robin@icewind.nl>
  *
+ * @author Julien Lutran <julien.lutran@corp.ovh.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -36,7 +37,6 @@ use OCP\IL10N;
  * OpenStack Keystone authentication
  */
 class OpenStackV3 extends AuthMechanism {
-
 	public function __construct(IL10N $l) {
 		$this
 			->setIdentifier('openstack::openstackv3')
@@ -47,9 +47,9 @@ class OpenStackV3 extends AuthMechanism {
 				new DefinitionParameter('domain', $l->t('Domain')),
 				(new DefinitionParameter('password', $l->t('Password')))
 					->setType(DefinitionParameter::VALUE_PASSWORD),
+				new DefinitionParameter('tenant', $l->t('Tenant name')),
 				new DefinitionParameter('url', $l->t('Identity endpoint URL'))
 			])
 		;
 	}
-
 }

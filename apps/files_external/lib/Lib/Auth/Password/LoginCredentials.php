@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2015, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -35,8 +36,7 @@ use OCP\Security\ICredentialsManager;
  * Username and password from login credentials, saved in DB
  */
 class LoginCredentials extends AuthMechanism {
-
-	const CREDENTIALS_IDENTIFIER = 'password::logincredentials/credentials';
+	public const CREDENTIALS_IDENTIFIER = 'password::logincredentials/credentials';
 
 	/** @var ISession */
 	protected $session;
@@ -87,5 +87,4 @@ class LoginCredentials extends AuthMechanism {
 		$storage->setBackendOption('user', $credentials['user']);
 		$storage->setBackendOption('password', $credentials['password']);
 	}
-
 }

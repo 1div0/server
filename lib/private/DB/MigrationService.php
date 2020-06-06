@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  * @copyright Copyright (c) 2017, ownCloud GmbH
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -97,7 +98,7 @@ class MigrationService {
 				foreach ($info['dependencies']['database'] as $database) {
 					if (\is_string($database) && $database === 'oci') {
 						$this->checkOracle = true;
-					} else if (\is_array($database) && isset($database['@value']) && $database['@value'] === 'oci') {
+					} elseif (\is_array($database) && isset($database['@value']) && $database['@value'] === 'oci') {
 						$this->checkOracle = true;
 					}
 				}
@@ -159,7 +160,6 @@ class MigrationService {
 
 			// Recreate the schema after the table was dropped.
 			$schema = new SchemaWrapper($this->connection);
-
 		} catch (SchemaException $e) {
 			// Table not found, no need to panic, we will create it.
 		}
@@ -329,7 +329,7 @@ class MigrationService {
 	 * @return mixed|null|string
 	 */
 	public function getMigration($alias) {
-		switch($alias) {
+		switch ($alias) {
 			case 'current':
 				return $this->getCurrentVersion();
 			case 'next':
@@ -468,12 +468,12 @@ class MigrationService {
 		$instance = $this->createInstance($version);
 
 		if (!$schemaOnly) {
-			$instance->preSchemaChange($this->output, function() {
+			$instance->preSchemaChange($this->output, function () {
 				return new SchemaWrapper($this->connection);
 			}, ['tablePrefix' => $this->connection->getPrefix()]);
 		}
 
-		$toSchema = $instance->changeSchema($this->output, function() {
+		$toSchema = $instance->changeSchema($this->output, function () {
 			return new SchemaWrapper($this->connection);
 		}, ['tablePrefix' => $this->connection->getPrefix()]);
 
@@ -488,7 +488,7 @@ class MigrationService {
 		}
 
 		if (!$schemaOnly) {
-			$instance->postSchemaChange($this->output, function() {
+			$instance->postSchemaChange($this->output, function () {
 				return new SchemaWrapper($this->connection);
 			}, ['tablePrefix' => $this->connection->getPrefix()]);
 		}
@@ -538,11 +538,11 @@ class MigrationService {
 
 					if ($isUsingDefaultName) {
 						$sequenceName = $table->getName() . '_' . implode('_', $primaryKey->getColumns()) . '_seq';
-						$sequences = array_filter($sequences, function(Sequence $sequence) use ($sequenceName) {
+						$sequences = array_filter($sequences, function (Sequence $sequence) use ($sequenceName) {
 							return $sequence->getName() !== $sequenceName;
 						});
 					}
-				} else if ($this->connection->getDatabasePlatform() instanceof OraclePlatform) {
+				} elseif ($this->connection->getDatabasePlatform() instanceof OraclePlatform) {
 					$defaultName = $table->getName() . '_seq';
 					$isUsingDefaultName = strtolower($defaultName) === $indexName;
 				}

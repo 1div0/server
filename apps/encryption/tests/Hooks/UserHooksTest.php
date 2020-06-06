@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -26,7 +27,6 @@
  */
 
 namespace OCA\Encryption\Tests\Hooks;
-
 
 use OCA\Encryption\Crypto\Crypt;
 use OCA\Encryption\Hooks\UserHooks;
@@ -155,7 +155,6 @@ class UserHooksTest extends TestCase {
 		$this->instance->postPasswordReset($params);
 		$passwordResetUsers = $this->invokePrivate($this->instance, 'passwordResetUsers');
 		$this->assertEmpty($passwordResetUsers);
-
 	}
 
 	/**
@@ -302,12 +301,11 @@ class UserHooksTest extends TestCase {
 	}
 
 	public function XtestSetPasswordNoUser() {
-
 		$userSessionMock = $this->getMockBuilder(IUserSession::class)
 			->disableOriginalConstructor()
 			->getMock();
 
-		$userSessionMock->expects($this->any())->method('getUser')->will($this->returnValue(null));
+		$userSessionMock->expects($this->any())->method('getUser')->willReturn(null);
 
 		$this->recoveryMock->expects($this->once())
 			->method('isRecoveryEnabledForUser')
@@ -390,7 +388,5 @@ class UserHooksTest extends TestCase {
 					$this->recoveryMock
 				]
 			)->setMethods(['setupFS'])->getMock();
-
 	}
-
 }

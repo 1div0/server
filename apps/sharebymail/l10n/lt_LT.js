@@ -42,8 +42,9 @@ OC.L10N.register(
     "You can choose a different password at any time in the share dialog." : "Dalinimosi dialoge bet kuriuo metu galite pasirinkti kitą slaptažodį.",
     "Could not find share" : "Nepavyko rasti viešinio",
     "Share by mail" : "Bendrinimas el. paštu",
-    "Share provider which allows you to share files by mail" : "Pasidalinimo teikėjas, kuris leidžia dalintis failais el. paštu",
+    "Share provider which allows you to share files by mail" : "Bendrinimo teikėjas, kuris leidžia bendrinti failus el. paštu",
     "Allows users to share a personalized link to a file or folder by putting in an email address." : "Leidžia naudotojams bendrinti asmeninę nuorodą į failą ar aplanką, įvedus el. pašto adresą.",
-    "Send password by mail" : "Siųsti slaptažodį el. paštu"
+    "Send password by mail" : "Siųsti slaptažodį el. paštu",
+    "Enforce password protection" : "Priverstinė apsauga slaptažodžiu"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

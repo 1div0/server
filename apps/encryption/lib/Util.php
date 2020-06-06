@@ -26,7 +26,6 @@
 
 namespace OCA\Encryption;
 
-
 use OC\Files\View;
 use OCA\Encryption\Crypto\Crypt;
 use OCP\IConfig;
@@ -183,7 +182,6 @@ class Util {
 				throw new \BadMethodCallException('Unknown user: ' .
 				'method expects path to a user folder relative to the data folder');
 			}
-
 		}
 
 		return $owner;
@@ -198,5 +196,4 @@ class Util {
 	public function getStorage($path) {
 		return $this->files->getMount($path)->getStorage();
 	}
-
 }

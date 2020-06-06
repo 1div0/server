@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -27,6 +28,7 @@
 namespace OCA\DAV\Connector\Sabre;
 
 use OCP\IConfig;
+use OCP\IL10N;
 use OCP\Util;
 use Sabre\DAV\Exception\ServiceUnavailable;
 use Sabre\DAV\ServerPlugin;
@@ -35,6 +37,9 @@ class MaintenancePlugin extends ServerPlugin {
 
 	/** @var IConfig */
 	private $config;
+
+	/** @var \OCP\IL10N */
+	private $l10n;
 
 	/**
 	 * Reference to main server object
@@ -46,11 +51,9 @@ class MaintenancePlugin extends ServerPlugin {
 	/**
 	 * @param IConfig $config
 	 */
-	public function __construct(IConfig $config = null) {
+	public function __construct(IConfig $config, IL10N $l10n) {
 		$this->config = $config;
-		if (is_null($config)) {
-			$this->config = \OC::$server->getConfig();
-		}
+		$this->l10n = \OC::$server->getL10N('dav');
 	}
 
 
@@ -67,7 +70,7 @@ class MaintenancePlugin extends ServerPlugin {
 	 */
 	public function initialize(\Sabre\DAV\Server $server) {
 		$this->server = $server;
-		$this->server->on('beforeMethod', array($this, 'checkMaintenanceMode'), 1);
+		$this->server->on('beforeMethod:*', [$this, 'checkMaintenanceMode'], 1);
 	}
 
 	/**
@@ -79,10 +82,10 @@ class MaintenancePlugin extends ServerPlugin {
 	 */
 	public function checkMaintenanceMode() {
 		if ($this->config->getSystemValueBool('maintenance')) {
-			throw new ServiceUnavailable('System in maintenance mode.');
+			throw new ServiceUnavailable($this->l10n->t('System in maintenance mode.'));
 		}
 		if (Util::needUpgrade()) {
-			throw new ServiceUnavailable('Upgrade needed');
+			throw new ServiceUnavailable($this->l10n->t('Upgrade needed'));
 		}
 
 		return true;

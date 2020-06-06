@@ -27,11 +27,9 @@ use OC\AppFramework\Http\Request;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 
 class ChildController extends Controller {
-
 	public function __construct($appName, $request) {
 		parent::__construct($appName, $request);
 		$this->registerResponder('tom', function ($respone) {
@@ -41,7 +39,7 @@ class ChildController extends Controller {
 
 	public function custom($in) {
 		$this->registerResponder('json', function ($response) {
-			return new JSONResponse(array(strlen($response)));
+			return new JSONResponse([strlen($response)]);
 		});
 
 		return $in;
@@ -89,7 +87,7 @@ class ControllerTest extends \Test\TestCase {
 			->getMock();
 		$this->app->expects($this->any())
 				->method('getAppName')
-				->will($this->returnValue('apptemplate_advanced'));
+				->willReturn('apptemplate_advanced');
 
 		$this->controller = new ChildController($this->app, $request);
 	}
@@ -103,9 +101,9 @@ class ControllerTest extends \Test\TestCase {
 
 
 	public function testFormat() {
-		$response = $this->controller->buildResponse(array('hi'), 'json');
+		$response = $this->controller->buildResponse(['hi'], 'json');
 
-		$this->assertEquals(array('hi'), $response->getData());
+		$this->assertEquals(['hi'], $response->getData());
 	}
 
 
@@ -118,10 +116,10 @@ class ControllerTest extends \Test\TestCase {
 			'Feature-Policy' => "autoplay 'none';camera 'none';fullscreen 'none';geolocation 'none';microphone 'none';payment 'none'",
 		];
 
-		$response = $this->controller->customDataResponse(array('hi'));
+		$response = $this->controller->customDataResponse(['hi']);
 		$response = $this->controller->buildResponse($response, 'json');
 
-		$this->assertEquals(array('hi'), $response->getData());
+		$this->assertEquals(['hi'], $response->getData());
 		$this->assertEquals(300, $response->getStatus());
 		$this->assertEquals($expectedHeaders, $response->getHeaders());
 	}
@@ -131,7 +129,7 @@ class ControllerTest extends \Test\TestCase {
 		$response = $this->controller->custom('hi');
 		$response = $this->controller->buildResponse($response, 'json');
 
-		$this->assertEquals(array(2), $response->getData());
+		$this->assertEquals([2], $response->getData());
 	}
 
 
@@ -158,6 +156,4 @@ class ControllerTest extends \Test\TestCase {
 
 		$this->assertEquals('tom', $responder);
 	}
-
-
 }

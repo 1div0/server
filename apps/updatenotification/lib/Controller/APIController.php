@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -78,7 +79,7 @@ class APIController extends OCSController {
 
 		// Get list of installed custom apps
 		$installedApps = $this->appManager->getInstalledApps();
-		$installedApps = array_filter($installedApps, function($app) {
+		$installedApps = array_filter($installedApps, function ($app) {
 			try {
 				$this->appManager->getAppPath($app);
 			} catch (AppPathNotFoundException $e) {
@@ -97,7 +98,7 @@ class APIController extends OCSController {
 		$this->appFetcher->setVersion($newVersion, 'future-apps.json', false);
 
 		// Apps available on the app store for that version
-		$availableApps = array_map(function(array $app) {
+		$availableApps = array_map(function (array $app) {
 			return $app['id'];
 		}, $this->appFetcher->get());
 

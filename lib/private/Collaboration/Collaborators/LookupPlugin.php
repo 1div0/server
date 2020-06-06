@@ -26,7 +26,6 @@
 
 namespace OC\Collaboration\Collaborators;
 
-
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
@@ -74,7 +73,7 @@ class LookupPlugin implements ISearchPlugin {
 		}
 
 		$lookupServerUrl = $this->config->getSystemValue('lookup_server', 'https://lookup.nextcloud.com');
-		if(empty($lookupServerUrl)) {
+		if (empty($lookupServerUrl)) {
 			return false;
 		}
 		$lookupServerUrl = rtrim($lookupServerUrl, '/');

@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -71,7 +72,7 @@ class CSPMiddleware extends Middleware {
 		$defaultPolicy = $this->contentSecurityPolicyManager->getDefaultPolicy();
 		$defaultPolicy = $this->contentSecurityPolicyManager->mergePolicies($defaultPolicy, $policy);
 
-		if($this->cspNonceManager->browserSupportsCspV3()) {
+		if ($this->cspNonceManager->browserSupportsCspV3()) {
 			$defaultPolicy->useJsNonce($this->csrfTokenManager->getToken()->getEncryptedValue());
 		}
 

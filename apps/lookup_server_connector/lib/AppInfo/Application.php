@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -33,7 +34,7 @@ use OCP\IUser;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Application extends App {
-	public function __construct () {
+	public function __construct() {
 		parent::__construct('lookup_server_connector');
 	}
 
@@ -49,7 +50,7 @@ class Application extends App {
 	 */
 	public function registerHooksAndEvents(): void {
 		$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
-		$dispatcher->addListener('OC\AccountManager::userUpdated', static function(GenericEvent $event) {
+		$dispatcher->addListener('OC\AccountManager::userUpdated', static function (GenericEvent $event) {
 			/** @var IUser $user */
 			$user = $event->getSubject();
 
@@ -57,6 +58,5 @@ class Application extends App {
 			$updateLookupServer = \OC::$server->query(UpdateLookupServer::class);
 			$updateLookupServer->userUpdated($user);
 		});
-
 	}
 }

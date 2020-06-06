@@ -7,6 +7,7 @@ declare(strict_types=1);
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -29,7 +30,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\AdminAudit\Actions;
-
 
 use OCP\IUser;
 
@@ -101,7 +101,7 @@ class UserManagement extends Action {
 	 * @param array $params
 	 */
 	public function change(array $params) {
-		switch($params['feature']) {
+		switch ($params['feature']) {
 			case 'enabled':
 				$this->log(
 					$params['value'] === true
@@ -131,7 +131,7 @@ class UserManagement extends Action {
 	 * @param IUser $user
 	 */
 	public function setPassword(IUser $user) {
-		if($user->getBackendClassName() === 'Database') {
+		if ($user->getBackendClassName() === 'Database') {
 			$this->log(
 				'Password of user "%s" has been changed',
 				[

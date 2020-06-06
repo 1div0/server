@@ -3,7 +3,7 @@
  * @copyright Copyright (c) 2017 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,7 +23,6 @@
  */
 
 namespace OCA\Settings\Settings\Personal;
-
 
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Settings\ISettings;

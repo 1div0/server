@@ -7,6 +7,7 @@ declare(strict_types=1);
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -43,23 +44,23 @@ interface ILogger {
 	/**
 	 * @since 14.0.0
 	 */
-	const DEBUG=0;
+	public const DEBUG=0;
 	/**
 	 * @since 14.0.0
 	 */
-	const INFO=1;
+	public const INFO=1;
 	/**
 	 * @since 14.0.0
 	 */
-	const WARN=2;
+	public const WARN=2;
 	/**
 	 * @since 14.0.0
 	 */
-	const ERROR=3;
+	public const ERROR=3;
 	/**
 	 * @since 14.0.0
 	 */
-	const FATAL=4;
+	public const FATAL=4;
 
 	/**
 	 * System is unusable.

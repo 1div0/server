@@ -5,11 +5,12 @@ declare(strict_types=1);
 /**
  * @copyright 2017, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -72,7 +73,7 @@ class JsController extends Controller {
 			$folder = $this->appData->getFolder($appName);
 			$gzip = false;
 			$file = $this->getFile($folder, $fileName, $gzip);
-		} catch(NotFoundException $e) {
+		} catch (NotFoundException $e) {
 			return new NotFoundResponse();
 		}
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -36,9 +37,8 @@ use OCP\IDBConnection;
  * @package OCA\DAV\CalDAV\Proxy
  */
 class ProxyMapper extends QBMapper {
-
-	const PERMISSION_READ  = 1;
-	const PERMISSION_WRITE = 2;
+	public const PERMISSION_READ  = 1;
+	public const PERMISSION_WRITE = 2;
 
 	/**
 	 * ProxyMapper constructor.

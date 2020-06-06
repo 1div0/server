@@ -2,6 +2,7 @@
 /**
  * @copyright 2017, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -35,7 +36,7 @@ class WalledGardenController extends Controller {
 	 *
 	 * @return Response
 	 */
-	function get() {
+	public function get() {
 		$resp = new Response();
 		$resp->setStatus(Http::STATUS_NO_CONTENT);
 		return $resp;

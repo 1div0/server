@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
@@ -37,7 +38,6 @@ use OCA\Files_External\Lib\Storage\OwnCloud;
  * @package OCA\Files_External\Tests\Storage
  */
 class OwncloudTest extends \Test\Files\Storage\Storage {
-
 	private $config;
 
 	protected function setUp(): void {
@@ -45,7 +45,7 @@ class OwncloudTest extends \Test\Files\Storage\Storage {
 
 		$id = $this->getUniqueID();
 		$this->config = include('files_external/tests/config.php');
-		if ( ! is_array($this->config) or ! isset($this->config['owncloud']) or ! $this->config['owncloud']['run']) {
+		if (! is_array($this->config) or ! isset($this->config['owncloud']) or ! $this->config['owncloud']['run']) {
 			$this->markTestSkipped('Nextcloud backend not configured');
 		}
 		$this->config['owncloud']['root'] .= '/' . $id; //make sure we have an new empty folder to work in

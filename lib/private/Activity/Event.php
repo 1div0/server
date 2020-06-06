@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Phil Davis <phil.davis@inf.org>
  *
@@ -524,10 +525,10 @@ class Event implements IEvent {
 			$this->getTimestamp() !== 0
 			/**
 			 * Disabled for BC with old activities
-			&&
-			$this->getObjectType() !== ''
-			&&
-			$this->getObjectId() !== 0
+			 * &&
+			 * $this->getObjectType() !== ''
+			 * &&
+			 * $this->getObjectId() !== 0
 			 */
 		;
 	}

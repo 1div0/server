@@ -22,8 +22,6 @@
  */
 namespace OCA\DAV\CalDAV\Integration;
 
-use Sabre\CalDAV\ICalendar;
-
 /**
  * Interface ICalendarProvider
  *
@@ -69,5 +67,4 @@ interface ICalendarProvider {
 	 * @return ExternalCalendar|null Calendar if it exists, null otherwise
 	 */
 	public function getCalendarInCalendarHome(string $principalUri, string $calendarUri): ?ExternalCalendar;
-
 }

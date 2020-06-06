@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Vinicius Cubas Brand <vinicius@eita.org.br>
  *
  * @license AGPL-3.0
@@ -23,7 +24,6 @@
 
 namespace OCA\User_LDAP\Tests\Integration\Lib\User;
 
-use OC\User\NoUserException;
 use OCA\User_LDAP\Jobs\CleanUp;
 use OCA\User_LDAP\Mapping\UserMapping;
 use OCA\User_LDAP\Tests\Integration\AbstractIntegrationTest;
@@ -85,7 +85,7 @@ class IntegrationTestUserCleanUp extends AbstractIntegrationTest {
 		// it is deleted from the LDAP server. The instance will be returned
 		// from cache and may false-positively confirm the correctness.
 		$user = \OC::$server->getUserManager()->get($username);
-		if($user === null) {
+		if ($user === null) {
 			return false;
 		}
 		$user->delete();

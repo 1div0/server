@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Victor Dubiniuk <dubiniuk@owncloud.com>
  *
@@ -70,7 +71,7 @@ class SignCore extends Command {
 		$privateKeyPath = $input->getOption('privateKey');
 		$keyBundlePath = $input->getOption('certificate');
 		$path = $input->getOption('path');
-		if(is_null($privateKeyPath) || is_null($keyBundlePath) || is_null($path)) {
+		if (is_null($privateKeyPath) || is_null($keyBundlePath) || is_null($path)) {
 			$output->writeln('--privateKey, --certificate and --path are required.');
 			return null;
 		}
@@ -78,12 +79,12 @@ class SignCore extends Command {
 		$privateKey = $this->fileAccessHelper->file_get_contents($privateKeyPath);
 		$keyBundle = $this->fileAccessHelper->file_get_contents($keyBundlePath);
 
-		if($privateKey === false) {
+		if ($privateKey === false) {
 			$output->writeln(sprintf('Private key "%s" does not exists.', $privateKeyPath));
 			return null;
 		}
 
-		if($keyBundle === false) {
+		if ($keyBundle === false) {
 			$output->writeln(sprintf('Certificate "%s" does not exists.', $keyBundlePath));
 			return null;
 		}
@@ -97,7 +98,7 @@ class SignCore extends Command {
 		try {
 			$this->checker->writeCoreSignature($x509, $rsa, $path);
 			$output->writeln('Successfully signed "core"');
-		} catch (\Exception $e){
+		} catch (\Exception $e) {
 			$output->writeln('Error: ' . $e->getMessage());
 			return 1;
 		}

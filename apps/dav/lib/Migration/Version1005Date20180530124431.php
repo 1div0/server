@@ -2,6 +2,7 @@
 /**
  * @copyright 2017 Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -44,7 +45,7 @@ class Version1005Date20180530124431 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$types = ['resources', 'rooms'];
-		foreach($types as $type) {
+		foreach ($types as $type) {
 			if (!$schema->hasTable('calendar_' . $type)) {
 				$table = $schema->createTable('calendar_' . $type);
 

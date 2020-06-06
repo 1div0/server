@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -51,8 +52,8 @@ class ScanFilesTest extends TestCase {
 
 		$this->scanFiles = $this->getMockBuilder('\OCA\Files\BackgroundJob\ScanFiles')
 				->setConstructorArgs([
-						$this->config,
-						$this->userManager,
+					$this->config,
+					$this->userManager,
 				])
 				->setMethods(['runScanner'])
 				->getMock();
@@ -63,22 +64,22 @@ class ScanFilesTest extends TestCase {
 				->expects($this->at(0))
 				->method('getSystemValueBool')
 				->with('files_no_background_scan', false)
-				->will($this->returnValue(false));
+				->willReturn(false);
 		$this->config
 				->expects($this->at(1))
 				->method('getAppValue')
 				->with('files', 'cronjob_scan_files', 0)
-				->will($this->returnValue(50));
+				->willReturn(50);
 		$this->userManager
 				->expects($this->at(0))
 				->method('search')
 				->with('', 500, 50)
-				->will($this->returnValue([]));
+				->willReturn([]);
 		$this->userManager
 				->expects($this->at(1))
 				->method('search')
 				->with('', 500)
-				->will($this->returnValue([]));
+				->willReturn([]);
 		$this->config
 				->expects($this->at(2))
 				->method('setAppValue')
@@ -93,19 +94,19 @@ class ScanFilesTest extends TestCase {
 				->expects($this->at(0))
 				->method('getSystemValueBool')
 				->with('files_no_background_scan', false)
-				->will($this->returnValue(false));
+				->willReturn(false);
 		$this->config
 				->expects($this->at(1))
 				->method('getAppValue')
 				->with('files', 'cronjob_scan_files', 0)
-				->will($this->returnValue(50));
+				->willReturn(50);
 		$this->userManager
 				->expects($this->at(0))
 				->method('search')
 				->with('', 500, 50)
-				->will($this->returnValue([
-						$fakeUser
-				]));
+				->willReturn([
+					$fakeUser
+				]);
 		$this->config
 				->expects($this->at(2))
 				->method('setAppValue')
@@ -123,22 +124,22 @@ class ScanFilesTest extends TestCase {
 				->expects($this->at(0))
 				->method('getSystemValueBool')
 				->with('files_no_background_scan', false)
-				->will($this->returnValue(false));
+				->willReturn(false);
 		$this->config
 				->expects($this->at(1))
 				->method('getAppValue')
 				->with('files', 'cronjob_scan_files', 0)
-				->will($this->returnValue(50));
+				->willReturn(50);
 		$this->userManager
 				->expects($this->at(0))
 				->method('search')
 				->with('', 500, 50)
-				->will($this->returnValue([]));
+				->willReturn([]);
 		$this->userManager
 				->expects($this->at(1))
 				->method('search')
 				->with('', 500)
-				->will($this->returnValue([]));
+				->willReturn([]);
 		$this->config
 				->expects($this->at(2))
 				->method('setAppValue')
@@ -149,5 +150,4 @@ class ScanFilesTest extends TestCase {
 
 		$this->invokePrivate($this->scanFiles, 'run', [[]]);
 	}
-
 }

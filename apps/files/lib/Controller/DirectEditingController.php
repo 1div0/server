@@ -23,15 +23,11 @@
 
 namespace OCA\Files\Controller;
 
-
 use Exception;
 use OCA\Files\Service\DirectEditingService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\DirectEditing\ACreateEmpty;
-use OCP\DirectEditing\ACreateFromTemplate;
-use OCP\DirectEditing\IEditor;
 use OCP\DirectEditing\IManager;
 use OCP\DirectEditing\RegisterDirectEditorEvent;
 use OCP\EventDispatcher\IEventDispatcher;

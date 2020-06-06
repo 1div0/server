@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -77,7 +78,7 @@ class OracleMigrator extends Migrator {
 		return new Index(
 		//TODO migrate existing uppercase indexes, then $this->connection->quoteIdentifier($index->getName()),
 			$index->getName(),
-			array_map(function($columnName) {
+			array_map(function ($columnName) {
 				return $this->connection->quoteIdentifier($columnName);
 			}, $index->getColumns()),
 			$index->isUnique(),
@@ -96,11 +97,11 @@ class OracleMigrator extends Migrator {
 	 */
 	protected function quoteForeignKeyConstraint($fkc) {
 		return new ForeignKeyConstraint(
-			array_map(function($columnName) {
+			array_map(function ($columnName) {
 				return $this->connection->quoteIdentifier($columnName);
 			}, $fkc->getLocalColumns()),
 			$this->connection->quoteIdentifier($fkc->getForeignTableName()),
-			array_map(function($columnName) {
+			array_map(function ($columnName) {
 				return $this->connection->quoteIdentifier($columnName);
 			}, $fkc->getForeignColumns()),
 			$fkc->getName(),
@@ -118,16 +119,16 @@ class OracleMigrator extends Migrator {
 		$schemaDiff = parent::getDiff($targetSchema, $connection);
 
 		// oracle forces us to quote the identifiers
-		$schemaDiff->newTables = array_map(function(Table $table) {
+		$schemaDiff->newTables = array_map(function (Table $table) {
 			return new Table(
 				$this->connection->quoteIdentifier($table->getName()),
-				array_map(function(Column $column) {
+				array_map(function (Column $column) {
 					return $this->quoteColumn($column);
 				}, $table->getColumns()),
-				array_map(function(Index $index) {
+				array_map(function (Index $index) {
 					return $this->quoteIndex($index);
 				}, $table->getIndexes()),
-				array_map(function(ForeignKeyConstraint $fck) {
+				array_map(function (ForeignKeyConstraint $fck) {
 					return $this->quoteForeignKeyConstraint($fck);
 				}, $table->getForeignKeys()),
 				0,
@@ -135,7 +136,7 @@ class OracleMigrator extends Migrator {
 			);
 		}, $schemaDiff->newTables);
 
-		$schemaDiff->removedTables = array_map(function(Table $table) {
+		$schemaDiff->removedTables = array_map(function (Table $table) {
 			return new Table(
 				$this->connection->quoteIdentifier($table->getName()),
 				$table->getColumns(),
@@ -149,7 +150,7 @@ class OracleMigrator extends Migrator {
 		foreach ($schemaDiff->changedTables as $tableDiff) {
 			$tableDiff->name = $this->connection->quoteIdentifier($tableDiff->name);
 
-			$tableDiff->addedColumns = array_map(function(Column $column) {
+			$tableDiff->addedColumns = array_map(function (Column $column) {
 				return $this->quoteColumn($column);
 			}, $tableDiff->addedColumns);
 
@@ -163,39 +164,39 @@ class OracleMigrator extends Migrator {
 				return count($column->changedProperties) > 0;
 			});
 
-			$tableDiff->removedColumns = array_map(function(Column $column) {
+			$tableDiff->removedColumns = array_map(function (Column $column) {
 				return $this->quoteColumn($column);
 			}, $tableDiff->removedColumns);
 
-			$tableDiff->renamedColumns = array_map(function(Column $column) {
+			$tableDiff->renamedColumns = array_map(function (Column $column) {
 				return $this->quoteColumn($column);
 			}, $tableDiff->renamedColumns);
 
-			$tableDiff->addedIndexes = array_map(function(Index $index) {
+			$tableDiff->addedIndexes = array_map(function (Index $index) {
 				return $this->quoteIndex($index);
 			}, $tableDiff->addedIndexes);
 
-			$tableDiff->changedIndexes = array_map(function(Index $index) {
+			$tableDiff->changedIndexes = array_map(function (Index $index) {
 				return $this->quoteIndex($index);
 			}, $tableDiff->changedIndexes);
 
-			$tableDiff->removedIndexes = array_map(function(Index $index) {
+			$tableDiff->removedIndexes = array_map(function (Index $index) {
 				return $this->quoteIndex($index);
 			}, $tableDiff->removedIndexes);
 
-			$tableDiff->renamedIndexes = array_map(function(Index $index) {
+			$tableDiff->renamedIndexes = array_map(function (Index $index) {
 				return $this->quoteIndex($index);
 			}, $tableDiff->renamedIndexes);
 
-			$tableDiff->addedForeignKeys = array_map(function(ForeignKeyConstraint $fkc) {
+			$tableDiff->addedForeignKeys = array_map(function (ForeignKeyConstraint $fkc) {
 				return $this->quoteForeignKeyConstraint($fkc);
 			}, $tableDiff->addedForeignKeys);
 
-			$tableDiff->changedForeignKeys = array_map(function(ForeignKeyConstraint $fkc) {
+			$tableDiff->changedForeignKeys = array_map(function (ForeignKeyConstraint $fkc) {
 				return $this->quoteForeignKeyConstraint($fkc);
 			}, $tableDiff->changedForeignKeys);
 
-			$tableDiff->removedForeignKeys = array_map(function(ForeignKeyConstraint $fkc) {
+			$tableDiff->removedForeignKeys = array_map(function (ForeignKeyConstraint $fkc) {
 				return $this->quoteForeignKeyConstraint($fkc);
 			}, $tableDiff->removedForeignKeys);
 		}
@@ -228,5 +229,4 @@ class OracleMigrator extends Migrator {
 	protected function getFilterExpression() {
 		return '/^"' . preg_quote($this->config->getSystemValue('dbtableprefix', 'oc_')) . '/';
 	}
-
 }

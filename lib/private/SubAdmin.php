@@ -4,6 +4,7 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -53,16 +54,16 @@ class SubAdmin extends PublicEmitter implements ISubAdmin {
 	 * @param IDBConnection $dbConn
 	 */
 	public function __construct(IUserManager $userManager,
-	                            IGroupManager $groupManager,
+								IGroupManager $groupManager,
 								IDBConnection $dbConn) {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->dbConn = $dbConn;
 
-		$this->userManager->listen('\OC\User', 'postDelete', function($user) {
+		$this->userManager->listen('\OC\User', 'postDelete', function ($user) {
 			$this->post_deleteUser($user);
 		});
-		$this->groupManager->listen('\OC\Group', 'postDelete', function($group) {
+		$this->groupManager->listen('\OC\Group', 'postDelete', function ($group) {
 			$this->post_deleteGroup($group);
 		});
 	}
@@ -109,6 +110,25 @@ class SubAdmin extends PublicEmitter implements ISubAdmin {
 	 * @return IGroup[]
 	 */
 	public function getSubAdminsGroups(IUser $user): array {
+		$groupIds = $this->getSubAdminsGroupIds($user);
+
+		$groups = [];
+		foreach ($groupIds as $groupId) {
+			$group = $this->groupManager->get($groupId);
+			if ($group !== null) {
+				$groups[$group->getGID()] = $group;
+			}
+		}
+
+		return $groups;
+	}
+
+	/**
+	 * Get group ids of a SubAdmin
+	 * @param IUser $user the SubAdmin
+	 * @return string[]
+	 */
+	public function getSubAdminsGroupIds(IUser $user): array {
 		$qb = $this->dbConn->getQueryBuilder();
 
 		$result = $qb->select('gid')
@@ -117,11 +137,8 @@ class SubAdmin extends PublicEmitter implements ISubAdmin {
 			->execute();
 
 		$groups = [];
-		while($row = $result->fetch()) {
-			$group = $this->groupManager->get($row['gid']);
-			if(!is_null($group)) {
-				$groups[$group->getGID()] = $group;
-			}
+		while ($row = $result->fetch()) {
+			$groups[] = $row['gid'];
 		}
 		$result->closeCursor();
 
@@ -134,8 +151,8 @@ class SubAdmin extends PublicEmitter implements ISubAdmin {
 	 * @return array ['displayName' => displayname]
 	 */
 	public function getSubAdminsGroupsName(IUser $user): array {
-		return array_map(function($group) {
-			return array('displayName' => $group->getDisplayName());
+		return array_map(function ($group) {
+			return ['displayName' => $group->getDisplayName()];
 		}, $this->getSubAdminsGroups($user));
 	}
 
@@ -153,9 +170,9 @@ class SubAdmin extends PublicEmitter implements ISubAdmin {
 			->execute();
 
 		$users = [];
-		while($row = $result->fetch()) {
+		while ($row = $result->fetch()) {
 			$user = $this->userManager->get($row['uid']);
-			if(!is_null($user)) {
+			if (!is_null($user)) {
 				$users[] = $user;
 			}
 		}
@@ -176,10 +193,10 @@ class SubAdmin extends PublicEmitter implements ISubAdmin {
 			->execute();
 
 		$subadmins = [];
-		while($row = $result->fetch()) {
+		while ($row = $result->fetch()) {
 			$user = $this->userManager->get($row['uid']);
 			$group = $this->groupManager->get($row['gid']);
-			if(!is_null($user) && !is_null($group)) {
+			if (!is_null($user) && !is_null($group)) {
 				$subadmins[] = [
 					'user'  => $user,
 					'group' => $group
@@ -248,19 +265,17 @@ class SubAdmin extends PublicEmitter implements ISubAdmin {
 	 * @return bool
 	 */
 	public function isUserAccessible(IUser $subadmin, IUser $user): bool {
-		if(!$this->isSubAdmin($subadmin)) {
+		if (!$this->isSubAdmin($subadmin)) {
 			return false;
 		}
-		if($this->groupManager->isAdmin($user->getUID())) {
+		if ($this->groupManager->isAdmin($user->getUID())) {
 			return false;
 		}
-		$accessibleGroups = $this->getSubAdminsGroups($subadmin);
-		foreach($accessibleGroups as $accessibleGroup) {
-			if($accessibleGroup->inGroup($user)) {
-				return true;
-			}
-		}
-		return false;
+
+		$accessibleGroups = $this->getSubAdminsGroupIds($subadmin);
+		$userGroups = $this->groupManager->getUserGroupIds($user);
+
+		return !empty(array_intersect($accessibleGroups, $userGroups));
 	}
 
 	/**

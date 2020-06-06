@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Tobias Kaminsky <tobias@kaminsky.me>
  *
@@ -28,8 +29,6 @@ declare(strict_types=1);
 namespace OCA\DAV\Connector\Sabre;
 
 use OCP\Share\IShare;
-use Sabre\Xml\Element;
-use Sabre\Xml\Reader;
 use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
 
@@ -37,7 +36,7 @@ use Sabre\Xml\XmlSerializable;
  * This property contains multiple "sharee" elements, each containing a share sharee
  */
 class ShareeList implements XmlSerializable {
-	const NS_NEXTCLOUD = 'http://nextcloud.org/ns';
+	public const NS_NEXTCLOUD = 'http://nextcloud.org/ns';
 
 	/** @var IShare[] */
 	private $shares;
@@ -52,7 +51,7 @@ class ShareeList implements XmlSerializable {
 	 * @param Writer $writer
 	 * @return void
 	 */
-	function xmlSerialize(Writer $writer) {
+	public function xmlSerialize(Writer $writer) {
 		foreach ($this->shares as $share) {
 			$writer->startElement('{' . self::NS_NEXTCLOUD . '}sharee');
 			$writer->writeElement('{' . self::NS_NEXTCLOUD . '}id', $share->getSharedWith());

@@ -72,20 +72,19 @@ use OCP\User\Backend\IGetHomeBackend;
 use OCP\User\Backend\IGetRealUIDBackend;
 use OCP\User\Backend\ISetDisplayNameBackend;
 use OCP\User\Backend\ISetPasswordBackend;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Class for user management in a SQL Database (e.g. MySQL, SQLite)
  */
-class Database extends ABackend
-	implements ICreateUserBackend,
-	           ISetPasswordBackend,
-	           ISetDisplayNameBackend,
-	           IGetDisplayNameBackend,
-	           ICheckPasswordBackend,
-	           IGetHomeBackend,
-	           ICountUsersBackend,
-	           IGetRealUIDBackend {
+class Database extends ABackend implements
+	ICreateUserBackend,
+			   ISetPasswordBackend,
+			   ISetDisplayNameBackend,
+			   IGetDisplayNameBackend,
+			   ICheckPasswordBackend,
+			   IGetHomeBackend,
+			   ICountUsersBackend,
+			   IGetRealUIDBackend {
 	/** @var CappedMemoryCache */
 	private $cache;
 
@@ -325,7 +324,6 @@ class Database extends ABackend
 				}
 				return (string)$row['uid'];
 			}
-
 		}
 
 		return false;

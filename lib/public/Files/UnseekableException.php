@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Piotr Filiciak <piotr@filiciak.pl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -35,4 +36,5 @@ namespace OCP\Files;
  * Exception for seek problem
  * @since 9.1.0
  */
-class UnseekableException extends \Exception {}
+class UnseekableException extends \Exception {
+}

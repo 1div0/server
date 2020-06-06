@@ -3,6 +3,7 @@
  * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -25,29 +26,38 @@ declare(strict_types=1);
 
 namespace OC\Authentication\Login;
 
+use OC\Authentication\Events\LoginFailed;
 use OC\Core\Controller\LoginController;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ILogger;
+use OCP\IUserManager;
 
 class LoggedInCheckCommand extends ALoginCommand {
 
 	/** @var ILogger */
 	private $logger;
+	/** @var IEventDispatcher */
+	private $dispatcher;
+	/** @var IUserManager */
+	private $userManager;
 
-	public function __construct(ILogger $logger) {
+	public function __construct(ILogger $logger, IEventDispatcher $dispatcher) {
 		$this->logger = $logger;
+		$this->dispatcher = $dispatcher;
 	}
 
 	public function process(LoginData $loginData): LoginResult {
 		if ($loginData->getUser() === false) {
-			$username = $loginData->getUsername();
+			$loginName = $loginData->getUsername();
 			$ip = $loginData->getRequest()->getRemoteAddress();
 
-			$this->logger->warning("Login failed: $username (Remote IP: $ip)");
+			$this->logger->warning("Login failed: $loginName (Remote IP: $ip)");
+
+			$this->dispatcher->dispatchTyped(new LoginFailed($loginName));
 
 			return LoginResult::failure($loginData, LoginController::LOGIN_MSG_INVALIDPASSWORD);
 		}
 
 		return $this->processNextOrFinishSuccessfully($loginData);
 	}
-
 }

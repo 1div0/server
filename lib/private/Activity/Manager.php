@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -26,7 +27,6 @@
  */
 
 namespace OC\Activity;
-
 
 use OCP\Activity\IConsumer;
 use OCP\Activity\IEvent;
@@ -76,10 +76,10 @@ class Manager implements IManager {
 	}
 
 	/** @var \Closure[] */
-	private $consumersClosures = array();
+	private $consumersClosures = [];
 
 	/** @var IConsumer[] */
-	private $consumers = array();
+	private $consumers = [];
 
 	/**
 	 * @return \OCP\Activity\IConsumer[]
@@ -90,7 +90,7 @@ class Manager implements IManager {
 		}
 
 		$this->consumers = [];
-		foreach($this->consumersClosures as $consumer) {
+		foreach ($this->consumersClosures as $consumer) {
 			$c = $consumer();
 			if ($c instanceof IConsumer) {
 				$this->consumers[] = $c;
@@ -385,5 +385,4 @@ class Manager implements IManager {
 		// Token found login as that user
 		return array_shift($users);
 	}
-
 }

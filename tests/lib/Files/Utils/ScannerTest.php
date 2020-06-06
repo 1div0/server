@@ -21,7 +21,7 @@ class TestScanner extends \OC\Files\Utils\Scanner {
 	/**
 	 * @var \OC\Files\Mount\MountPoint[] $mounts
 	 */
-	private $mounts = array();
+	private $mounts = [];
 
 	/**
 	 * @param \OC\Files\Mount\MountPoint $mount
@@ -63,7 +63,7 @@ class ScannerTest extends \Test\TestCase {
 	}
 
 	public function testReuseExistingRoot() {
-		$storage = new Temporary(array());
+		$storage = new Temporary([]);
 		$mount = new MountPoint($storage, '');
 		Filesystem::getMountManager()->addMount($mount);
 		$cache = $storage->getCache();
@@ -85,7 +85,7 @@ class ScannerTest extends \Test\TestCase {
 	}
 
 	public function testReuseExistingFile() {
-		$storage = new Temporary(array());
+		$storage = new Temporary([]);
 		$mount = new MountPoint($storage, '');
 		Filesystem::getMountManager()->addMount($mount);
 		$cache = $storage->getCache();
@@ -112,18 +112,18 @@ class ScannerTest extends \Test\TestCase {
 
 		$mountProvider = $this->createMock(IMountProvider::class);
 
-		$storage = new Temporary(array());
+		$storage = new Temporary([]);
 		$mount = new MountPoint($storage, '/' . $uid . '/files/foo');
 
 		$mountProvider->expects($this->any())
 			->method('getMountsForUser')
-			->will($this->returnCallback(function (IUser $user, IStorageFactory $storageFactory) use ($mount, $uid) {
+			->willReturnCallback(function (IUser $user, IStorageFactory $storageFactory) use ($mount, $uid) {
 				if ($user->getUID() === $uid) {
 					return [$mount];
 				} else {
 					return [];
 				}
-			}));
+			});
 
 		\OC::$server->getMountProviderCollection()->registerProvider($mountProvider);
 		$cache = $storage->getCache();
@@ -169,7 +169,7 @@ class ScannerTest extends \Test\TestCase {
 	}
 
 	public function testPropagateEtag() {
-		$storage = new Temporary(array());
+		$storage = new Temporary([]);
 		$mount = new MountPoint($storage, '');
 		Filesystem::getMountManager()->addMount($mount);
 		$cache = $storage->getCache();
@@ -199,9 +199,9 @@ class ScannerTest extends \Test\TestCase {
 
 		$sharedStorage->expects($this->any())
 			->method('instanceOfStorage')
-			->will($this->returnValueMap([
+			->willReturnMap([
 				[SharedStorage::class, true],
-			]));
+			]);
 		$sharedStorage->expects($this->never())
 			->method('getScanner');
 
@@ -213,7 +213,7 @@ class ScannerTest extends \Test\TestCase {
 	}
 
 	public function testShallow() {
-		$storage = new Temporary(array());
+		$storage = new Temporary([]);
 		$mount = new MountPoint($storage, '');
 		Filesystem::getMountManager()->addMount($mount);
 		$cache = $storage->getCache();
@@ -241,5 +241,4 @@ class ScannerTest extends \Test\TestCase {
 		$this->assertTrue($cache->inCache('folder/bar.txt'));
 		$this->assertFalse($cache->inCache('folder/subfolder/foobar.txt'));
 	}
-
 }

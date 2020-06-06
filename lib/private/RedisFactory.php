@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Alejandro Varela <epma01@gmail.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -68,7 +69,6 @@ class RedisFactory {
 				$this->instance->setOption(\RedisCluster::OPT_SLAVE_FAILOVER, $config['failover_mode']);
 			}
 		} else {
-
 			$this->instance = new \Redis();
 			$config = $this->config->getValue('redis', []);
 			if (isset($config['host'])) {
@@ -78,7 +78,7 @@ class RedisFactory {
 			}
 			if (isset($config['port'])) {
 				$port = $config['port'];
-			} else if ($host[0] !== '/') {
+			} elseif ($host[0] !== '/') {
 				$port = 6379;
 			} else {
 				$port = null;

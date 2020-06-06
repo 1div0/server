@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Markus Goetz <markus@woboq.com>
@@ -36,7 +37,7 @@ use OCP\ILogger;
 use OCP\IMemcache;
 
 class Factory implements ICacheFactory {
-	const NULL_CACHE = NullCache::class;
+	public const NULL_CACHE = NullCache::class;
 
 	/**
 	 * @var string $globalPrefix
@@ -71,8 +72,7 @@ class Factory implements ICacheFactory {
 	 * @param string|null $lockingCacheClass
 	 */
 	public function __construct(string $globalPrefix, ILogger $logger,
-		$localCacheClass = null, $distributedCacheClass = null, $lockingCacheClass = null)
-	{
+		$localCacheClass = null, $distributedCacheClass = null, $lockingCacheClass = null) {
 		$this->logger = $logger;
 		$this->globalPrefix = $globalPrefix;
 

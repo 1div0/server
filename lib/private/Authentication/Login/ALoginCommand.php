@@ -43,6 +43,5 @@ abstract class ALoginCommand {
 		}
 	}
 
-	public abstract function process(LoginData $loginData): LoginResult;
-
+	abstract public function process(LoginData $loginData): LoginResult;
 }

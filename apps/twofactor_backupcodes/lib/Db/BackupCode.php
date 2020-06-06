@@ -3,7 +3,6 @@
  *
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,7 +22,6 @@
  */
 
 namespace OCA\TwoFactorBackupCodes\Db;
-
 
 use OCP\AppFramework\Db\Entity;
 
@@ -45,5 +43,4 @@ class BackupCode extends Entity {
 
 	/** @var int */
 	protected $used;
-
 }

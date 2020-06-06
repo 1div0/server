@@ -312,13 +312,16 @@ export default {
 		settings() {
 			return this.$store.getters.getServerData
 		},
+		selectedGroupDecoded() {
+			return decodeURIComponent(this.selectedGroup)
+		},
 		filteredUsers() {
 			if (this.selectedGroup === 'disabled') {
 				return this.users.filter(user => user.enabled === false)
 			}
 			if (!this.settings.isAdmin) {
 				// we don't want subadmins to edit themselves
-				return this.users.filter(user => user.enabled !== false && user.id !== OC.getCurrentUser().uid)
+				return this.users.filter(user => user.enabled !== false)
 			}
 			return this.users.filter(user => user.enabled !== false)
 		},

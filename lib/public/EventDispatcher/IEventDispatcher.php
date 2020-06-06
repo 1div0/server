@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -78,5 +79,4 @@ interface IEventDispatcher {
 	 * @since 18.0.0
 	 */
 	public function dispatchTyped(Event $event): void;
-
 }

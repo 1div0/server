@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -27,7 +28,7 @@ use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
 
 class Groups implements XmlSerializable {
-	const NS_OWNCLOUD = 'http://owncloud.org/ns';
+	public const NS_OWNCLOUD = 'http://owncloud.org/ns';
 
 	/** @var string[] of TYPE:CHECKSUM */
 	private $groups;
@@ -39,7 +40,7 @@ class Groups implements XmlSerializable {
 		$this->groups = $groups;
 	}
 
-	function xmlSerialize(Writer $writer) {
+	public function xmlSerialize(Writer $writer) {
 		foreach ($this->groups as $group) {
 			$writer->writeElement('{' . self::NS_OWNCLOUD . '}group', $group);
 		}

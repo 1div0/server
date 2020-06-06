@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -23,7 +24,6 @@
  */
 
 namespace OCA\DAV\Tests\unit\CardDAV;
-
 
 use OCA\DAV\CardDAV\AddressBook;
 use OCA\DAV\CardDAV\ImageExportPlugin;
@@ -141,10 +141,10 @@ class ImageExportPluginTest extends TestCase {
 			->willReturn(1);
 
 		$this->tree->method('getNodeForPath')
-			->willReturnCallback(function($path) use ($card, $book) {
+			->willReturnCallback(function ($path) use ($card, $book) {
 				if ($path === 'user/book/card') {
 					return $card;
-				} else if ($path === 'user/book') {
+				} elseif ($path === 'user/book') {
 					return $book;
 				}
 				$this->fail();
@@ -186,7 +186,6 @@ class ImageExportPluginTest extends TestCase {
 			$this->response->expects($this->once())
 				->method('setBody')
 				->with('imgdata');
-
 		} else {
 			$this->cache->method('get')
 				->with(1, 'card', $size, $card)

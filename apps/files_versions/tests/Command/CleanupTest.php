@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -23,7 +24,6 @@
  */
 
 namespace OCA\Files_Versions\Tests\Command;
-
 
 use OC\User\Manager;
 use OCA\Files_Versions\Command\CleanUp;
@@ -65,14 +65,13 @@ class CleanupTest extends TestCase {
 	 * @param boolean $nodeExists
 	 */
 	public function testDeleteVersions($nodeExists) {
-
 		$this->rootFolder->expects($this->once())
 			->method('nodeExists')
 			->with('/testUser/files_versions')
 			->willReturn($nodeExists);
 
 
-		if($nodeExists) {
+		if ($nodeExists) {
 			$this->rootFolder->expects($this->once())
 				->method('get')
 				->with('/testUser/files_versions')
@@ -90,10 +89,10 @@ class CleanupTest extends TestCase {
 	}
 
 	public function dataTestDeleteVersions() {
-		return array(
-			array(true),
-			array(false)
-		);
+		return [
+			[true],
+			[false]
+		];
 	}
 
 
@@ -167,5 +166,4 @@ class CleanupTest extends TestCase {
 
 		$this->invokePrivate($instance, 'execute', [$inputInterface, $outputInterface]);
 	}
-
 }

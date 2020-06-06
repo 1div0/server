@@ -24,7 +24,6 @@
 
 namespace OC\DB\QueryBuilder\ExpressionBuilder;
 
-
 use OC\DB\QueryBuilder\QueryFunction;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
@@ -56,5 +55,4 @@ class PgSqlExpressionBuilder extends ExpressionBuilder {
 		$y = $this->helper->quoteColumnName($y);
 		return $this->expressionBuilder->comparison($x, 'ILIKE', $y);
 	}
-
 }

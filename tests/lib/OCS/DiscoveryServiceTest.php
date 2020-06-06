@@ -21,7 +21,6 @@
 
 namespace Test\OCS;
 
-
 use OC\OCS\DiscoveryService;
 use OCP\Http\Client\IClientService;
 use OCP\ICacheFactory;
@@ -94,5 +93,4 @@ class DiscoveryServiceTest extends TestCase {
 			[['services' => ['myService' => ['endpoints' => ['foo' => '/bar</foo']]]], 'myService', []],
 		];
 	}
-
 }

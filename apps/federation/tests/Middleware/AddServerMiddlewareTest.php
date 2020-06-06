@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -25,7 +26,6 @@
  */
 
 namespace OCA\Federation\Tests\Middleware;
-
 
 use OC\HintException;
 use OCA\Federation\Controller\SettingsController;
@@ -71,12 +71,11 @@ class AddServerMiddlewareTest extends TestCase {
 	 * @param string $hint
 	 */
 	public function testAfterException($exception, $hint) {
-
 		$this->logger->expects($this->once())->method('logException');
 
 		$this->l10n->expects($this->any())->method('t')
 			->willReturnCallback(
-				function($message) {
+				function ($message) {
 					return $message;
 				}
 			);
@@ -100,5 +99,4 @@ class AddServerMiddlewareTest extends TestCase {
 			[new \Exception('message'), 'message'],
 		];
 	}
-
 }

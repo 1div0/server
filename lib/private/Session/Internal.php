@@ -36,8 +36,6 @@ namespace OC\Session;
 
 use OC\Authentication\Exceptions\InvalidTokenException;
 use OC\Authentication\Token\IProvider;
-use OC\SystemConfig;
-use OCP\IConfig;
 use OCP\Session\Exceptions\SessionNotAvailableException;
 
 /**
@@ -205,12 +203,12 @@ class Internal extends Session {
 	 */
 	private function invoke(string $functionName, array $parameters = [], bool $silence = false) {
 		try {
-			if($silence) {
+			if ($silence) {
 				return @call_user_func_array($functionName, $parameters);
 			} else {
 				return call_user_func_array($functionName, $parameters);
 			}
-		} catch(\Error $e) {
+		} catch (\Error $e) {
 			$this->trapError($e->getCode(), $e->getMessage());
 		}
 	}

@@ -4,6 +4,7 @@
  *
  * @author Björn Schießle <bjoern@schiessle.org>
  * @author brumsel <brumsel@losecatcher.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -51,7 +52,7 @@ class Helper {
 		$l = \OC::$server->getL10N('files');
 		$maxUploadFileSize = \OCP\Util::maxUploadFilesize($dir, $storageInfo['free']);
 		$maxHumanFileSize = \OCP\Util::humanFileSize($maxUploadFileSize);
-		$maxHumanFileSize = $l->t('Upload (max. %s)', array($maxHumanFileSize));
+		$maxHumanFileSize = $l->t('Upload (max. %s)', [$maxHumanFileSize]);
 
 		return [
 			'uploadMaxFilesize' => $maxUploadFileSize,
@@ -72,7 +73,7 @@ class Helper {
 	 * @return string icon URL
 	 */
 	public static function determineIcon($file) {
-		if($file['type'] === 'dir') {
+		if ($file['type'] === 'dir') {
 			$icon = \OC::$server->getMimeTypeDetector()->mimeTypeIcon('dir');
 			// TODO: move this part to the client side, using mountType
 			if ($file->isShared()) {
@@ -80,7 +81,7 @@ class Helper {
 			} elseif ($file->isMounted()) {
 				$icon = \OC::$server->getMimeTypeDetector()->mimeTypeIcon('dir-external');
 			}
-		}else{
+		} else {
 			$icon = \OC::$server->getMimeTypeDetector()->mimeTypeIcon($file->getMimetype());
 		}
 
@@ -140,7 +141,7 @@ class Helper {
 	 * @return array formatted file info
 	 */
 	public static function formatFileInfo(FileInfo $i) {
-		$entry = array();
+		$entry = [];
 
 		$entry['id'] = $i['fileid'];
 		$entry['parentId'] = $i['parent'];
@@ -182,7 +183,7 @@ class Helper {
 	 * @return array
 	 */
 	public static function formatFileInfos($fileInfos) {
-		$files = array();
+		$files = [];
 		foreach ($fileInfos as $i) {
 			$files[] = self::formatFileInfo($i);
 		}
@@ -233,7 +234,6 @@ class Helper {
 
 		if (!empty($tags)) {
 			foreach ($tags as $fileId => $fileTags) {
-
 				foreach ($fileList as $key => $fileData) {
 					if ($fileId !== $fileData[$fileIdentifier]) {
 						continue;
@@ -259,10 +259,10 @@ class Helper {
 		$sortFunc = 'compareFileNames';
 		if ($sortAttribute === 'mtime') {
 			$sortFunc = 'compareTimestamp';
-		} else if ($sortAttribute === 'size') {
+		} elseif ($sortAttribute === 'size') {
 			$sortFunc = 'compareSize';
 		}
-		usort($files, array(Helper::class, $sortFunc));
+		usort($files, [Helper::class, $sortFunc]);
 		if ($sortDescending) {
 			$files = array_reverse($files);
 		}

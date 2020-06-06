@@ -2,6 +2,8 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -85,7 +87,7 @@ class TagServiceTest extends \Test\TestCase {
 		$this->userSession->expects($this->any())
 			->method('getUser')
 			->withAnyParameters()
-			->will($this->returnValue($user));
+			->willReturn($user);
 
 		$this->root = \OC::$server->getUserFolder();
 		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -109,13 +111,14 @@ class TagServiceTest extends \Test\TestCase {
 			])
 			->setMethods($methods)
 			->getMock();
-
 	}
 
 	protected function tearDown(): void {
 		\OC_User::setUserId('');
 		$user = \OC::$server->getUserManager()->get($this->user);
-		if ($user !== null) { $user->delete(); }
+		if ($user !== null) {
+			$user->delete();
+		}
 	}
 
 	public function testUpdateFileTags() {
@@ -132,25 +135,25 @@ class TagServiceTest extends \Test\TestCase {
 		$fileId = $testFile->getId();
 
 		// set tags
-		$this->tagService->updateFileTags('subdir/test.txt', array($tag1, $tag2));
+		$this->tagService->updateFileTags('subdir/test.txt', [$tag1, $tag2]);
 
-		$this->assertEquals(array($fileId), $this->tagger->getIdsForTag($tag1));
-		$this->assertEquals(array($fileId), $this->tagger->getIdsForTag($tag2));
+		$this->assertEquals([$fileId], $this->tagger->getIdsForTag($tag1));
+		$this->assertEquals([$fileId], $this->tagger->getIdsForTag($tag2));
 
 		// remove tag
-		$this->tagService->updateFileTags('subdir/test.txt', array($tag2));
-		$this->assertEquals(array(), $this->tagger->getIdsForTag($tag1));
-		$this->assertEquals(array($fileId), $this->tagger->getIdsForTag($tag2));
+		$this->tagService->updateFileTags('subdir/test.txt', [$tag2]);
+		$this->assertEquals([], $this->tagger->getIdsForTag($tag1));
+		$this->assertEquals([$fileId], $this->tagger->getIdsForTag($tag2));
 
 		// clear tags
-		$this->tagService->updateFileTags('subdir/test.txt', array());
-		$this->assertEquals(array(), $this->tagger->getIdsForTag($tag1));
-		$this->assertEquals(array(), $this->tagger->getIdsForTag($tag2));
+		$this->tagService->updateFileTags('subdir/test.txt', []);
+		$this->assertEquals([], $this->tagger->getIdsForTag($tag1));
+		$this->assertEquals([], $this->tagger->getIdsForTag($tag2));
 
 		// non-existing file
 		$caught = false;
 		try {
-			$this->tagService->updateFileTags('subdir/unexist.txt', array($tag1));
+			$this->tagService->updateFileTags('subdir/unexist.txt', [$tag1]);
 		} catch (\OCP\Files\NotFoundException $e) {
 			$caught = true;
 		}
@@ -160,7 +163,6 @@ class TagServiceTest extends \Test\TestCase {
 	}
 
 	public function testFavoriteActivity() {
-
 		$subdir = $this->root->newFolder('subdir');
 		$file = $subdir->newFile('test.txt');
 

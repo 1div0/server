@@ -24,7 +24,6 @@
 
 namespace Tests\Contacts\ContactsMenu;
 
-use Exception;
 use OC\App\AppManager;
 use OC\Contacts\ContactsMenu\ActionProviderStore;
 use OC\Contacts\ContactsMenu\Providers\EMailProvider;
@@ -77,13 +76,13 @@ class ActionProviderStoreTest extends TestCase {
 				'contactsmenu' => [
 					'OCA\Contacts\Provider1',
 				],
-		]);
+			]);
 		$this->serverContainer->expects($this->exactly(2))
 			->method('query')
-			->will($this->returnValueMap([
-					[EMailProvider::class, true, $provider1],
-					['OCA\Contacts\Provider1', true, $provider2]
-		]));
+			->willReturnMap([
+				[EMailProvider::class, true, $provider1],
+				['OCA\Contacts\Provider1', true, $provider2]
+			]);
 
 		$providers = $this->actionProviderStore->getProviders($user);
 
@@ -105,9 +104,9 @@ class ActionProviderStoreTest extends TestCase {
 			->willReturn([/* Empty info.xml */]);
 		$this->serverContainer->expects($this->once())
 			->method('query')
-			->will($this->returnValueMap([
-					[EMailProvider::class, true, $provider1],
-		]));
+			->willReturnMap([
+				[EMailProvider::class, true, $provider1],
+			]);
 
 		$providers = $this->actionProviderStore->getProviders($user);
 
@@ -130,5 +129,4 @@ class ActionProviderStoreTest extends TestCase {
 
 		$this->actionProviderStore->getProviders($user);
 	}
-
 }

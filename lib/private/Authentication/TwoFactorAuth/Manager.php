@@ -31,13 +31,11 @@ use function array_diff;
 use function array_filter;
 use BadMethodCallException;
 use Exception;
-use OC\Authentication\Exceptions\ExpiredTokenException;
 use OC\Authentication\Exceptions\InvalidTokenException;
 use OC\Authentication\Token\IProvider as TokenProvider;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Authentication\TwoFactorAuth\IActivatableAtLogin;
-use OCP\Authentication\TwoFactorAuth\ILoginSetupProvider;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IConfig;
@@ -48,11 +46,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Manager {
-
-	const SESSION_UID_KEY = 'two_factor_auth_uid';
-	const SESSION_UID_DONE = 'two_factor_auth_passed';
-	const REMEMBER_LOGIN = 'two_factor_remember_login';
-	const BACKUP_CODES_PROVIDER_ID = 'backup_codes';
+	public const SESSION_UID_KEY = 'two_factor_auth_uid';
+	public const SESSION_UID_DONE = 'two_factor_auth_passed';
+	public const REMEMBER_LOGIN = 'two_factor_remember_login';
+	public const BACKUP_CODES_PROVIDER_ID = 'backup_codes';
 
 	/** @var ProviderLoader */
 	private $providerLoader;
@@ -142,7 +139,7 @@ class Manager {
 	 */
 	public function getLoginSetupProviders(IUser $user): array {
 		$providers = $this->providerLoader->getProviders($user);
-		return array_filter($providers, function(IProvider $provider) {
+		return array_filter($providers, function (IProvider $provider) {
 			return ($provider instanceof IActivatableAtLogin);
 		});
 	}
@@ -160,7 +157,6 @@ class Manager {
 	 */
 	private function fixMissingProviderStates(array $providerStates,
 		array $providers, IUser $user): array {
-
 		foreach ($providers as $provider) {
 			if (isset($providerStates[$provider->getId()])) {
 				// All good
@@ -181,7 +177,7 @@ class Manager {
 
 	/**
 	 * @param array $states
-	 * @param IProvider $providers
+	 * @param IProvider[] $providers
 	 */
 	private function isProviderMissing(array $states, array $providers): bool {
 		$indexed = [];
@@ -200,8 +196,8 @@ class Manager {
 				$missing[] = $providerId;
 				$this->logger->alert("two-factor auth provider '$providerId' failed to load",
 					[
-					'app' => 'core',
-				]);
+						'app' => 'core',
+					]);
 			}
 		}
 
@@ -386,5 +382,4 @@ class Manager {
 			$this->tokenProvider->invalidateTokenById($userId, $tokenId);
 		}
 	}
-
 }

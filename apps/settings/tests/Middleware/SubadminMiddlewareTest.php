@@ -72,7 +72,7 @@ class SubadminMiddlewareTest extends \Test\TestCase {
 			->expects($this->once())
 			->method('hasAnnotation')
 			->with('NoSubadminRequired')
-			->will($this->returnValue(false));
+			->willReturn(false);
 		$this->subadminMiddleware->beforeController($this->controller, 'foo');
 	}
 
@@ -82,7 +82,7 @@ class SubadminMiddlewareTest extends \Test\TestCase {
 			->expects($this->once())
 			->method('hasAnnotation')
 			->with('NoSubadminRequired')
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->subadminMiddleware->beforeController($this->controller, 'foo');
 	}
 
@@ -91,7 +91,7 @@ class SubadminMiddlewareTest extends \Test\TestCase {
 			->expects($this->once())
 			->method('hasAnnotation')
 			->with('NoSubadminRequired')
-			->will($this->returnValue(false));
+			->willReturn(false);
 		$this->subadminMiddlewareAsSubAdmin->beforeController($this->controller, 'foo');
 	}
 
@@ -100,12 +100,12 @@ class SubadminMiddlewareTest extends \Test\TestCase {
 			->expects($this->once())
 			->method('hasAnnotation')
 			->with('NoSubadminRequired')
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->subadminMiddlewareAsSubAdmin->beforeController($this->controller, 'foo');
 	}
 
 	public function testAfterNotAdminException() {
-		$expectedResponse = new TemplateResponse('core', '403', array(), 'guest');
+		$expectedResponse = new TemplateResponse('core', '403', [], 'guest');
 		$expectedResponse->setStatus(403);
 		$this->assertEquals($expectedResponse, $this->subadminMiddleware->afterException($this->controller, 'foo', new NotAdminException('')));
 	}
@@ -114,7 +114,7 @@ class SubadminMiddlewareTest extends \Test\TestCase {
 	public function testAfterRegularException() {
 		$this->expectException(\Exception::class);
 
-		$expectedResponse = new TemplateResponse('core', '403', array(), 'guest');
+		$expectedResponse = new TemplateResponse('core', '403', [], 'guest');
 		$expectedResponse->setStatus(403);
 		$this->subadminMiddleware->afterException($this->controller, 'foo', new \Exception());
 	}

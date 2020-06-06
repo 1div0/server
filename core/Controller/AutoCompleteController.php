@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2017 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -91,7 +92,7 @@ class AutoCompleteController extends Controller {
 		unset($results['exact']);
 		$results = array_merge_recursive($exactMatches, $results);
 
-		if($sorter !== null) {
+		if ($sorter !== null) {
 			$sorters = array_reverse(explode('|', $sorter));
 			$this->autoCompleteManager->runSorters($sorters, $results, [
 				'itemType' => $itemType,

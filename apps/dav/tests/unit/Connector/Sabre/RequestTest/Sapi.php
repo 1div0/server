@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  *
@@ -60,7 +61,7 @@ class Sapi {
 		$copyStream = fopen('php://temp', 'r+');
 		if (is_string($response->getBody())) {
 			fwrite($copyStream, $response->getBody());
-		} else if (is_resource($response->getBody())) {
+		} elseif (is_resource($response->getBody())) {
 			stream_copy_to_stream($response->getBody(), $copyStream);
 		}
 		rewind($copyStream);

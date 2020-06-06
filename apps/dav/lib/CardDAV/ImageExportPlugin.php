@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -65,7 +66,6 @@ class ImageExportPlugin extends ServerPlugin {
 	 * @return bool
 	 */
 	public function httpGet(RequestInterface $request, ResponseInterface $response) {
-
 		$queryParams = $request->getQueryParameters();
 		// TODO: in addition to photo we should also add logo some point in time
 		if (!array_key_exists('photo', $queryParams)) {
@@ -97,7 +97,7 @@ class ImageExportPlugin extends ServerPlugin {
 		$addressbook = $this->server->tree->getNodeForPath($addressbookpath);
 
 		$response->setHeader('Cache-Control', 'private, max-age=3600, must-revalidate');
-		$response->setHeader('Etag', $node->getETag() );
+		$response->setHeader('Etag', $node->getETag());
 		$response->setHeader('Pragma', 'public');
 
 		try {

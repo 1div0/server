@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  *
  * @license AGPL-3.0
@@ -32,15 +33,14 @@ use OCP\EventDispatcher\Event;
  * @since 9.0.0
  */
 class ManagerEvent extends Event {
-
-	const EVENT_APP_ENABLE = 'OCP\App\IAppManager::enableApp';
-	const EVENT_APP_ENABLE_FOR_GROUPS = 'OCP\App\IAppManager::enableAppForGroups';
-	const EVENT_APP_DISABLE = 'OCP\App\IAppManager::disableApp';
+	public const EVENT_APP_ENABLE = 'OCP\App\IAppManager::enableApp';
+	public const EVENT_APP_ENABLE_FOR_GROUPS = 'OCP\App\IAppManager::enableAppForGroups';
+	public const EVENT_APP_DISABLE = 'OCP\App\IAppManager::disableApp';
 
 	/**
 	 * @since 9.1.0
 	 */
-	const EVENT_APP_UPDATE = 'OCP\App\IAppManager::updateApp';
+	public const EVENT_APP_UPDATE = 'OCP\App\IAppManager::updateApp';
 
 	/** @var string */
 	protected $event;

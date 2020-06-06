@@ -26,11 +26,10 @@ namespace OC\App;
 use InvalidArgumentException;
 
 class CompareVersion {
-
-	const REGEX_MAJOR = '/^\d+$/';
-	const REGEX_MAJOR_MINOR = '/^\d+.\d+$/';
-	const REGEX_MAJOR_MINOR_PATCH = '/^\d+.\d+.\d+$/';
-	const REGEX_SERVER = '/^\d+.\d+.\d+(.\d+)?$/';
+	public const REGEX_MAJOR = '/^\d+$/';
+	public const REGEX_MAJOR_MINOR = '/^\d+.\d+$/';
+	public const REGEX_MAJOR_MINOR_PATCH = '/^\d+.\d+.\d+$/';
+	public const REGEX_SERVER = '/^\d+.\d+.\d+(.\d+)?$/';
 
 	/**
 	 * Checks if the given server version fulfills the given (app) version requirements.
@@ -46,16 +45,15 @@ class CompareVersion {
 	 */
 	public function isCompatible(string $actual, string $required,
 		string $comparator = '>='): bool {
-
 		if (!preg_match(self::REGEX_SERVER, $actual)) {
 			throw new InvalidArgumentException('server version is invalid');
 		}
 
 		if (preg_match(self::REGEX_MAJOR, $required) === 1) {
 			return $this->compareMajor($actual, $required, $comparator);
-		} else if (preg_match(self::REGEX_MAJOR_MINOR, $required) === 1) {
+		} elseif (preg_match(self::REGEX_MAJOR_MINOR, $required) === 1) {
 			return $this->compareMajorMinor($actual, $required, $comparator);
-		} else if (preg_match(self::REGEX_MAJOR_MINOR_PATCH, $required) === 1) {
+		} elseif (preg_match(self::REGEX_MAJOR_MINOR_PATCH, $required) === 1) {
 			return $this->compareMajorMinorPatch($actual, $required, $comparator);
 		} else {
 			throw new InvalidArgumentException('required version is invalid');
@@ -92,5 +90,4 @@ class CompareVersion {
 		return version_compare("$actualMajor.$actualMinor.$actualPatch",
 			"$requiredMajor.$requiredMinor.$requiredPatch", $comparator);
 	}
-
 }

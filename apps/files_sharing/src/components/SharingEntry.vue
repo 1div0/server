@@ -23,6 +23,7 @@
 <template>
 	<li class="sharing-entry">
 		<Avatar class="sharing-entry__avatar"
+			:is-no-user="share.type !== SHARE_TYPES.SHARE_TYPE_USER"
 			:user="share.shareWith"
 			:display-name="share.shareWithDisplayName"
 			:url="share.shareWithAvatar" />
@@ -92,10 +93,10 @@
 					:first-day-of-week="firstDay"
 					:lang="lang"
 					:value="share.expireDate"
+					value-type="format"
 					icon="icon-calendar-dark"
 					type="date"
-					:not-before="dateTomorrow"
-					:not-after="dateMaxEnforced"
+					:disabled-date="disabledDate"
 					@update:value="onExpirationChange">
 					{{ t('files_sharing', 'Enter a date') }}
 				</ActionInput>

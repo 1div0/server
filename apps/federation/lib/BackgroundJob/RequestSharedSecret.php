@@ -28,7 +28,6 @@
 
 namespace OCA\Federation\BackgroundJob;
 
-
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Ring\Exception\RingException;
@@ -143,7 +142,6 @@ class RequestSharedSecret extends Job {
 	}
 
 	protected function run($argument) {
-
 		$target = $argument['url'];
 		$created = isset($argument['created']) ? (int)$argument['created'] : $this->timeFactory->getTime();
 		$currentTime = $this->timeFactory->getTime();
@@ -180,7 +178,6 @@ class RequestSharedSecret extends Job {
 			);
 
 			$status = $result->getStatusCode();
-
 		} catch (ClientException $e) {
 			$status = $e->getCode();
 			if ($status === Http::STATUS_FORBIDDEN) {
@@ -206,7 +203,6 @@ class RequestSharedSecret extends Job {
 		) {
 			$this->retainJob = true;
 		}
-
 	}
 
 	/**

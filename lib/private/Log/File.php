@@ -4,6 +4,7 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author duritong <peter.meier+github@immerda.ch>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
@@ -34,6 +35,7 @@
  */
 
 namespace OC\Log;
+
 use OC\SystemConfig;
 use OCP\ILogger;
 use OCP\Log\IFileBased;
@@ -57,7 +59,7 @@ class File extends LogDetails implements IWriter, IFileBased {
 		parent::__construct($config);
 		$this->logFile = $path;
 		if (!file_exists($this->logFile)) {
-			if(
+			if (
 				(
 					!is_writable(dirname($this->logFile))
 					|| !touch($this->logFile)
@@ -106,7 +108,7 @@ class File extends LogDetails implements IWriter, IFileBased {
 	 */
 	public function getEntries(int $limit=50, int $offset=0):array {
 		$minLevel = $this->config->getValue("loglevel", ILogger::WARN);
-		$entries = array();
+		$entries = [];
 		$handle = @fopen($this->logFile, 'rb');
 		if ($handle) {
 			fseek($handle, 0, SEEK_END);

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  *
  * @license AGPL-3.0
@@ -31,4 +32,5 @@ use Exception;
  * @package OCP\AppFramework
  * @since 8.1.0
  */
-class QueryException extends Exception {}
+class QueryException extends Exception {
+}

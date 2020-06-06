@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Jagszent <daniel@jagszent.de>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -25,6 +26,7 @@
  */
 
 namespace OC\Files\Cache;
+
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\Cache\IWatcher;
 
@@ -32,10 +34,9 @@ use OCP\Files\Cache\IWatcher;
  * check the storage backends for updates and change the cache accordingly
  */
 class Watcher implements IWatcher {
-
 	protected $watchPolicy = self::CHECK_ONCE;
 
-	protected $checkedPaths = array();
+	protected $checkedPaths = [];
 
 	/**
 	 * @var \OC\Files\Storage\Storage $storage

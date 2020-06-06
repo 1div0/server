@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jesús Macias <jmacias@solidgear.es>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Juan Pablo Villafañez <jvillafanez@solidgear.es>
@@ -35,6 +36,7 @@
 
 namespace OCA\Files_External\Lib\Storage;
 
+use Icewind\SMB\ACL;
 use Icewind\SMB\BasicAuth;
 use Icewind\SMB\Exception\AlreadyExistsException;
 use Icewind\SMB\Exception\ConnectException;
@@ -54,6 +56,7 @@ use OC\Cache\CappedMemoryCache;
 use OC\Files\Filesystem;
 use OC\Files\Storage\Common;
 use OCA\Files_External\Lib\Notify\SMBNotifyHandler;
+use OCP\Constants;
 use OCP\Files\Notify\IChange;
 use OCP\Files\Notify\IRenameChange;
 use OCP\Files\Storage\INotifyStorage;
@@ -88,6 +91,9 @@ class SMB extends Common implements INotifyStorage {
 	/** @var bool */
 	protected $showHidden;
 
+	/** @var bool */
+	protected $checkAcl;
+
 	public function __construct($params) {
 		if (!isset($params['host'])) {
 			throw new \Exception('Invalid configuration, no host provided');
@@ -95,8 +101,8 @@ class SMB extends Common implements INotifyStorage {
 
 		if (isset($params['auth'])) {
 			$auth = $params['auth'];
-		} else if (isset($params['user']) && isset($params['password']) && isset($params['share'])) {
-			list($workgroup, $user) = $this->splitUser($params['user']);
+		} elseif (isset($params['user']) && isset($params['password']) && isset($params['share'])) {
+			[$workgroup, $user] = $this->splitUser($params['user']);
 			$auth = new BasicAuth($user, $workgroup, $params['password']);
 		} else {
 			throw new \Exception('Invalid configuration, no credentials provided');
@@ -124,6 +130,7 @@ class SMB extends Common implements INotifyStorage {
 		$this->root = rtrim($this->root, '/') . '/';
 
 		$this->showHidden = isset($params['show_hidden']) && $params['show_hidden'];
+		$this->checkAcl = isset($params['check_acl']) && $params['check_acl'];
 
 		$this->statCache = new CappedMemoryCache();
 		parent::__construct($params);
@@ -160,7 +167,7 @@ class SMB extends Common implements INotifyStorage {
 	protected function relativePath($fullPath) {
 		if ($fullPath === $this->root) {
 			return '';
-		} else if (substr($fullPath, 0, strlen($this->root)) === $this->root) {
+		} elseif (substr($fullPath, 0, strlen($this->root)) === $this->root) {
 			return substr($fullPath, strlen($this->root));
 		} else {
 			return null;
@@ -184,7 +191,7 @@ class SMB extends Common implements INotifyStorage {
 		} catch (ForbiddenException $e) {
 			// with php-smbclient, this exceptions is thrown when the provided password is invalid.
 			// Possible is also ForbiddenException with a different error code, so we check it.
-			if($e->getCode() === 1) {
+			if ($e->getCode() === 1) {
 				$this->throwUnavailable($e);
 			}
 			throw $e;
@@ -201,34 +208,64 @@ class SMB extends Common implements INotifyStorage {
 	}
 
 	/**
+	 * get the acl from fileinfo that is relevant for the configured user
+	 *
+	 * @param IFileInfo $file
+	 * @return ACL|null
+	 */
+	private function getACL(IFileInfo $file): ?ACL {
+		$acls = $file->getAcls();
+		foreach ($acls as $user => $acl) {
+			[, $user] = explode('\\', $user); // strip domain
+			if ($user === $this->server->getAuth()->getUsername()) {
+				return $acl;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * @param string $path
 	 * @return \Icewind\SMB\IFileInfo[]
 	 * @throws StorageNotAvailableException
 	 */
-	protected function getFolderContents($path) {
+	protected function getFolderContents($path): iterable {
 		try {
-			$path = $this->buildPath($path);
+			$path = ltrim($this->buildPath($path), '/');
 			$files = $this->share->dir($path);
 			foreach ($files as $file) {
 				$this->statCache[$path . '/' . $file->getName()] = $file;
 			}
-			return array_filter($files, function (IFileInfo $file) {
+
+			foreach ($files as $file) {
 				try {
 					// the isHidden check is done before checking the config boolean to ensure that the metadata is always fetch
 					// so we trigger the below exceptions where applicable
 					$hide = $file->isHidden() && !$this->showHidden;
+
+					if ($this->checkAcl && $acl = $this->getACL($file)) {
+						// if there is no explicit deny, we assume it's allowed
+						// this doesn't take inheritance fully into account but if read permissions is denied for a parent we wouldn't be in this folder
+						// additionally, it's better to have false negatives here then false positives
+						if ($acl->denies(ACL::MASK_READ) || $acl->denies(ACL::MASK_EXECUTE)) {
+							$this->logger->debug('Hiding non readable entry ' . $file->getName());
+							return false;
+						}
+					}
+
 					if ($hide) {
 						$this->logger->debug('hiding hidden file ' . $file->getName());
 					}
-					return !$hide;
+					if (!$hide) {
+						yield $file;
+					}
 				} catch (ForbiddenException $e) {
 					$this->logger->logException($e, ['level' => ILogger::DEBUG, 'message' => 'Hiding forbidden entry ' . $file->getName()]);
-					return false;
 				} catch (NotFoundException $e) {
 					$this->logger->logException($e, ['level' => ILogger::DEBUG, 'message' => 'Hiding not found entry ' . $file->getName()]);
-					return false;
 				}
-			});
+			}
 		} catch (ConnectException $e) {
 			$this->logger->logException($e, ['message' => 'Error while getting folder content']);
 			throw new StorageNotAvailableException($e->getMessage(), $e->getCode(), $e);
@@ -472,7 +509,7 @@ class SMB extends Common implements INotifyStorage {
 		}
 
 		try {
-			$this->statCache = array();
+			$this->statCache = [];
 			$content = $this->share->dir($this->buildPath($path));
 			foreach ($content as $file) {
 				if ($file->isDirectory()) {
@@ -507,6 +544,46 @@ class SMB extends Common implements INotifyStorage {
 		}
 	}
 
+	public function getMetaData($path) {
+		$fileInfo = $this->getFileInfo($path);
+		if (!$fileInfo) {
+			return null;
+		}
+
+		return $this->getMetaDataFromFileInfo($fileInfo);
+	}
+
+	private function getMetaDataFromFileInfo(IFileInfo $fileInfo) {
+		$permissions = Constants::PERMISSION_READ + Constants::PERMISSION_SHARE;
+
+		if (!$fileInfo->isReadOnly()) {
+			$permissions += Constants::PERMISSION_DELETE;
+			$permissions += Constants::PERMISSION_UPDATE;
+			if ($fileInfo->isDirectory()) {
+				$permissions += Constants::PERMISSION_CREATE;
+			}
+		}
+
+		$data = [];
+		if ($fileInfo->isDirectory()) {
+			$data['mimetype'] = 'httpd/unix-directory';
+		} else {
+			$data['mimetype'] = \OC::$server->getMimeTypeDetector()->detectPath($fileInfo->getPath());
+		}
+		$data['mtime'] = $fileInfo->getMTime();
+		if ($fileInfo->isDirectory()) {
+			$data['size'] = -1; //unknown
+		} else {
+			$data['size'] = $fileInfo->getSize();
+		}
+		$data['etag'] = $this->getETag($fileInfo->getPath());
+		$data['storage_mtime'] = $data['mtime'];
+		$data['permissions'] = $permissions;
+		$data['name'] = $fileInfo->getName();
+
+		return $data;
+	}
+
 	public function opendir($path) {
 		try {
 			$files = $this->getFolderContents($path);
@@ -518,8 +595,15 @@ class SMB extends Common implements INotifyStorage {
 		$names = array_map(function ($info) {
 			/** @var \Icewind\SMB\IFileInfo $info */
 			return $info->getName();
-		}, $files);
+		}, iterator_to_array($files));
 		return IteratorDirectory::wrap($names);
+	}
+
+	public function getDirectoryContent($directory): \Traversable {
+		$files = $this->getFolderContents($directory);
+		foreach ($files as $file) {
+			yield $this->getMetaDataFromFileInfo($file);
+		}
 	}
 
 	public function filetype($path) {

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -72,7 +73,7 @@ class SimpleContainer extends Container implements IContainer {
 					// Service not found, use the default value when available
 					if ($parameter->isDefaultValueAvailable()) {
 						$parameters[] = $parameter->getDefaultValue();
-					} else if ($parameterClass !== null) {
+					} elseif ($parameterClass !== null) {
 						$resolveName = $parameter->getName();
 						$parameters[] = $this->query($resolveName);
 					} else {
@@ -102,7 +103,7 @@ class SimpleContainer extends Container implements IContainer {
 				throw new QueryException($baseMsg .
 					' Class can not be instantiated');
 			}
-		} catch(ReflectionException $e) {
+		} catch (ReflectionException $e) {
 			throw new QueryException($baseMsg . ' ' . $e->getMessage());
 		}
 	}
@@ -111,7 +112,7 @@ class SimpleContainer extends Container implements IContainer {
 		$name = $this->sanitizeName($name);
 		if ($this->offsetExists($name)) {
 			return $this->offsetGet($name);
-		} else if ($autoload) {
+		} elseif ($autoload) {
 			$object = $this->resolve($name);
 			$this->registerService($name, function () use ($object) {
 				return $object;
@@ -140,7 +141,7 @@ class SimpleContainer extends Container implements IContainer {
 	 */
 	public function registerService($name, Closure $closure, $shared = true) {
 		$name = $this->sanitizeName($name);
-		if (isset($this[$name]))  {
+		if (isset($this[$name])) {
 			unset($this[$name]);
 		}
 		if ($shared) {

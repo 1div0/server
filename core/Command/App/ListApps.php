@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -61,19 +62,19 @@ class ListApps extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		if ($input->getOption('shipped') === 'true' || $input->getOption('shipped') === 'false'){
+		if ($input->getOption('shipped') === 'true' || $input->getOption('shipped') === 'false') {
 			$shippedFilter = $input->getOption('shipped') === 'true';
 		} else {
 			$shippedFilter = null;
 		}
-		
+
 		$apps = \OC_App::getAllApps();
 		$enabledApps = $disabledApps = [];
 		$versions = \OC_App::getAppVersions();
 
 		//sort enabled apps above disabled apps
 		foreach ($apps as $app) {
-			if ($shippedFilter !== null && $this->manager->isShipped($app) !== $shippedFilter){
+			if ($shippedFilter !== null && $this->manager->isShipped($app) !== $shippedFilter) {
 				continue;
 			}
 			if ($this->manager->isInstalled($app)) {

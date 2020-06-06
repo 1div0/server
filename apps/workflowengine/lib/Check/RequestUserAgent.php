@@ -21,7 +21,6 @@
 
 namespace OCA\WorkflowEngine\Check;
 
-
 use OCP\IL10N;
 use OCP\IRequest;
 
@@ -83,5 +82,4 @@ class RequestUserAgent extends AbstractStringCheck {
 	public function isAvailableForScope(int $scope): bool {
 		return true;
 	}
-
 }

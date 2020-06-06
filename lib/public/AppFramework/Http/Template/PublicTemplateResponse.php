@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018 Julius Härtl <jus@bitgrid.net>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -34,7 +35,6 @@ use OCP\AppFramework\Http\TemplateResponse;
  * @since 14.0.0
  */
 class PublicTemplateResponse extends TemplateResponse {
-
 	private $headerTitle = '';
 	private $headerDetails = '';
 	private $headerActions = [];
@@ -48,7 +48,7 @@ class PublicTemplateResponse extends TemplateResponse {
 	 * @param array $params
 	 * @since 14.0.0
 	 */
-	public function __construct(string $appName, string $templateName, array $params = array()) {
+	public function __construct(string $appName, string $templateName, array $params = []) {
 		parent::__construct($appName, $templateName, $params, 'public');
 		\OC_Util::addScript('core', 'public/publicpage');
 	}
@@ -97,7 +97,7 @@ class PublicTemplateResponse extends TemplateResponse {
 			}
 			$this->headerActions[] = $action;
 		}
-		usort($this->headerActions, function(IMenuAction $a, IMenuAction $b) {
+		usort($this->headerActions, function (IMenuAction $a, IMenuAction $b) {
 			return $a->getPriority() > $b->getPriority();
 		});
 	}
@@ -155,5 +155,4 @@ class PublicTemplateResponse extends TemplateResponse {
 		$this->setParams($params);
 		return  parent::render();
 	}
-
 }

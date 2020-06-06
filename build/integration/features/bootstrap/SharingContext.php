@@ -2,6 +2,7 @@
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -22,8 +23,6 @@
  */
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
-use PHPUnit\Framework\Assert;
-use Psr\Http\Message\ResponseInterface;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
@@ -34,6 +33,9 @@ require __DIR__ . '/../../vendor/autoload.php';
 class SharingContext implements Context, SnippetAcceptingContext {
 	use Sharing;
 	use AppConfiguration;
+	use CommandLine;
 
-	protected function resetAppConfigs() {}
+	protected function resetAppConfigs() {
+		$this->modifyServerConfig('sharebymail', 'enforcePasswordProtection', 'no');
+	}
 }

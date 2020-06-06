@@ -2,6 +2,7 @@
 /**
  * @copyright 2017, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -87,11 +88,11 @@ class SameSiteCookieMiddleware extends Middleware {
 
 		// Append __Host to the cookie if it meets the requirements
 		$cookiePrefix = '';
-		if($cookieParams['secure'] === true && $cookieParams['path'] === '/') {
+		if ($cookieParams['secure'] === true && $cookieParams['path'] === '/') {
 			$cookiePrefix = '__Host-';
 		}
 
-		foreach($policies as $policy) {
+		foreach ($policies as $policy) {
 			header(
 				sprintf(
 					'Set-Cookie: %snc_sameSiteCookie%s=true; path=%s; httponly;' . $secureCookie . 'expires=Fri, 31-Dec-2100 23:59:59 GMT; SameSite=%s',

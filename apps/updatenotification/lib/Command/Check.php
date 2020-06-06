@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018, Tobia De Koninck (tobia@ledfan.be)
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Tobia De Koninck <LEDfan@users.noreply.github.com>
  *
@@ -86,7 +87,7 @@ class Check extends Command {
 		// Report summary
 		if ($updatesAvailableCount === 0) {
 			$output->writeln('<info>Everything up to date</info>');
-		} else if ($updatesAvailableCount === 1) {
+		} elseif ($updatesAvailableCount === 1) {
 			$output->writeln('<comment>1 update available</comment>');
 		} else {
 			$output->writeln('<comment>' . $updatesAvailableCount . ' updates available</comment>');

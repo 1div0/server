@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -96,12 +97,12 @@ class Notifier implements INotifier {
 	 * @since 9.0.0
 	 */
 	public function prepare(INotification $notification, string $languageCode): INotification {
-		if($notification->getApp() !== 'comments') {
+		if ($notification->getApp() !== 'comments') {
 			throw new \InvalidArgumentException();
 		}
 		try {
 			$comment = $this->commentsManager->get($notification->getObjectId());
-		} catch(NotFoundException $e) {
+		} catch (NotFoundException $e) {
 			// needs to be converted to InvalidArgumentException, otherwise none Notifications will be shown at all
 			throw new \InvalidArgumentException('Comment not found', 0, $e);
 		}
@@ -118,12 +119,12 @@ class Notifier implements INotifier {
 		switch ($notification->getSubject()) {
 			case 'mention':
 				$parameters = $notification->getSubjectParameters();
-				if($parameters[0] !== 'files') {
+				if ($parameters[0] !== 'files') {
 					throw new \InvalidArgumentException('Unsupported comment object');
 				}
 				$userFolder = $this->rootFolder->getUserFolder($notification->getUser());
 				$nodes = $userFolder->getById((int)$parameters[1]);
-				if(empty($nodes)) {
+				if (empty($nodes)) {
 					throw new AlreadyProcessedException();
 				}
 				$node = $nodes[0];
@@ -217,7 +218,7 @@ class Notifier implements INotifier {
 			$placeholders[] = '{' . $placeholder . '}';
 			if ($parameter['type'] === 'user') {
 				$replacements[] = '@' . $parameter['name'];
-			} else if ($parameter['type'] === 'file') {
+			} elseif ($parameter['type'] === 'file') {
 				$replacements[] = $parameter['path'];
 			} else {
 				$replacements[] = $parameter['name'];

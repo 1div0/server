@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -33,7 +34,6 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\IDateTimeFormatter;
 use OCP\IGroupManager;
-use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Settings\ISettings;
 use OCP\Support\Subscription\IRegistry;
@@ -96,7 +96,7 @@ class Admin implements ISettings {
 		$defaultCustomerUpdateServerURLPrefix = 'https://updates.nextcloud.com/customers/';
 
 		$isDefaultUpdateServerURL = $updateServerURL === $defaultUpdateServerURL
-			|| $updateServerURL === substr($updateServerURL, 0, strlen($defaultCustomerUpdateServerURLPrefix));
+			|| strpos($updateServerURL, $defaultCustomerUpdateServerURLPrefix) === 0;
 
 		$hasValidSubscription = $this->subscriptionRegistry->delegateHasValidSubscription();
 
@@ -127,22 +127,22 @@ class Admin implements ISettings {
 
 	protected function filterChanges(array $changes): array {
 		$filtered = [];
-		if(isset($changes['changelogURL'])) {
+		if (isset($changes['changelogURL'])) {
 			$filtered['changelogURL'] = $changes['changelogURL'];
 		}
-		if(!isset($changes['whatsNew'])) {
+		if (!isset($changes['whatsNew'])) {
 			return $filtered;
 		}
 
 		$iterator = $this->l10nFactory->getLanguageIterator();
 		do {
 			$lang = $iterator->current();
-			if(isset($changes['whatsNew'][$lang])) {
+			if (isset($changes['whatsNew'][$lang])) {
 				$filtered['whatsNew'] = $changes['whatsNew'][$lang];
 				return $filtered;
 			}
 			$iterator->next();
-		} while($lang !== 'en' && $iterator->valid());
+		} while ($lang !== 'en' && $iterator->valid());
 
 		return $filtered;
 	}

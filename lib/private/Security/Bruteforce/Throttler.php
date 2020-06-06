@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Mark Berezovsky <xpnf@yandex.ru>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -48,7 +49,7 @@ use OCP\ILogger;
  * @package OC\Security\Bruteforce
  */
 class Throttler {
-	const LOGIN_ACTION = 'login';
+	public const LOGIN_ACTION = 'login';
 
 	/** @var IDBConnection */
 	private $db;
@@ -89,6 +90,17 @@ class Throttler {
 	}
 
 	/**
+	 *  Calculate the cut off timestamp
+	 *
+	 * @return int
+	 */
+	private function getCutoffTimestamp(): int {
+		return (new \DateTime())
+			->sub($this->getCutoff(43200))
+			->getTimestamp();
+	}
+
+	/**
 	 * Register a failed attempt to bruteforce a security control
 	 *
 	 * @param string $action
@@ -100,7 +112,7 @@ class Throttler {
 									$ip,
 									array $metadata = []) {
 		// No need to log if the bruteforce protection is disabled
-		if($this->config->getSystemValue('auth.bruteforce.protection.enabled', true) === false) {
+		if ($this->config->getSystemValue('auth.bruteforce.protection.enabled', true) === false) {
 			return;
 		}
 
@@ -126,7 +138,7 @@ class Throttler {
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->insert('bruteforce_attempts');
-		foreach($values as $column => $value) {
+		foreach ($values as $column => $value) {
 			$qb->setValue($column, $qb->createNamedParameter($value));
 		}
 		$qb->execute();
@@ -139,19 +151,19 @@ class Throttler {
 	 * @return bool
 	 */
 	private function isIPWhitelisted($ip) {
-		if($this->config->getSystemValue('auth.bruteforce.protection.enabled', true) === false) {
+		if ($this->config->getSystemValue('auth.bruteforce.protection.enabled', true) === false) {
 			return true;
 		}
 
 		$keys = $this->config->getAppKeys('bruteForce');
-		$keys = array_filter($keys, function($key) {
+		$keys = array_filter($keys, function ($key) {
 			$regex = '/^whitelist_/S';
 			return preg_match($regex, $key) === 1;
 		});
 
 		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
 			$type = 4;
-		} else if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+		} elseif (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
 			$type = 6;
 		} else {
 			return false;
@@ -175,7 +187,7 @@ class Throttler {
 			$addr = inet_pton($addr);
 
 			$valid = true;
-			for($i = 0; $i < $mask; $i++) {
+			for ($i = 0; $i < $mask; $i++) {
 				$part = ord($addr[(int)($i/8)]);
 				$orig = ord($ip[(int)($i/8)]);
 
@@ -196,7 +208,6 @@ class Throttler {
 		}
 
 		return false;
-
 	}
 
 	/**
@@ -212,9 +223,7 @@ class Throttler {
 			return 0;
 		}
 
-		$cutoffTime = (new \DateTime())
-			->sub($this->getCutoff(43200))
-			->getTimestamp();
+		$cutoffTime = $this->getCutoffTimestamp();
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
@@ -234,7 +243,7 @@ class Throttler {
 
 		$maxDelay = 25;
 		$firstDelay = 0.1;
-		if ($attempts > (8 * PHP_INT_SIZE - 1))  {
+		if ($attempts > (8 * PHP_INT_SIZE - 1)) {
 			// Don't ever overflow. Just assume the maxDelay time:s
 			$firstDelay = $maxDelay;
 		} else {
@@ -259,9 +268,7 @@ class Throttler {
 			return;
 		}
 
-		$cutoffTime = (new \DateTime())
-			->sub($this->getCutoff(43200))
-			->getTimestamp();
+		$cutoffTime = $this->getCutoffTimestamp();
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete('bruteforce_attempts')
@@ -269,6 +276,22 @@ class Throttler {
 			->andWhere($qb->expr()->eq('subnet', $qb->createNamedParameter($ipAddress->getSubnet())))
 			->andWhere($qb->expr()->eq('action', $qb->createNamedParameter($action)))
 			->andWhere($qb->expr()->eq('metadata', $qb->createNamedParameter(json_encode($metadata))));
+
+		$qb->execute();
+	}
+
+	/**
+	 * Reset the throttling delay for an IP address
+	 *
+	 * @param string $ip
+	 */
+	public function resetDelayForIP($ip) {
+		$cutoffTime = $this->getCutoffTimestamp();
+
+		$qb = $this->db->getQueryBuilder();
+		$qb->delete('bruteforce_attempts')
+			->where($qb->expr()->gt('occurred', $qb->createNamedParameter($cutoffTime)))
+			->andWhere($qb->expr()->eq('ip', $qb->createNamedParameter($ip)));
 
 		$qb->execute();
 	}

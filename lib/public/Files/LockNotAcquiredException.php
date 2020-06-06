@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Owen Winkler <a_github@midnightcircus.com>
  * @author Robin Appelman <robin@icewind.nl>
@@ -48,7 +49,7 @@ class LockNotAcquiredException extends \Exception {
 	 * @since 7.0.0
 	 */
 	public function __construct($path, $lockType, $code = 0, \Exception $previous = null) {
-		$message = \OC::$server->getL10N('core')->t('Could not obtain lock type %d on "%s".', array($lockType, $path));
+		$message = \OC::$server->getL10N('core')->t('Could not obtain lock type %d on "%s".', [$lockType, $path]);
 		parent::__construct($message, $code, $previous);
 	}
 

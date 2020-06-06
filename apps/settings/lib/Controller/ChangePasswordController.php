@@ -89,8 +89,9 @@ class ChangePasswordController extends Controller {
 	 * @BruteForceProtection(action=changePersonalPassword)
 	 */
 	public function changePersonalPassword(string $oldpassword = '', string $newpassword = null): JSONResponse {
+		$loginName = $this->userSession->getLoginName();
 		/** @var IUser $user */
-		$user = $this->userManager->checkPassword($this->userId, $oldpassword);
+		$user = $this->userManager->checkPassword($loginName, $oldpassword);
 		if ($user === false) {
 			$response = new JSONResponse([
 				'status' => 'error',
@@ -108,8 +109,8 @@ class ChangePasswordController extends Controller {
 					'status' => 'error'
 				]);
 			}
-		// password policy app throws exception
-		} catch(HintException $e) {
+			// password policy app throws exception
+		} catch (HintException $e) {
 			return new JSONResponse([
 				'status' => 'error',
 				'data' => [
@@ -221,8 +222,8 @@ class ChangePasswordController extends Controller {
 			} else { // now we know that everything is fine regarding the recovery password, let's try to change the password
 				try {
 					$result = $targetUser->setPassword($password, $recoveryPassword);
-				// password policy app throws exception
-				} catch(HintException $e) {
+					// password policy app throws exception
+				} catch (HintException $e) {
 					return new JSONResponse([
 						'status' => 'error',
 						'data' => [
@@ -256,8 +257,8 @@ class ChangePasswordController extends Controller {
 						],
 					]);
 				}
-			// password policy app throws exception
-			} catch(HintException $e) {
+				// password policy app throws exception
+			} catch (HintException $e) {
 				return new JSONResponse([
 					'status' => 'error',
 					'data' => [

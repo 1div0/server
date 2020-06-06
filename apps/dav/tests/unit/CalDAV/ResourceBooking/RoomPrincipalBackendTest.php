@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -26,7 +27,7 @@ namespace OCA\DAV\Tests\unit\CalDAV\ResourceBooking;
 
 use OCA\DAV\CalDAV\ResourceBooking\RoomPrincipalBackend;
 
-Class RoomPrincipalBackendTest extends AbstractPrincipalBackendTest {
+class RoomPrincipalBackendTest extends AbstractPrincipalBackendTest {
 	protected function setUp(): void {
 		parent::setUp();
 

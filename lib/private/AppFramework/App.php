@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -99,7 +100,7 @@ class App {
 	public static function main(string $controllerName, string $methodName, DIContainer $container, array $urlParams = null) {
 		if (!is_null($urlParams)) {
 			$container->query(IRequest::class)->setUrlParameters($urlParams);
-		} else if (isset($container['urlParams']) && !is_null($container['urlParams'])) {
+		} elseif (isset($container['urlParams']) && !is_null($container['urlParams'])) {
 			$container->query(IRequest::class)->setUrlParameters($container['urlParams']);
 		}
 		$appName = $container['AppName'];
@@ -107,7 +108,7 @@ class App {
 		// first try $controllerName then go for \OCA\AppName\Controller\$controllerName
 		try {
 			$controller = $container->query($controllerName);
-		} catch(QueryException $e) {
+		} catch (QueryException $e) {
 			if (strpos($controllerName, '\\Controller\\') !== false) {
 				// This is from a global registered app route that is not enabled.
 				[/*OC(A)*/, $app, /* Controller/Name*/] = explode('\\', $controllerName, 3);
@@ -137,17 +138,17 @@ class App {
 
 		$io = $container[IOutput::class];
 
-		if(!is_null($httpHeaders)) {
+		if (!is_null($httpHeaders)) {
 			$io->setHeader($httpHeaders);
 		}
 
-		foreach($responseHeaders as $name => $value) {
+		foreach ($responseHeaders as $name => $value) {
 			$io->setHeader($name . ': ' . $value);
 		}
 
-		foreach($responseCookies as $name => $value) {
+		foreach ($responseCookies as $name => $value) {
 			$expireDate = null;
-			if($value['expireDate'] instanceof \DateTime) {
+			if ($value['expireDate'] instanceof \DateTime) {
 				$expireDate = $value['expireDate']->getTimestamp();
 			}
 			$io->setCookie(
@@ -178,12 +179,11 @@ class App {
 		if (!$emptyResponse) {
 			if ($response instanceof ICallbackResponse) {
 				$response->callback($io);
-			} else if (!is_null($output)) {
+			} elseif (!is_null($output)) {
 				$io->setHeader('Content-Length: ' . strlen($output));
 				$io->setOutput($output);
 			}
 		}
-
 	}
 
 	/**
@@ -199,8 +199,7 @@ class App {
 	 * @param DIContainer $container an instance of a pimple container.
 	 */
 	public static function part(string $controllerName, string $methodName, array $urlParams,
-								DIContainer $container){
-
+								DIContainer $container) {
 		$container['urlParams'] = $urlParams;
 		$controller = $container[$controllerName];
 
@@ -209,5 +208,4 @@ class App {
 		list(, , $output) =  $dispatcher->dispatch($controller, $methodName);
 		return $output;
 	}
-
 }

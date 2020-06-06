@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
@@ -37,7 +39,6 @@ use OCP\IConfig;
 use OCP\IDBConnection;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
-
 
 /**
  * @group DB

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Guillaume COMPAGNON <gcompagnon@outlook.com>
  * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
  * @author Joas Schilling <coding@schilljs.com>
@@ -42,7 +43,7 @@ use Test\TestCase;
  *
  * @package OCA\Theming\Tests
  */
-class CapabilitiesTest extends TestCase  {
+class CapabilitiesTest extends TestCase {
 	/** @var ThemingDefaults|\PHPUnit_Framework_MockObject_MockObject */
 	protected $theming;
 
@@ -175,19 +176,19 @@ class CapabilitiesTest extends TestCase  {
 			->method('isBackgroundThemed')
 			->willReturn($backgroundThemed);
 
-		if($background !== 'backgroundColor') {
+		if ($background !== 'backgroundColor') {
 			$this->theming->expects($this->once())
 				->method('getBackground')
 				->willReturn($background);
 			$this->url->expects($this->exactly(4))
 				->method('getAbsoluteURL')
-				->willReturnCallback(function($url) use($baseUrl) {
+				->willReturnCallback(function ($url) use ($baseUrl) {
 					return $baseUrl . $url;
 				});
 		} else {
 			$this->url->expects($this->exactly(3))
 				->method('getAbsoluteURL')
-				->willReturnCallback(function($url) use($baseUrl) {
+				->willReturnCallback(function ($url) use ($baseUrl) {
 					return $baseUrl . $url;
 				});
 		}

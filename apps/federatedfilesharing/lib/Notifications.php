@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  *
  * @license AGPL-3.0
@@ -32,7 +33,7 @@ use OCP\Http\Client\IClientService;
 use OCP\OCS\IDiscoveryService;
 
 class Notifications {
-	const RESPONSE_FORMAT = 'json'; // default response format for ocs calls
+	public const RESPONSE_FORMAT = 'json'; // default response format for ocs calls
 
 	/** @var AddressHandler */
 	private $addressHandler;
@@ -93,13 +94,12 @@ class Notifications {
 	 * @throws \OC\ServerNotAvailableException
 	 */
 	public function sendRemoteShare($token, $shareWith, $name, $remote_id, $owner, $ownerFederatedId, $sharedBy, $sharedByFederatedId, $shareType) {
-
 		list($user, $remote) = $this->addressHandler->splitUserRemote($shareWith);
 
 		if ($user && $remote) {
 			$local = $this->addressHandler->generateRemoteURL();
 
-			$fields = array(
+			$fields = [
 				'shareWith' => $user,
 				'token' => $token,
 				'name' => $name,
@@ -110,7 +110,7 @@ class Notifications {
 				'sharedByFederatedId' => $sharedByFederatedId,
 				'remote' => $local,
 				'shareType' => $shareType
-			);
+			];
 
 			$result = $this->tryHttpPostToShareEndpoint($remote, '', $fields);
 			$status = json_decode($result['result'], true);
@@ -122,7 +122,6 @@ class Notifications {
 				\OC_Hook::emit('OCP\Share', 'federated_share_added', ['server' => $remote]);
 				return true;
 			}
-
 		}
 
 		return false;
@@ -143,13 +142,12 @@ class Notifications {
 	 * @throws \OC\ServerNotAvailableException
 	 */
 	public function requestReShare($token, $id, $shareId, $remote, $shareWith, $permission, $filename) {
-
-		$fields = array(
+		$fields = [
 			'shareWith' => $shareWith,
 			'token' => $token,
 			'permission' => $permission,
 			'remoteId' => $shareId,
-		);
+		];
 
 		$ocmFields = $fields;
 		$ocmFields['remoteId'] = $id;
@@ -250,11 +248,10 @@ class Notifications {
 	 * @return boolean
 	 */
 	public function sendUpdateToRemote($remote, $remoteId, $token, $action, $data = [], $try = 0) {
-
 		$fields = [
 			'token' => $token,
 			'remoteId' => $remoteId
-			];
+		];
 		foreach ($data as $key => $value) {
 			$fields[$key] = $value;
 		}
@@ -308,7 +305,6 @@ class Notifications {
 	 * @throws \Exception
 	 */
 	protected function tryHttpPostToShareEndpoint($remoteDomain, $urlSuffix, array $fields, $action="share") {
-
 		if ($this->addressHandler->urlContainProtocol($remoteDomain) === false) {
 			$remoteDomain = 'https://' . $remoteDomain;
 		}
@@ -340,7 +336,6 @@ class Notifications {
 	 * @throws \Exception
 	 */
 	protected function tryLegacyEndPoint($remoteDomain, $urlSuffix, array $fields) {
-
 		$result = [
 			'success' => false,
 			'result' => '',
@@ -368,7 +363,6 @@ class Notifications {
 		}
 
 		return $result;
-
 	}
 
 	/**
@@ -439,6 +433,5 @@ class Notifications {
 		}
 
 		return false;
-
 	}
 }

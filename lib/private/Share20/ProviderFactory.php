@@ -9,7 +9,6 @@
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Maxence Lange <maxence@nextcloud.com>
- * @author Maxence Lange <maxence@pontapreta.net>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -36,7 +35,6 @@ use OC\Share20\Exception\ProviderException;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\FederatedFileSharing\FederatedShareProvider;
 use OCA\FederatedFileSharing\Notifications;
-use OCA\FederatedFileSharing\OCM\CloudFederationProvider;
 use OCA\FederatedFileSharing\TokenHandler;
 use OCA\ShareByMail\Settings\SettingsManager;
 use OCA\ShareByMail\ShareByMailProvider;
@@ -198,7 +196,6 @@ class ProviderFactory implements IProviderFactory {
 	 * @suppress PhanUndeclaredClassMethod
 	 */
 	protected function getShareByCircleProvider() {
-
 		if ($this->circlesAreNotAvailable) {
 			return null;
 		}
@@ -211,7 +208,6 @@ class ProviderFactory implements IProviderFactory {
 		}
 
 		if ($this->shareByCircleProvider === null) {
-
 			$this->shareByCircleProvider = new \OCA\Circles\ShareByCircleProvider(
 				$this->serverContainer->getDatabaseConnection(),
 				$this->serverContainer->getSecureRandom(),
@@ -258,13 +254,13 @@ class ProviderFactory implements IProviderFactory {
 		$provider = null;
 		if ($id === 'ocinternal') {
 			$provider = $this->defaultShareProvider();
-		} else if ($id === 'ocFederatedSharing') {
+		} elseif ($id === 'ocFederatedSharing') {
 			$provider = $this->federatedShareProvider();
-		} else if ($id === 'ocMailShare') {
+		} elseif ($id === 'ocMailShare') {
 			$provider = $this->getShareByMailProvider();
-		} else if ($id === 'ocCircleShare') {
+		} elseif ($id === 'ocCircleShare') {
 			$provider = $this->getShareByCircleProvider();
-		} else if ($id === 'ocRoomShare') {
+		} elseif ($id === 'ocRoomShare') {
 			$provider = $this->getRoomShareProvider();
 		}
 
@@ -286,13 +282,13 @@ class ProviderFactory implements IProviderFactory {
 			$shareType === \OCP\Share::SHARE_TYPE_LINK
 		) {
 			$provider = $this->defaultShareProvider();
-		} else if ($shareType === \OCP\Share::SHARE_TYPE_REMOTE || $shareType === \OCP\Share::SHARE_TYPE_REMOTE_GROUP) {
+		} elseif ($shareType === \OCP\Share::SHARE_TYPE_REMOTE || $shareType === \OCP\Share::SHARE_TYPE_REMOTE_GROUP) {
 			$provider = $this->federatedShareProvider();
-		} else if ($shareType === \OCP\Share::SHARE_TYPE_EMAIL) {
+		} elseif ($shareType === \OCP\Share::SHARE_TYPE_EMAIL) {
 			$provider = $this->getShareByMailProvider();
-		} else if ($shareType === \OCP\Share::SHARE_TYPE_CIRCLE) {
+		} elseif ($shareType === \OCP\Share::SHARE_TYPE_CIRCLE) {
 			$provider = $this->getShareByCircleProvider();
-		} else if ($shareType === \OCP\Share::SHARE_TYPE_ROOM) {
+		} elseif ($shareType === \OCP\Share::SHARE_TYPE_ROOM) {
 			$provider = $this->getRoomShareProvider();
 		}
 

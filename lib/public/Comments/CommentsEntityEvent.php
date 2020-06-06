@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  *
  * @license AGPL-3.0
@@ -32,8 +33,7 @@ use OCP\EventDispatcher\Event;
  * @since 9.1.0
  */
 class CommentsEntityEvent extends Event {
-
-	const EVENT_ENTITY = 'OCP\Comments\ICommentsManager::registerEntity';
+	public const EVENT_ENTITY = 'OCP\Comments\ICommentsManager::registerEntity';
 
 	/** @var string */
 	protected $event;

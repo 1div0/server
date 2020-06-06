@@ -46,7 +46,8 @@ $serverFactory = new \OCA\DAV\Connector\Sabre\ServerFactory(
 	\OC::$server->getTagManager(),
 	\OC::$server->getRequest(),
 	\OC::$server->getPreviewManager(),
-	\OC::$server->getEventDispatcher()
+	\OC::$server->getEventDispatcher(),
+	\OC::$server->getL10N('dav')
 );
 
 // Backends
@@ -68,7 +69,7 @@ $authPlugin->addBackend($bearerAuthPlugin);
 
 $requestUri = \OC::$server->getRequest()->getRequestUri();
 
-$server = $serverFactory->createServer($baseuri, $requestUri, $authPlugin, function() {
+$server = $serverFactory->createServer($baseuri, $requestUri, $authPlugin, function () {
 	// use the view for the logged in user
 	return \OC\Files\Filesystem::getView();
 });

@@ -23,12 +23,10 @@
 
 namespace OCA\CloudFederationAPI\AppInfo;
 
-
 use OCA\CloudFederationAPI\Capabilities;
 use OCP\AppFramework\App;
 
 class Application extends App {
-
 	public function __construct() {
 		parent::__construct('cloud_federation_api');
 

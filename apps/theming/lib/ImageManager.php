@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Julius Härtl <jus@bitgrid.net>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Julius Haertl <jus@bitgrid.net>
  * @author Julius Härtl <jus@bitgrid.net>
@@ -234,11 +235,11 @@ class ImageManager {
 	 */
 	public function shouldReplaceIcons() {
 		$cache = $this->cacheFactory->createDistributed('theming-' . $this->urlGenerator->getBaseUrl());
-		if($value = $cache->get('shouldReplaceIcons')) {
+		if ($value = $cache->get('shouldReplaceIcons')) {
 			return (bool)$value;
 		}
 		$value = false;
-		if(extension_loaded('imagick')) {
+		if (extension_loaded('imagick')) {
 			if (count(\Imagick::queryFormats('SVG')) >= 1) {
 				$value = true;
 			}

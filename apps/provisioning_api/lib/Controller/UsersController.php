@@ -18,7 +18,7 @@ declare(strict_types=1);
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  * @author Tom Needham <tom@owncloud.com>
  *
@@ -105,7 +105,7 @@ class UsersController extends AUserData {
 								NewUserMailHelper $newUserMailHelper,
 								FederatedFileSharingFactory $federatedFileSharingFactory,
 								ISecureRandom $secureRandom,
-							    RemoteWipe $remoteWipe) {
+								RemoteWipe $remoteWipe) {
 		parent::__construct($appName,
 							$request,
 							$userManager,
@@ -140,9 +140,9 @@ class UsersController extends AUserData {
 		// Admin? Or SubAdmin?
 		$uid = $user->getUID();
 		$subAdminManager = $this->groupManager->getSubAdmin();
-		if ($this->groupManager->isAdmin($uid)){
+		if ($this->groupManager->isAdmin($uid)) {
 			$users = $this->userManager->search($search, $limit, $offset);
-		} else if ($subAdminManager->isSubAdmin($user)) {
+		} elseif ($subAdminManager->isSubAdmin($user)) {
 			$subAdminOfGroups = $subAdminManager->getSubAdminsGroups($user);
 			foreach ($subAdminOfGroups as $key => $group) {
 				$subAdminOfGroups[$key] = $group->getGID();
@@ -173,10 +173,10 @@ class UsersController extends AUserData {
 		// Admin? Or SubAdmin?
 		$uid = $currentUser->getUID();
 		$subAdminManager = $this->groupManager->getSubAdmin();
-		if ($this->groupManager->isAdmin($uid)){
+		if ($this->groupManager->isAdmin($uid)) {
 			$users = $this->userManager->search($search, $limit, $offset);
 			$users = array_keys($users);
-		} else if ($subAdminManager->isSubAdmin($currentUser)) {
+		} elseif ($subAdminManager->isSubAdmin($currentUser)) {
 			$subAdminOfGroups = $subAdminManager->getSubAdminsGroups($currentUser);
 			foreach ($subAdminOfGroups as $key => $group) {
 				$subAdminOfGroups[$key] = $group->getGID();
@@ -250,7 +250,7 @@ class UsersController extends AUserData {
 		$isAdmin = $this->groupManager->isAdmin($user->getUID());
 		$subAdminManager = $this->groupManager->getSubAdmin();
 
-		if(empty($userid) && $this->config->getAppValue('core', 'newUser.generateUserID', 'no') === 'yes') {
+		if (empty($userid) && $this->config->getAppValue('core', 'newUser.generateUserID', 'no') === 'yes') {
 			$userid = $this->createNewUserId();
 		}
 
@@ -352,7 +352,6 @@ class UsersController extends AUserData {
 			}
 
 			return new DataResponse(['id' => $userid]);
-
 		} catch (HintException $e) {
 			$this->logger->logException($e, [
 				'message' => 'Failed addUser attempt with hint exception.',
@@ -414,7 +413,6 @@ class UsersController extends AUserData {
 			$data['display-name'] = $data['displayname'];
 			unset($data['displayname']);
 			return new DataResponse($data);
-
 		}
 
 		throw new OCSException('', \OCP\API::RESPOND_UNAUTHORISED);
@@ -506,8 +504,8 @@ class UsersController extends AUserData {
 		} else {
 			// Check if admin / subadmin
 			$subAdminManager = $this->groupManager->getSubAdmin();
-			if ($subAdminManager->isUserAccessible($currentLoggedInUser, $targetUser)
-			|| $this->groupManager->isAdmin($currentLoggedInUser->getUID())) {
+			if ($this->groupManager->isAdmin($currentLoggedInUser->getUID())
+			|| $subAdminManager->isUserAccessible($currentLoggedInUser, $targetUser)) {
 				// They have permissions over the user
 				$permittedFields[] = 'display';
 				$permittedFields[] = AccountManager::PROPERTY_DISPLAYNAME;
@@ -530,7 +528,7 @@ class UsersController extends AUserData {
 			throw new OCSException('', \OCP\API::RESPOND_UNAUTHORISED);
 		}
 		// Process the edit
-		switch($key) {
+		switch ($key) {
 			case 'display':
 			case AccountManager::PROPERTY_DISPLAYNAME:
 				$targetUser->setDisplayName($value);
@@ -755,7 +753,6 @@ class UsersController extends AUserData {
 				throw new OCSException('', \OCP\API::RESPOND_UNAUTHORISED);
 			}
 		}
-
 	}
 
 	/**
@@ -835,8 +832,7 @@ class UsersController extends AUserData {
 				// Not an admin, so the user must be a subadmin of this group, but that is not allowed.
 				throw new OCSException('Cannot remove yourself from this group as you are a SubAdmin', 105);
 			}
-
-		} else if (!$this->groupManager->isAdmin($loggedInUser->getUID())) {
+		} elseif (!$this->groupManager->isAdmin($loggedInUser->getUID())) {
 			/** @var IGroup[] $subAdminGroups */
 			$subAdminGroups = $subAdminManager->getSubAdminsGroups($loggedInUser);
 			$subAdminGroups = array_map(function (IGroup $subAdminGroup) {
@@ -973,7 +969,7 @@ class UsersController extends AUserData {
 		try {
 			$emailTemplate = $this->newUserMailHelper->generateTemplate($targetUser, false);
 			$this->newUserMailHelper->sendMail($targetUser, $emailTemplate);
-		} catch(\Exception $e) {
+		} catch (\Exception $e) {
 			$this->logger->logException($e, [
 				'message' => "Can't send new user mail to $email",
 				'level' => ILogger::ERROR,

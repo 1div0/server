@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -72,7 +73,7 @@ class DeleteOrphanedFilesTest extends TestCase {
 	protected function tearDown(): void {
 		$userManager = \OC::$server->getUserManager();
 		$user1 = $userManager->get($this->user1);
-		if($user1) {
+		if ($user1) {
 			$user1->delete();
 		}
 

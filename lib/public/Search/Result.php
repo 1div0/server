@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Andrew Brown <andrew@casabrown.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jakob Sack <mail@jakobsack.de>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -56,7 +57,7 @@ class Result {
 
 	/**
 	 * The type of search result returned; for consistency, name this the same
-	 * as the class name (e.g. \OC\Search\File -> 'file') in lowercase. 
+	 * as the class name (e.g. \OC\Search\File -> 'file') in lowercase.
 	 * @var string
 	 * @since 7.0.0
 	 */

@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -24,7 +25,6 @@
  */
 
 namespace OCA\Federation\Tests\Controller;
-
 
 use OC\BackgroundJob\JobList;
 use OCA\Federation\Controller\OCSAuthAPIController;
@@ -92,7 +92,6 @@ class OCSAuthAPIControllerTest extends TestCase {
 
 		$this->timeFactory->method('getTime')
 			->willReturn($this->currentTime);
-
 	}
 
 	/**
@@ -104,7 +103,6 @@ class OCSAuthAPIControllerTest extends TestCase {
 	 * @param bool $ok
 	 */
 	public function testRequestSharedSecret($token, $localToken, $isTrustedServer, $ok) {
-
 		$url = 'url';
 
 		$this->trustedServers
@@ -145,7 +143,6 @@ class OCSAuthAPIControllerTest extends TestCase {
 	 * @param bool $ok
 	 */
 	public function testGetSharedSecret($isTrustedServer, $isValidToken, $ok) {
-
 		$url = 'url';
 		$token = 'token';
 
@@ -170,7 +167,7 @@ class OCSAuthAPIControllerTest extends TestCase {
 		$ocsAuthApi->expects($this->any())
 			->method('isValidToken')->with($url, $token)->willReturn($isValidToken);
 
-		if($ok) {
+		if ($ok) {
 			$this->secureRandom->expects($this->once())->method('generate')->with(32)
 				->willReturn('secret');
 			$this->trustedServers->expects($this->once())
@@ -198,5 +195,4 @@ class OCSAuthAPIControllerTest extends TestCase {
 			[false, false, false],
 		];
 	}
-
 }

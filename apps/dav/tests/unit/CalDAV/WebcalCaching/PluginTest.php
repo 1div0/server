@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018 Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -27,18 +28,17 @@ use OCA\DAV\CalDAV\WebcalCaching\Plugin;
 use OCP\IRequest;
 
 class PluginTest extends \Test\TestCase {
-
 	public function testDisabled() {
 		$request = $this->createMock(IRequest::class);
 		$request->expects($this->at(0))
 			->method('isUserAgent')
 			->with([])
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$request->expects($this->at(1))
 			->method('getHeader')
 			->with('X-NC-CalDAV-Webcal-Caching')
-			->will($this->returnValue(''));
+			->willReturn('');
 
 		$plugin = new Plugin($request);
 
@@ -50,12 +50,12 @@ class PluginTest extends \Test\TestCase {
 		$request->expects($this->at(0))
 			->method('isUserAgent')
 			->with([])
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$request->expects($this->at(1))
 			->method('getHeader')
 			->with('X-NC-CalDAV-Webcal-Caching')
-			->will($this->returnValue('On'));
+			->willReturn('On');
 
 		$plugin = new Plugin($request);
 

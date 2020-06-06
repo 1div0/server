@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Roeland Jago Douma <roeland@famdouma.nl>
@@ -265,5 +266,4 @@ class PublicKeyTokenMapperTest extends TestCase {
 		$this->assertFalse($this->mapper->hasExpiredTokens('user1'));
 		$this->assertTrue($this->mapper->hasExpiredTokens('user3'));
 	}
-
 }

@@ -2,6 +2,7 @@
 /**
  * @copyright 2017, Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -101,7 +102,7 @@ class CalendarImpl implements ICalendar {
 		$permissions = $this->calendar->getACL();
 		$result = 0;
 		foreach ($permissions as $permission) {
-			switch($permission['privilege']) {
+			switch ($permission['privilege']) {
 				case '{DAV:}read':
 					$result |= Constants::PERMISSION_READ;
 					break;

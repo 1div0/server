@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -25,7 +26,6 @@ declare(strict_types=1);
  */
 
 namespace OCA\UpdateNotification\Tests\Notification;
-
 
 use OCA\UpdateNotification\Notification\Notifier;
 use OCP\IConfig;
@@ -78,7 +78,8 @@ class NotifierTest extends TestCase {
 				$this->userSession,
 				$this->groupManager
 			);
-		} {
+		}
+		{
 			return $this->getMockBuilder(Notifier::class)
 				->setConstructorArgs([
 					$this->urlGenerator,

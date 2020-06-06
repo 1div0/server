@@ -108,7 +108,7 @@ OC.L10N.register(
     "Restored by {user}" : "{user} obnovi predmet",
     "Renamed by {user}" : "{user} preimenuje predmet",
     "Moved by {user}" : "{user} premakne predmet",
-    "\"remote user\"" : "»oddaljeni uporabnik«",
+    "\"remote user\"" : "»Oddaljen uporabnik«",
     "You created {file}" : "Ustvarite datoteko ali mapo {file}",
     "You created an encrypted file in {file}" : "Ustvarite šifrirano datoteko v {file}",
     "{user} created {file}" : "{user} ustvari datoteko {file}",
@@ -148,7 +148,7 @@ OC.L10N.register(
     "Transfer" : "Prenos",
     "Transfer {path} to {userid}" : "Prenesi pot {path} k uporabniku {userid}",
     "Invalid path selected" : "Izbrana je neveljavna pot",
-    "Ownership transfer request sent" : "Zahtevek prenosa lastništva poslan",
+    "Ownership transfer request sent" : "Zahteva za prenos lastništva je poslana",
     "Tags" : "Oznake",
     "Error while loading the file data" : "Prišlo je do napake med nalaganjem podatkov računa",
     "Unable to change the favourite state of the file" : "Ni mogoče spremeniti stanja priljubljenosti datoteke",
@@ -158,7 +158,6 @@ OC.L10N.register(
     "Settings" : "Nastavitve",
     "Show hidden files" : "Pokaži skrite datoteke",
     "WebDAV" : "WebDAV",
-    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Naslov omogoča dostop do datotek prek <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">WebDAV</a>.",
     "Toggle grid view" : "Preklopi mrežni pogled",
     "No files in here" : "V mapi ni datotek",
     "Upload some content or sync with your devices!" : "Uvozite vsebino, ali pa omogočite usklajevanje z napravami!",
@@ -177,7 +176,6 @@ OC.L10N.register(
     "Pending shares" : "Mesta souporabe na čakanju",
     "Text file" : "Besedilna datoteka",
     "New text file.txt" : "nova_datoteka.txt",
-    "%s of %s used" : "Uporabljeno %s od %s",
-    "%1$s%% of %2$s used" : "Uporabljeno %1$s%% od %2$s"
+    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Naslov omogoča dostop do datotek prek <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">WebDAV</a>."
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

@@ -2,6 +2,7 @@
 /**
  * @copyright 2016, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -37,7 +38,7 @@ use Test\TestCase;
  * @package OCA\DAV\Tests\Unit\DAV\Migration
  * @group DB
  */
-class CalDAVRemoveEmptyValueTest extends TestCase  {
+class CalDAVRemoveEmptyValueTest extends TestCase {
 
 	/** @var ILogger|\PHPUnit_Framework_MockObject_MockObject */
 	private $logger;

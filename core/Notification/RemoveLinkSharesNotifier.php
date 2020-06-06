@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -60,7 +61,7 @@ class RemoveLinkSharesNotifier implements INotifier {
 	}
 
 	public function prepare(INotification $notification, string $languageCode): INotification {
-		if($notification->getApp() !== 'core') {
+		if ($notification->getApp() !== 'core') {
 			throw new \InvalidArgumentException();
 		}
 		$l = $this->l10nFactory->get('core', $languageCode);

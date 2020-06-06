@@ -6,6 +6,7 @@
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
+ * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -35,6 +36,7 @@ use OC\Cache\CappedMemoryCache;
 use OC\Files\Mount\Manager;
 use OC\Files\Mount\MountPoint;
 use OC\Hooks\PublicEmitter;
+use OC\User\NoUserException;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -133,7 +135,7 @@ class Root extends Folder implements IRootFolder {
 	 * @param string $method
 	 * @param Node[] $arguments
 	 */
-	public function emit($scope, $method, $arguments = array()) {
+	public function emit($scope, $method, $arguments = []) {
 		$this->emitter->emit($scope, $method, $arguments);
 	}
 
@@ -142,7 +144,7 @@ class Root extends Folder implements IRootFolder {
 	 * @param string $mountPoint
 	 * @param array $arguments
 	 */
-	public function mount($storage, $mountPoint, $arguments = array()) {
+	public function mount($storage, $mountPoint, $arguments = []) {
 		$mount = new MountPoint($storage, $mountPoint, $arguments);
 		$this->mountManager->addMount($mount);
 	}
@@ -352,7 +354,8 @@ class Root extends Folder implements IRootFolder {
 	 *
 	 * @param string $userId user ID
 	 * @return \OCP\Files\Folder
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
+	 * @throws NotPermittedException
 	 */
 	public function getUserFolder($userId) {
 		$userObject = $this->userManager->get($userId);
@@ -367,7 +370,7 @@ class Root extends Folder implements IRootFolder {
 					'app' => 'files',
 				]
 			);
-			throw new \OC\User\NoUserException('Backends provided no user object');
+			throw new NoUserException('Backends provided no user object');
 		}
 
 		$userId = $userObject->getUID();

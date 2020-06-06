@@ -3,8 +3,8 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
- * @author Lennart Rosam <hello@takuto.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -35,10 +35,10 @@ $prefix = (string)$_POST['ldap_serverconfig_chooser'];
 // Checkboxes are not submitted, when they are unchecked. Set them manually.
 // only legacy checkboxes (Advanced and Expert tab) need to be handled here,
 // the Wizard-like tabs handle it on their own
-$chkboxes = array('ldap_configuration_active', 'ldap_override_main_server',
-				  'ldap_turn_off_cert_check');
-foreach($chkboxes as $boxid) {
-	if(!isset($_POST[$boxid])) {
+$chkboxes = ['ldap_configuration_active', 'ldap_override_main_server',
+	'ldap_turn_off_cert_check'];
+foreach ($chkboxes as $boxid) {
+	if (!isset($_POST[$boxid])) {
 		$_POST[$boxid] = 0;
 	}
 }

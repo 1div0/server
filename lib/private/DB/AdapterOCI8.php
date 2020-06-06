@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -37,7 +38,7 @@ class AdapterOCI8 extends Adapter {
 		return $this->conn->realLastInsertId($table);
 	}
 
-	const UNIX_TIMESTAMP_REPLACEMENT = "(cast(sys_extract_utc(systimestamp) as date) - date'1970-01-01') * 86400";
+	public const UNIX_TIMESTAMP_REPLACEMENT = "(cast(sys_extract_utc(systimestamp) as date) - date'1970-01-01') * 86400";
 
 	public function fixupStatement($statement) {
 		$statement = preg_replace('/`(\w+)` ILIKE \?/', 'REGEXP_LIKE(`$1`, \'^\' || REPLACE(?, \'%\', \'.*\') || \'$\', \'i\')', $statement);

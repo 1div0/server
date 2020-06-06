@@ -2,6 +2,7 @@
 /**
  * @copyright 2017, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -369,6 +370,7 @@ class Version1004Date20170825134824 extends SimpleMigrationStep {
 				'unsigned' => true,
 			]);
 			$table->setPrimaryKey(['id']);
+			$table->addIndex(['principaluri'], 'schedulobj_principuri_index');
 		}
 
 		if (!$schema->hasTable('cards_properties')) {

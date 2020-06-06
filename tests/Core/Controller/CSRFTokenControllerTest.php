@@ -67,7 +67,7 @@ class CSRFTokenControllerTest extends TestCase {
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 		$this->assertEquals([
 			'token' => 'toktok123'
-			], $response->getData());
+		], $response->getData());
 	}
 
 	public function testGetTokenNoStrictSameSiteCookie(): void {
@@ -78,5 +78,4 @@ class CSRFTokenControllerTest extends TestCase {
 		$this->assertInstanceOf(JSONResponse::class, $response);
 		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
 	}
-
 }

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Härtl <jus@bitgrid.net>
  *
@@ -248,7 +249,7 @@ class EventMerger implements IEventMerger {
 			$placeholders[] = '{' . $placeholder . '}';
 			if ($parameter['type'] === 'file') {
 				$replacements[] = trim($parameter['path'], '/');
-			} else if (isset($parameter['name'])) {
+			} elseif (isset($parameter['name'])) {
 				$replacements[] = $parameter['name'];
 			} else {
 				$replacements[] = $parameter['id'];

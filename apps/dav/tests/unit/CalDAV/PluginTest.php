@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -28,7 +29,7 @@ namespace OCA\DAV\Tests\unit\CalDAV;
 use OCA\DAV\CalDAV\Plugin;
 use Test\TestCase;
 
-class PluginTest extends TestCase  {
+class PluginTest extends TestCase {
 	/** @var Plugin */
 	private $plugin;
 

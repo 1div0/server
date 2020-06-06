@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Robin Appelman <robin@icewind.nl>
@@ -25,7 +26,6 @@
 
 namespace OCP\DB\QueryBuilder;
 
-
 use Doctrine\DBAL\Connection;
 
 /**
@@ -37,36 +37,36 @@ interface IQueryBuilder {
 	/**
 	 * @since 9.0.0
 	 */
-	const PARAM_NULL = \PDO::PARAM_NULL;
+	public const PARAM_NULL = \PDO::PARAM_NULL;
 	/**
 	 * @since 9.0.0
 	 */
-	const PARAM_BOOL = \PDO::PARAM_BOOL;
+	public const PARAM_BOOL = \PDO::PARAM_BOOL;
 	/**
 	 * @since 9.0.0
 	 */
-	const PARAM_INT = \PDO::PARAM_INT;
+	public const PARAM_INT = \PDO::PARAM_INT;
 	/**
 	 * @since 9.0.0
 	 */
-	const PARAM_STR = \PDO::PARAM_STR;
+	public const PARAM_STR = \PDO::PARAM_STR;
 	/**
 	 * @since 9.0.0
 	 */
-	const PARAM_LOB = \PDO::PARAM_LOB;
+	public const PARAM_LOB = \PDO::PARAM_LOB;
 	/**
 	 * @since 9.0.0
 	 */
-	const PARAM_DATE = 'datetime';
+	public const PARAM_DATE = 'datetime';
 
 	/**
 	 * @since 9.0.0
 	 */
-	const PARAM_INT_ARRAY = Connection::PARAM_INT_ARRAY;
+	public const PARAM_INT_ARRAY = Connection::PARAM_INT_ARRAY;
 	/**
 	 * @since 9.0.0
 	 */
-	const PARAM_STR_ARRAY = Connection::PARAM_STR_ARRAY;
+	public const PARAM_STR_ARRAY = Connection::PARAM_STR_ARRAY;
 
 
 	/**
@@ -206,7 +206,7 @@ interface IQueryBuilder {
 	 * @return $this This QueryBuilder instance.
 	 * @since 8.2.0
 	 */
-	public function setParameters(array $params, array $types = array());
+	public function setParameters(array $params, array $types = []);
 
 	/**
 	 * Gets all defined query parameters for the query being constructed indexed by parameter index or name.

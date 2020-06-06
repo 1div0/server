@@ -52,11 +52,12 @@ use OCA\WorkflowEngine\Manager;
 use OCP\AppFramework\Http\IOutput;
 use OCP\AppFramework\IAppContainer;
 use OCP\AppFramework\QueryException;
+use OCP\AppFramework\Services\IAppConfig;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\Folder;
 use OCP\Files\IAppData;
-use OCP\GlobalScale\IConfig;
 use OCP\Group\ISubAdmin;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -83,7 +84,7 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 	 * @param array $urlParams
 	 * @param ServerContainer|null $server
 	 */
-	public function __construct($appName, $urlParams = array(), ServerContainer $server = null){
+	public function __construct($appName, $urlParams = [], ServerContainer $server = null) {
 		parent::__construct();
 		$this['AppName'] = $appName;
 		$this['urlParams'] = $urlParams;
@@ -105,11 +106,11 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 		/**
 		 * Core services
 		 */
-		$this->registerService(IOutput::class, function(){
+		$this->registerService(IOutput::class, function () {
 			return new Output($this->getServer()->getWebRoot());
 		});
 
-		$this->registerService(Folder::class, function() {
+		$this->registerService(Folder::class, function () {
 			return $this->getServer()->getUserFolder();
 		});
 
@@ -117,7 +118,7 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 			return $this->getServer()->getAppDataDir($c->query('AppName'));
 		});
 
-		$this->registerService(IL10N::class, function($c) {
+		$this->registerService(IL10N::class, function ($c) {
 			return $this->getServer()->getL10N($c->query('AppName'));
 		});
 
@@ -152,18 +153,14 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 			return $c->getServer()->getThemingDefaults();
 		});
 
-		$this->registerService(IConfig::class, function ($c) {
-			return $c->query(OC\GlobalScale\Config::class);
-		});
-
-		$this->registerService('Protocol', function($c){
+		$this->registerService('Protocol', function ($c) {
 			/** @var \OC\Server $server */
 			$server = $c->query('ServerContainer');
 			$protocol = $server->getRequest()->getHttpProtocol();
 			return new Http($_SERVER, $protocol);
 		});
 
-		$this->registerService('Dispatcher', function($c) {
+		$this->registerService('Dispatcher', function ($c) {
 			return new Dispatcher(
 				$c['Protocol'],
 				$c['MiddlewareDispatcher'],
@@ -182,10 +179,17 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 		/**
 		 * Middleware
 		 */
-		$this->registerService('MiddlewareDispatcher', function(SimpleContainer $c) {
+		$this->registerService('MiddlewareDispatcher', function (SimpleContainer $c) {
 			$server =  $this->getServer();
 
 			$dispatcher = new MiddlewareDispatcher();
+
+			$dispatcher->registerMiddleware(
+				$c->query(OC\AppFramework\Middleware\CompressionMiddleware::class)
+			);
+
+			$dispatcher->registerMiddleware($c->query(OC\AppFramework\Middleware\NotModifiedMiddleware::class));
+
 			$dispatcher->registerMiddleware(
 				$c->query(OC\AppFramework\Middleware\Security\ReloadExecutionMiddleware::class)
 			);
@@ -278,7 +282,7 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 				$c->query(\OC\AppFramework\Middleware\AdditionalScriptsMiddleware::class)
 			);
 
-			foreach($this->middleWares as $middleWare) {
+			foreach ($this->middleWares as $middleWare) {
 				$dispatcher->registerMiddleware($c->query($middleWare));
 			}
 
@@ -291,15 +295,14 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 			return $dispatcher;
 		});
 
-		$this->registerAlias(\OCP\Collaboration\Resources\IProviderManager::class, OC\Collaboration\Resources\ProviderManager::class);
-		$this->registerAlias(\OCP\Collaboration\Resources\IManager::class, OC\Collaboration\Resources\Manager::class);
+		$this->registerAlias(IAppConfig::class, OC\AppFramework\Services\AppConfig::class);
+		$this->registerAlias(IInitialState::class, OC\AppFramework\Services\InitialState::class);
 	}
 
 	/**
 	 * @return \OCP\IServerContainer
 	 */
-	public function getServer()
-	{
+	public function getServer() {
 		return $this->server;
 	}
 
@@ -350,7 +353,7 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 	 * @return mixed
 	 */
 	public function log($message, $level) {
-		switch($level){
+		switch ($level) {
 			case 'debug':
 				$level = ILogger::DEBUG;
 				break;
@@ -376,7 +379,7 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 	 * @param string $serviceName e.g. 'OCA\Files\Capabilities'
 	 */
 	public function registerCapability($serviceName) {
-		$this->query('OC\CapabilitiesManager')->registerCapability(function() use ($serviceName) {
+		$this->query('OC\CapabilitiesManager')->registerCapability(function () use ($serviceName) {
 			return $this->query($serviceName);
 		});
 	}
@@ -409,9 +412,9 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 		} else {
 			if ($this['AppName'] === 'settings' && strpos($name, 'OC\\Settings\\') === 0) {
 				return parent::query($name);
-			} else if ($this['AppName'] === 'core' && strpos($name, 'OC\\Core\\') === 0) {
+			} elseif ($this['AppName'] === 'core' && strpos($name, 'OC\\Core\\') === 0) {
 				return parent::query($name);
-			} else if (strpos($name, \OC\AppFramework\App::buildAppNamespace($this['AppName']) . '\\') === 0) {
+			} elseif (strpos($name, \OC\AppFramework\App::buildAppNamespace($this['AppName']) . '\\') === 0) {
 				return parent::query($name);
 			}
 		}

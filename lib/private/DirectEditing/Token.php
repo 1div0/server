@@ -23,7 +23,6 @@
 
 namespace OC\DirectEditing;
 
-
 use OCP\DirectEditing\IToken;
 use OCP\Files\File;
 
@@ -72,5 +71,4 @@ class Token implements IToken {
 	public function getUser(): string {
 		return $this->data['user_id'];
 	}
-
 }

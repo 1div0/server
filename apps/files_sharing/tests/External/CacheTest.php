@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -69,18 +70,18 @@ class CacheTest extends TestCase {
 		$this->storage
 			->expects($this->any())
 			->method('getId')
-			->will($this->returnValue('dummystorage::'));
+			->willReturn('dummystorage::');
 		$this->cache = new \OCA\Files_Sharing\External\Cache(
 			$this->storage,
 			$this->cloudIdManager->getCloudId($this->remoteUser, 'http://example.com/owncloud')
 		);
 		$this->cache->put(
 			'test.txt',
-			array(
+			[
 				'mimetype' => 'text/plain',
 				'size' => 5,
 				'mtime' => 123,
-			)
+			]
 		);
 	}
 
@@ -107,19 +108,19 @@ class CacheTest extends TestCase {
 	public function testGetFolderPopulatesOwner() {
 		$dirId = $this->cache->put(
 			'subdir',
-			array(
+			[
 				'mimetype' => 'httpd/unix-directory',
 				'size' => 5,
 				'mtime' => 123,
-			)
+			]
 		);
 		$this->cache->put(
 			'subdir/contents.txt',
-			array(
+			[
 				'mimetype' => 'text/plain',
 				'size' => 5,
 				'mtime' => 123,
-			)
+			]
 		);
 
 		$results = $this->cache->getFolderContentsById($dirId);
@@ -129,5 +130,4 @@ class CacheTest extends TestCase {
 			$results[0]['displayname_owner']
 		);
 	}
-
 }

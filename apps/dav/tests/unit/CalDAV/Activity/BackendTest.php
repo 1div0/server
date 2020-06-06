@@ -2,9 +2,10 @@
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -29,40 +30,47 @@ use OCA\DAV\CalDAV\Activity\Backend;
 use OCA\DAV\CalDAV\Activity\Provider\Calendar;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
+use OCP\App\IAppManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserSession;
+use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class BackendTest extends TestCase {
 
-	/** @var IManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IManager|MockObject */
 	protected $activityManager;
 
-	/** @var IGroupManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IGroupManager|MockObject */
 	protected $groupManager;
 
-	/** @var IUserSession|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserSession|MockObject */
 	protected $userSession;
+
+	/** @var IAppManager|MockObject */
+	protected $appManager;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->activityManager = $this->createMock(IManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
+		$this->appManager = $this->createMock(IAppManager::class);
 	}
 
 	/**
 	 * @param array $methods
-	 * @return Backend|\PHPUnit_Framework_MockObject_MockObject
+	 * @return Backend|MockObject
 	 */
 	protected function getBackend(array $methods = []) {
 		if (empty($methods)) {
 			return new Backend(
 				$this->activityManager,
 				$this->groupManager,
-				$this->userSession
+				$this->userSession,
+				$this->appManager
 			);
 		} else {
 			return $this->getMockBuilder(Backend::class)
@@ -70,6 +78,7 @@ class BackendTest extends TestCase {
 					$this->activityManager,
 					$this->groupManager,
 					$this->userSession,
+					$this->appManager,
 				])
 				->setMethods($methods)
 				->getMock();
@@ -97,7 +106,7 @@ class BackendTest extends TestCase {
 		$backend = $this->getBackend(['triggerCalendarActivity']);
 		$backend->expects($this->once())
 			->method('triggerCalendarActivity')
-			->willReturnCallback(function() use($expectedPayload, $expectedSubject) {
+			->willReturnCallback(function () use ($expectedPayload, $expectedSubject) {
 				$arguments = func_get_args();
 				$this->assertSame($expectedSubject, array_shift($arguments));
 				$this->assertEquals($expectedPayload, $arguments);
@@ -339,7 +348,7 @@ class BackendTest extends TestCase {
 
 	/**
 	 * @param string[] $users
-	 * @return IUser[]|\PHPUnit_Framework_MockObject_MockObject[]
+	 * @return IUser[]|MockObject[]
 	 */
 	protected function getUsers(array $users) {
 		$list = [];
@@ -351,7 +360,7 @@ class BackendTest extends TestCase {
 
 	/**
 	 * @param string $uid
-	 * @return IUser|\PHPUnit_Framework_MockObject_MockObject
+	 * @return IUser|MockObject
 	 */
 	protected function getUserMock($uid) {
 		$user = $this->createMock(IUser::class);

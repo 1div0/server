@@ -7,9 +7,12 @@ declare(strict_types=1);
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author GrayFix <grayfix@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
+ * @author Tiago Flores <tiago.flores@yahoo.com.br>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -72,12 +75,11 @@ class Application extends App {
 
 		$default = $config->getSystemValue('datadirectory', \OC::$SERVERROOT . '/data') . '/audit.log';
 		$logFile = $config->getAppValue('admin_audit', 'logfile', $default);
-		if($logFile === null) {
+		if ($logFile === null) {
 			$this->logger = $c->getLogger();
 			return;
 		}
 		$this->logger = $c->getLogFactory()->getCustomLogger($logFile);
-
 	}
 
 	public function register() {
@@ -118,7 +120,7 @@ class Application extends App {
 		$userSession->listen('\OC\User', 'postUnassignedUserId', [$userActions, 'unassign']);
 	}
 
-	protected function groupHooks()  {
+	protected function groupHooks() {
 		$groupActions = new GroupManagement($this->logger);
 
 		/** @var IGroupManager|Manager $groupManager */
@@ -150,26 +152,24 @@ class Application extends App {
 	}
 
 	protected function appHooks() {
-
 		$eventDispatcher = $this->getContainer()->getServer()->getEventDispatcher();
-		$eventDispatcher->addListener(ManagerEvent::EVENT_APP_ENABLE, function(ManagerEvent $event) {
+		$eventDispatcher->addListener(ManagerEvent::EVENT_APP_ENABLE, function (ManagerEvent $event) {
 			$appActions = new AppManagement($this->logger);
 			$appActions->enableApp($event->getAppID());
 		});
-		$eventDispatcher->addListener(ManagerEvent::EVENT_APP_ENABLE_FOR_GROUPS, function(ManagerEvent $event) {
+		$eventDispatcher->addListener(ManagerEvent::EVENT_APP_ENABLE_FOR_GROUPS, function (ManagerEvent $event) {
 			$appActions = new AppManagement($this->logger);
 			$appActions->enableAppForGroups($event->getAppID(), $event->getGroups());
 		});
-		$eventDispatcher->addListener(ManagerEvent::EVENT_APP_DISABLE, function(ManagerEvent $event) {
+		$eventDispatcher->addListener(ManagerEvent::EVENT_APP_DISABLE, function (ManagerEvent $event) {
 			$appActions = new AppManagement($this->logger);
 			$appActions->disableApp($event->getAppID());
 		});
-
 	}
 
 	protected function consoleHooks() {
 		$eventDispatcher = $this->getContainer()->getServer()->getEventDispatcher();
-		$eventDispatcher->addListener(ConsoleEvent::EVENT_RUN, function(ConsoleEvent $event) {
+		$eventDispatcher->addListener(ConsoleEvent::EVENT_RUN, function (ConsoleEvent $event) {
 			$appActions = new Console($this->logger);
 			$appActions->runCommand($event->getArguments());
 		});
@@ -180,7 +180,7 @@ class Application extends App {
 		$eventDispatcher = $this->getContainer()->getServer()->getEventDispatcher();
 		$eventDispatcher->addListener(
 			IPreview::EVENT,
-			function(GenericEvent $event) use ($fileActions) {
+			function (GenericEvent $event) use ($fileActions) {
 				/** @var File $file */
 				$file = $event->getSubject();
 				$fileActions->preview([
@@ -251,11 +251,11 @@ class Application extends App {
 
 	protected function securityHooks() {
 		$eventDispatcher = $this->getContainer()->getServer()->getEventDispatcher();
-		$eventDispatcher->addListener(IProvider::EVENT_SUCCESS, function(GenericEvent $event) {
+		$eventDispatcher->addListener(IProvider::EVENT_SUCCESS, function (GenericEvent $event) {
 			$security = new Security($this->logger);
 			$security->twofactorSuccess($event->getSubject(), $event->getArguments());
 		});
-		$eventDispatcher->addListener(IProvider::EVENT_FAILED, function(GenericEvent $event) {
+		$eventDispatcher->addListener(IProvider::EVENT_FAILED, function (GenericEvent $event) {
 			$security = new Security($this->logger);
 			$security->twofactorFailed($event->getSubject(), $event->getArguments());
 		});

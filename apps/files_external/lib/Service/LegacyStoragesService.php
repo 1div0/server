@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -88,7 +89,7 @@ abstract class LegacyStoragesService {
 				$applicableUsers[] = $applicable;
 				$storageConfig->setApplicableUsers($applicableUsers);
 			}
-		} else if ($mountType === \OC_Mount_Config::MOUNT_TYPE_GROUP) {
+		} elseif ($mountType === \OC_Mount_Config::MOUNT_TYPE_GROUP) {
 			$applicableGroups = $storageConfig->getApplicableGroups();
 			$applicableGroups[] = $applicable;
 			$storageConfig->setApplicableGroups($applicableGroups);

@@ -4,6 +4,7 @@
  *
  * @author Bart Visscher <bartv@thisnet.nl>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -121,8 +122,7 @@ class Share extends \OC\Share\Constants {
 	 * @deprecated 17.0.0
 	 */
 	public static function getItemShared($itemType, $itemSource, $format = self::FORMAT_NONE,
-	                                     $parameters = null, $includeCollections = false) {
-
+										 $parameters = null, $includeCollections = false) {
 		return \OC\Share\Share::getItemShared($itemType, $itemSource, $format, $parameters, $includeCollections);
 	}
 

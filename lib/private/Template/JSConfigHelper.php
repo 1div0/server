@@ -5,7 +5,6 @@
  * @author Abijeet <abijeetpatro@gmail.com>
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Felix Heidecke <felix@heidecke.me>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -37,6 +36,7 @@ use OCP\App\IAppManager;
 use OCP\Defaults;
 use OCP\IConfig;
 use OCP\IGroupManager;
+use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\IURLGenerator;
@@ -75,6 +75,9 @@ class JSConfigHelper {
 	/** @var CapabilitiesManager */
 	private $capabilitiesManager;
 
+	/** @var IInitialStateService */
+	private $initialStateService;
+
 	/** @var array user back-ends excluded from password verification */
 	private $excludedUserBackEnds = ['user_saml' => true, 'user_globalsiteselector' => true];
 
@@ -99,7 +102,8 @@ class JSConfigHelper {
 								IGroupManager $groupManager,
 								IniGetWrapper $iniWrapper,
 								IURLGenerator $urlGenerator,
-								CapabilitiesManager $capabilitiesManager) {
+								CapabilitiesManager $capabilitiesManager,
+								IInitialStateService $initialStateService) {
 		$this->l = $l;
 		$this->defaults = $defaults;
 		$this->appManager = $appManager;
@@ -110,10 +114,10 @@ class JSConfigHelper {
 		$this->iniWrapper = $iniWrapper;
 		$this->urlGenerator = $urlGenerator;
 		$this->capabilitiesManager = $capabilitiesManager;
+		$this->initialStateService = $initialStateService;
 	}
 
 	public function getConfig() {
-
 		$userBackendAllowsPasswordConfirmation = true;
 		if ($this->currentUser !== null) {
 			$uid = $this->currentUser->getUID();
@@ -121,7 +125,7 @@ class JSConfigHelper {
 			$backend = $this->currentUser->getBackend();
 			if ($backend instanceof IPasswordConfirmationBackend) {
 				$userBackendAllowsPasswordConfirmation = $backend->canConfirmPassword($uid);
-			} else if (isset($this->excludedUserBackEnds[$this->currentUser->getBackendClassName()])) {
+			} elseif (isset($this->excludedUserBackEnds[$this->currentUser->getBackendClassName()])) {
 				$userBackendAllowsPasswordConfirmation = false;
 			}
 		} else {
@@ -137,7 +141,7 @@ class JSConfigHelper {
 			$apps = $this->appManager->getEnabledAppsForUser($this->currentUser);
 		}
 
-		foreach($apps as $app) {
+		foreach ($apps as $app) {
 			$apps_paths[$app] = \OC_App::getAppWebPath($app);
 		}
 
@@ -147,7 +151,7 @@ class JSConfigHelper {
 		$defaultExpireDateEnabled = $this->config->getAppValue('core', 'shareapi_default_expire_date', 'no') === 'yes';
 		$defaultExpireDate = $enforceDefaultExpireDate = null;
 		if ($defaultExpireDateEnabled) {
-			$defaultExpireDate = (int) $this->config->getAppValue('core', 'shareapi_expire_after_n_days', '7');
+			$defaultExpireDate = (int)$this->config->getAppValue('core', 'shareapi_expire_after_n_days', '7');
 			$enforceDefaultExpireDate = $this->config->getAppValue('core', 'shareapi_enforce_expire_date', 'no') === 'yes';
 		}
 		$outgoingServer2serverShareEnabled = $this->config->getAppValue('files_sharing', 'outgoing_server2server_share_enabled', 'yes') === 'yes';
@@ -155,13 +159,13 @@ class JSConfigHelper {
 		$defaultInternalExpireDateEnabled = $this->config->getAppValue('core', 'shareapi_default_internal_expire_date', 'no') === 'yes';
 		$defaultInternalExpireDate = $defaultInternalExpireDateEnforced = null;
 		if ($defaultInternalExpireDateEnabled) {
-			$defaultInternalExpireDate = (int) $this->config->getAppValue('core', 'shareapi_internal_expire_after_n_days', '7');
+			$defaultInternalExpireDate = (int)$this->config->getAppValue('core', 'shareapi_internal_expire_after_n_days', '7');
 			$defaultInternalExpireDateEnforced = $this->config->getAppValue('core', 'shareapi_internal_enforce_expire_date', 'no') === 'yes';
 		}
 
 		$countOfDataLocation = 0;
-		$dataLocation = str_replace(\OC::$SERVERROOT .'/', '', $this->config->getSystemValue('datadirectory', ''), $countOfDataLocation);
-		if($countOfDataLocation !== 1 || !$this->groupManager->isAdmin($uid)) {
+		$dataLocation = str_replace(\OC::$SERVERROOT . '/', '', $this->config->getSystemValue('datadirectory', ''), $countOfDataLocation);
+		if ($countOfDataLocation !== 1 || !$this->groupManager->isAdmin($uid)) {
 			$dataLocation = false;
 		}
 
@@ -176,17 +180,31 @@ class JSConfigHelper {
 
 		$capabilities = $this->capabilitiesManager->getCapabilities();
 
+		$config = [
+			'session_lifetime' => min($this->config->getSystemValue('session_lifetime', $this->iniWrapper->getNumeric('session.gc_maxlifetime')), $this->iniWrapper->getNumeric('session.gc_maxlifetime')),
+			'session_keepalive' => $this->config->getSystemValue('session_keepalive', true),
+			'auto_logout' => $this->config->getSystemValue('auto_logout', false),
+			'version' => implode('.', \OCP\Util::getVersion()),
+			'versionstring' => \OC_Util::getVersionString(),
+			'enable_avatars' => true, // here for legacy reasons - to not crash existing code that relies on this value
+			'lost_password_link' => $this->config->getSystemValue('lost_password_link', null),
+			'modRewriteWorking' => $this->config->getSystemValue('htaccess.IgnoreFrontController', false) === true || getenv('front_controller_active') === 'true',
+			'sharing.maxAutocompleteResults' => (int)$this->config->getSystemValue('sharing.maxAutocompleteResults', 0),
+			'sharing.minSearchStringLength' => (int)$this->config->getSystemValue('sharing.minSearchStringLength', 0),
+			'blacklist_files_regex' => \OCP\Files\FileInfo::BLACKLIST_FILES_REGEX,
+		];
+
 		$array = [
 			"_oc_debug" => $this->config->getSystemValue('debug', false) ? 'true' : 'false',
 			"_oc_isadmin" => $this->groupManager->isAdmin($uid) ? 'true' : 'false',
 			"backendAllowsPasswordConfirmation" => $userBackendAllowsPasswordConfirmation ? 'true' : 'false',
-			"oc_dataURL" => is_string($dataLocation) ? "\"".$dataLocation."\"" : 'false',
-			"_oc_webroot" => "\"".\OC::$WEBROOT."\"",
-			"_oc_appswebroots" =>  str_replace('\\/', '/', json_encode($apps_paths)), // Ugly unescape slashes waiting for better solution
+			"oc_dataURL" => is_string($dataLocation) ? "\"" . $dataLocation . "\"" : 'false',
+			"_oc_webroot" => "\"" . \OC::$WEBROOT . "\"",
+			"_oc_appswebroots" => str_replace('\\/', '/', json_encode($apps_paths)), // Ugly unescape slashes waiting for better solution
 			"datepickerFormatDate" => json_encode($this->l->l('jsdate', null)),
 			'nc_lastLogin' => $lastConfirmTimestamp,
 			'nc_pageLoad' => time(),
-			"dayNames" =>  json_encode([
+			"dayNames" => json_encode([
 				(string)$this->l->t('Sunday'),
 				(string)$this->l->t('Monday'),
 				(string)$this->l->t('Tuesday'),
@@ -195,7 +213,7 @@ class JSConfigHelper {
 				(string)$this->l->t('Friday'),
 				(string)$this->l->t('Saturday')
 			]),
-			"dayNamesShort" =>  json_encode([
+			"dayNamesShort" => json_encode([
 				(string)$this->l->t('Sun.'),
 				(string)$this->l->t('Mon.'),
 				(string)$this->l->t('Tue.'),
@@ -204,7 +222,7 @@ class JSConfigHelper {
 				(string)$this->l->t('Fri.'),
 				(string)$this->l->t('Sat.')
 			]),
-			"dayNamesMin" =>  json_encode([
+			"dayNamesMin" => json_encode([
 				(string)$this->l->t('Su'),
 				(string)$this->l->t('Mo'),
 				(string)$this->l->t('Tu'),
@@ -241,19 +259,8 @@ class JSConfigHelper {
 				(string)$this->l->t('Nov.'),
 				(string)$this->l->t('Dec.')
 			]),
-			"firstDay" => json_encode($this->l->l('firstday', null)) ,
-			"_oc_config" => json_encode([
-				'session_lifetime'	=> min($this->config->getSystemValue('session_lifetime', $this->iniWrapper->getNumeric('session.gc_maxlifetime')), $this->iniWrapper->getNumeric('session.gc_maxlifetime')),
-				'session_keepalive'	=> $this->config->getSystemValue('session_keepalive', true),
-				'version'			=> implode('.', \OCP\Util::getVersion()),
-				'versionstring'		=> \OC_Util::getVersionString(),
-				'enable_avatars'	=> true, // here for legacy reasons - to not crash existing code that relies on this value
-				'lost_password_link'=> $this->config->getSystemValue('lost_password_link', null),
-				'modRewriteWorking'	=> $this->config->getSystemValue('htaccess.IgnoreFrontController', false) === true || getenv('front_controller_active') === 'true',
-				'sharing.maxAutocompleteResults' => (int)$this->config->getSystemValue('sharing.maxAutocompleteResults', 0),
-				'sharing.minSearchStringLength' => (int)$this->config->getSystemValue('sharing.minSearchStringLength', 0),
-				'blacklist_files_regex' => \OCP\Files\FileInfo::BLACKLIST_FILES_REGEX,
-			]),
+			"firstDay" => json_encode($this->l->l('firstday', null)),
+			"_oc_config" => json_encode($config),
 			"oc_appconfig" => json_encode([
 				'core' => [
 					'defaultExpireDateEnabled' => $defaultExpireDateEnabled,
@@ -285,7 +292,6 @@ class JSConfigHelper {
 				'longFooter' => $this->defaults->getLongFooter(),
 				'folder' => \OC_Util::getTheme(),
 			]),
-			"_oc_capabilities" => json_encode($capabilities),
 		];
 
 		if ($this->currentUser !== null) {
@@ -297,8 +303,11 @@ class JSConfigHelper {
 			]);
 		}
 
+		$this->initialStateService->provideInitialState('core', 'config', $config);
+		$this->initialStateService->provideInitialState('core', 'capabilities', $capabilities);
+
 		// Allow hooks to modify the output values
-		\OC_Hook::emit('\OCP\Config', 'js', array('array' => &$array));
+		\OC_Hook::emit('\OCP\Config', 'js', ['array' => &$array]);
 
 		$result = '';
 

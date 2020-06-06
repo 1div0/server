@@ -4,6 +4,8 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -27,7 +29,6 @@
  */
 
 namespace OCA\FederatedFileSharing\Tests;
-
 
 use OC\Federation\CloudIdManager;
 use OCA\FederatedFileSharing\AddressHandler;
@@ -97,9 +98,9 @@ class FederatedShareProviderTest extends \Test\TestCase {
 			->getMock();
 		$this->l = $this->getMockBuilder(IL10N::class)->getMock();
 		$this->l->method('t')
-			->will($this->returnCallback(function($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 		$this->logger = $this->getMockBuilder(ILogger::class)->getMock();
 		$this->rootFolder = $this->getMockBuilder('OCP\Files\IRootFolder')->getMock();
 		$this->config = $this->getMockBuilder(IConfig::class)->getMock();
@@ -414,7 +415,6 @@ class FederatedShareProviderTest extends \Test\TestCase {
 	 *
 	 */
 	public function testUpdate($owner, $sharedBy) {
-
 		$this->provider = $this->getMockBuilder('OCA\FederatedFileSharing\FederatedShareProvider')
 			->setConstructorArgs(
 				[
@@ -467,7 +467,7 @@ class FederatedShareProviderTest extends \Test\TestCase {
 				$sharedBy . '@http://localhost/'
 			)->willReturn(true);
 
-		if($owner === $sharedBy) {
+		if ($owner === $sharedBy) {
 			$this->provider->expects($this->never())->method('sendPermissionUpdate');
 		} else {
 			$this->provider->expects($this->once())->method('sendPermissionUpdate');
@@ -630,7 +630,7 @@ class FederatedShareProviderTest extends \Test\TestCase {
 					return ['user', 'server.com'];
 				}
 				return ['user2', 'server.com'];
-		});
+			});
 
 		$this->tokenHandler->method('generateToken')->willReturn('token');
 		$this->notifications
@@ -778,7 +778,7 @@ class FederatedShareProviderTest extends \Test\TestCase {
 		$this->gsConfig->expects($this->once())->method('isGlobalScaleEnabled')
 			->willReturn($gsEnabled);
 		$this->config->expects($this->any())->method('getAppValue')
-			->with('files_sharing', 'lookupServerEnabled', 'no')
+			->with('files_sharing', 'lookupServerEnabled', 'yes')
 			->willReturn($isEnabled);
 
 		$this->assertSame($expected,

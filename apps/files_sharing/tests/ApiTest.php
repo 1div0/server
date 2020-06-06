@@ -4,9 +4,11 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
  * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
  * @author Joas Schilling <coding@schilljs.com>
+ * @author Julius Härtl <jus@bitgrid.net>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
@@ -52,9 +54,8 @@ use OCP\Share\IShare;
  * TODO: convert to real intergration tests
  */
 class ApiTest extends TestCase {
-
-	const TEST_FOLDER_NAME = '/folder_share_api_test';
-	const APP_NAME = 'files_sharing';
+	public const TEST_FOLDER_NAME = '/folder_share_api_test';
+	public const APP_NAME = 'files_sharing';
 
 	private static $tempStorage;
 
@@ -90,7 +91,7 @@ class ApiTest extends TestCase {
 	}
 
 	protected function tearDown(): void {
-		if($this->view instanceof \OC\Files\View) {
+		if ($this->view instanceof \OC\Files\View) {
 			$this->view->unlink($this->filename);
 			$this->view->deleteAll($this->folder);
 		}
@@ -107,9 +108,9 @@ class ApiTest extends TestCase {
 	private function createOCS($userId) {
 		$l = $this->getMockBuilder(IL10N::class)->getMock();
 		$l->method('t')
-			->will($this->returnCallback(function($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 		$config = $this->createMock(IConfig::class);
 		$appManager = $this->createMock(IAppManager::class);
 		$serverContainer = $this->createMock(IServerContainer::class);
@@ -130,7 +131,7 @@ class ApiTest extends TestCase {
 		);
 	}
 
-	function testCreateShareUserFile() {
+	public function testCreateShareUserFile() {
 		$this->setUp(); // for some reasons phpunit refuses to do this for us only for this test
 		$ocs = $this->createOCS(self::TEST_FILES_SHARING_API_USER1);
 		$result = $ocs->createShare($this->filename, \OCP\Constants::PERMISSION_ALL, \OCP\Share::SHARE_TYPE_USER, self::TEST_FILES_SHARING_API_USER2);
@@ -148,7 +149,7 @@ class ApiTest extends TestCase {
 		$ocs->cleanup();
 	}
 
-	function testCreateShareUserFolder() {
+	public function testCreateShareUserFolder() {
 		$ocs = $this->createOCS(self::TEST_FILES_SHARING_API_USER1);
 		$result = $ocs->createShare($this->folder, \OCP\Constants::PERMISSION_ALL, \OCP\Share::SHARE_TYPE_USER, self::TEST_FILES_SHARING_API_USER2);
 		$ocs->cleanup();
@@ -162,11 +163,10 @@ class ApiTest extends TestCase {
 		$ocs = $this->createOCS(self::TEST_FILES_SHARING_API_USER1);
 		$ocs->deleteShare($data['id']);
 		$ocs->cleanup();
-
 	}
 
 
-	function testCreateShareGroupFile() {
+	public function testCreateShareGroupFile() {
 		$ocs = $this->createOCS(self::TEST_FILES_SHARING_API_USER1);
 		$result = $ocs->createShare($this->filename, \OCP\Constants::PERMISSION_ALL, \OCP\Share::SHARE_TYPE_GROUP, self::TEST_FILES_SHARING_API_GROUP1);
 		$ocs->cleanup();
@@ -182,7 +182,7 @@ class ApiTest extends TestCase {
 		$ocs->cleanup();
 	}
 
-	function testCreateShareGroupFolder() {
+	public function testCreateShareGroupFolder() {
 		$ocs = $this->createOCS(self::TEST_FILES_SHARING_API_USER1);
 		$result = $ocs->createShare($this->folder, \OCP\Constants::PERMISSION_ALL, \OCP\Share::SHARE_TYPE_GROUP, self::TEST_FILES_SHARING_API_GROUP1);
 		$ocs->cleanup();
@@ -196,7 +196,6 @@ class ApiTest extends TestCase {
 		$ocs = $this->createOCS(self::TEST_FILES_SHARING_API_USER1);
 		$ocs->deleteShare($data['id']);
 		$ocs->cleanup();
-
 	}
 
 	public function testCreateShareLink() {
@@ -205,7 +204,9 @@ class ApiTest extends TestCase {
 		$ocs->cleanup();
 
 		$data = $result->getData();
-		$this->assertEquals(1, $data['permissions']);
+		$this->assertEquals(\OCP\Constants::PERMISSION_READ |
+			\OCP\Constants::PERMISSION_SHARE,
+			$data['permissions']);
 		$this->assertEmpty($data['expiration']);
 		$this->assertTrue(is_string($data['token']));
 
@@ -230,7 +231,8 @@ class ApiTest extends TestCase {
 			\OCP\Constants::PERMISSION_READ |
 			\OCP\Constants::PERMISSION_CREATE |
 			\OCP\Constants::PERMISSION_UPDATE |
-			\OCP\Constants::PERMISSION_DELETE,
+			\OCP\Constants::PERMISSION_DELETE |
+			\OCP\Constants::PERMISSION_SHARE,
 			$data['permissions']
 		);
 		$this->assertEmpty($data['expiration']);
@@ -247,8 +249,7 @@ class ApiTest extends TestCase {
 		$ocs->cleanup();
 	}
 
-	function testEnforceLinkPassword() {
-
+	public function testEnforceLinkPassword() {
 		$password = md5(time());
 		$config = \OC::$server->getConfig();
 		$config->setAppValue('core', 'shareapi_enforce_links_password', 'yes');
@@ -258,7 +259,6 @@ class ApiTest extends TestCase {
 			$ocs->createShare($this->folder, \OCP\Constants::PERMISSION_ALL, \OCP\Share::SHARE_TYPE_LINK);
 			$this->fail();
 		} catch (OCSForbiddenException $e) {
-
 		}
 		$ocs->cleanup();
 
@@ -267,7 +267,6 @@ class ApiTest extends TestCase {
 			$ocs->createShare($this->folder, \OCP\Constants::PERMISSION_ALL, \OCP\Share::SHARE_TYPE_LINK, null, 'false', '');
 			$this->fail();
 		} catch (OCSForbiddenException $e) {
-
 		}
 		$ocs->cleanup();
 
@@ -289,7 +288,6 @@ class ApiTest extends TestCase {
 			$ocs->updateShare($data['id']);
 			$this->fail();
 		} catch (OCSBadRequestException $e) {
-
 		}
 		$ocs->cleanup();
 
@@ -304,8 +302,8 @@ class ApiTest extends TestCase {
 
 	/**
 	 * @medium
-	*/
-	function testSharePermissions() {
+	 */
+	public function testSharePermissions() {
 		// sharing file to a user should work if shareapi_exclude_groups is set
 		// to no
 		\OC::$server->getConfig()->setAppValue('core', 'shareapi_exclude_groups', 'no');
@@ -356,7 +354,7 @@ class ApiTest extends TestCase {
 	/**
 	 * @medium
 	 */
-	function testGetAllShares() {
+	public function testGetAllShares() {
 		$node = $this->userFolder->get($this->filename);
 
 		$share = $this->shareManager->newShare();
@@ -377,7 +375,7 @@ class ApiTest extends TestCase {
 		$this->shareManager->deleteShare($share);
 	}
 
-	function testGetAllSharesWithMe() {
+	public function testGetAllSharesWithMe() {
 		$node1 = $this->userFolder->get($this->filename);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -413,7 +411,7 @@ class ApiTest extends TestCase {
 	/**
 	 * @medium
 	 */
-	function testPublicLinkUrl() {
+	public function testPublicLinkUrl() {
 		$ocs = $this->createOCS(self::TEST_FILES_SHARING_API_USER1);
 		$result = $ocs->createShare($this->folder, \OCP\Constants::PERMISSION_ALL, \OCP\Share::SHARE_TYPE_LINK);
 		$ocs->cleanup();
@@ -462,7 +460,7 @@ class ApiTest extends TestCase {
 	 * @depends testCreateShareUserFile
 	 * @depends testCreateShareLink
 	 */
-	function testGetShareFromSource() {
+	public function testGetShareFromSource() {
 		$node = $this->userFolder->get($this->filename);
 		$share = $this->shareManager->newShare();
 		$share->setNode($node)
@@ -495,7 +493,7 @@ class ApiTest extends TestCase {
 	 * @depends testCreateShareUserFile
 	 * @depends testCreateShareLink
 	 */
-	function testGetShareFromSourceWithReshares() {
+	public function testGetShareFromSourceWithReshares() {
 		$node = $this->userFolder->get($this->filename);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node)
@@ -536,7 +534,7 @@ class ApiTest extends TestCase {
 	 * @medium
 	 * @depends testCreateShareUserFile
 	 */
-	function testGetShareFromId() {
+	public function testGetShareFromId() {
 		$node = $this->userFolder->get($this->filename);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node)
@@ -560,7 +558,7 @@ class ApiTest extends TestCase {
 	/**
 	 * @medium
 	 */
-	function testGetShareFromFolder() {
+	public function testGetShareFromFolder() {
 		$node1 = $this->userFolder->get($this->filename);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -590,7 +588,7 @@ class ApiTest extends TestCase {
 		$this->shareManager->deleteShare($share2);
 	}
 
-	function testGetShareFromFolderWithFile() {
+	public function testGetShareFromFolderWithFile() {
 		$node1 = $this->userFolder->get($this->filename);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -616,7 +614,7 @@ class ApiTest extends TestCase {
 	 * share a folder, than reshare a file within the shared folder and check if we construct the correct path
 	 * @medium
 	 */
-	function testGetShareFromFolderReshares() {
+	public function testGetShareFromFolderReshares() {
 		$node1 = $this->userFolder->get($this->folder);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -648,12 +646,12 @@ class ApiTest extends TestCase {
 		$share3->setStatus(IShare::STATUS_ACCEPTED);
 		$this->shareManager->updateShare($share3);
 
-		$testValues=array(
-			array('query' => $this->folder,
-				'expectedResult' => $this->folder . $this->filename),
-			array('query' => $this->folder . $this->subfolder,
-				'expectedResult' => $this->folder . $this->subfolder . $this->filename),
-		);
+		$testValues=[
+			['query' => $this->folder,
+				'expectedResult' => $this->folder . $this->filename],
+			['query' => $this->folder . $this->subfolder,
+				'expectedResult' => $this->folder . $this->subfolder . $this->filename],
+		];
 
 		foreach ($testValues as $value) {
 			$ocs = $this->createOCS(self::TEST_FILES_SHARING_API_USER2);
@@ -676,7 +674,7 @@ class ApiTest extends TestCase {
 	 * reshare a sub folder and check if we get the correct path
 	 * @medium
 	 */
-	function testGetShareFromSubFolderReShares() {
+	public function testGetShareFromSubFolderReShares() {
 		$node1 = $this->userFolder->get($this->folder . $this->subfolder);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -718,7 +716,7 @@ class ApiTest extends TestCase {
 	 * test re-re-share of folder if the path gets constructed correctly
 	 * @medium
 	 */
-	function XtestGetShareFromFolderReReShares() {
+	public function XtestGetShareFromFolderReReShares() {
 		$node1 = $this->userFolder->get($this->folder . $this->subfolder);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -795,7 +793,7 @@ class ApiTest extends TestCase {
 	 * test multiple shared folder if the path gets constructed correctly
 	 * @medium
 	 */
-	function testGetShareMultipleSharedFolder() {
+	public function testGetShareMultipleSharedFolder() {
 		$this->setUp();
 		$node1 = $this->userFolder->get($this->folder . $this->subfolder);
 		$share1 = $this->shareManager->newShare();
@@ -860,7 +858,7 @@ class ApiTest extends TestCase {
 	 * test re-re-share of folder if the path gets constructed correctly
 	 * @medium
 	 */
-	function testGetShareFromFileReReShares() {
+	public function testGetShareFromFileReReShares() {
 		$node1 = $this->userFolder->get($this->folder . $this->subfolder);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -915,7 +913,7 @@ class ApiTest extends TestCase {
 	/**
 	 * @medium
 	 */
-	function testGetShareFromUnknownId() {
+	public function testGetShareFromUnknownId() {
 		$ocs = $this->createOCS(self::TEST_FILES_SHARING_API_USER3);
 		try {
 			$ocs->getShare(0);
@@ -931,8 +929,7 @@ class ApiTest extends TestCase {
 	 * @depends testCreateShareUserFile
 	 * @depends testCreateShareLink
 	 */
-	function testUpdateShare() {
-
+	public function testUpdateShare() {
 		$password = md5(time());
 
 		$node1 = $this->userFolder->get($this->filename);
@@ -983,7 +980,7 @@ class ApiTest extends TestCase {
 	/**
 	 * @medium
 	 */
-	function testUpdateShareUpload() {
+	public function testUpdateShareUpload() {
 		$node1 = $this->userFolder->get($this->folder);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -1002,7 +999,8 @@ class ApiTest extends TestCase {
 			\OCP\Constants::PERMISSION_READ |
 			\OCP\Constants::PERMISSION_CREATE |
 			\OCP\Constants::PERMISSION_UPDATE |
-			\OCP\Constants::PERMISSION_DELETE,
+			\OCP\Constants::PERMISSION_DELETE |
+			\OCP\Constants::PERMISSION_SHARE,
 			$share1->getPermissions()
 		);
 
@@ -1013,7 +1011,7 @@ class ApiTest extends TestCase {
 	/**
 	 * @medium
 	 */
-	function testUpdateShareExpireDate() {
+	public function testUpdateShareExpireDate() {
 		$node1 = $this->userFolder->get($this->folder);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -1053,7 +1051,6 @@ class ApiTest extends TestCase {
 			$ocs->updateShare($share1->getId());
 			$this->fail();
 		} catch (OCSBadRequestException $e) {
-
 		}
 		$ocs->cleanup();
 
@@ -1068,7 +1065,6 @@ class ApiTest extends TestCase {
 			$ocs->updateShare($share1->getId());
 			$this->fail();
 		} catch (OCSBadRequestException $e) {
-
 		}
 		$ocs->cleanup();
 
@@ -1087,7 +1083,7 @@ class ApiTest extends TestCase {
 	 * @medium
 	 * @depends testCreateShareUserFile
 	 */
-	function testDeleteShare() {
+	public function testDeleteShare() {
 		$node1 = $this->userFolder->get($this->filename);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -1119,7 +1115,7 @@ class ApiTest extends TestCase {
 	/**
 	 * test unshare of a reshared file
 	 */
-	function testDeleteReshare() {
+	public function testDeleteReshare() {
 		$node1 = $this->userFolder->get($this->folder);
 		$share1 = $this->shareManager->newShare();
 		$share1->setNode($node1)
@@ -1214,7 +1210,7 @@ class ApiTest extends TestCase {
 	 */
 	public static function initTestMountPointsHook($data) {
 		if ($data['user'] === self::TEST_FILES_SHARING_API_USER1) {
-			\OC\Files\Filesystem::mount(self::$tempStorage, array(), '/' . self::TEST_FILES_SHARING_API_USER1 . '/files' . self::TEST_FOLDER_NAME);
+			\OC\Files\Filesystem::mount(self::$tempStorage, [], '/' . self::TEST_FILES_SHARING_API_USER1 . '/files' . self::TEST_FOLDER_NAME);
 		}
 	}
 
@@ -1222,7 +1218,7 @@ class ApiTest extends TestCase {
 	 * Tests mounting a folder that is an external storage mount point.
 	 */
 	public function testShareStorageMountPoint() {
-		$tempStorage = new \OC\Files\Storage\Temporary(array());
+		$tempStorage = new \OC\Files\Storage\Temporary([]);
 		$tempStorage->file_put_contents('test.txt', 'abcdef');
 		$tempStorage->getScanner()->scan('');
 
@@ -1371,7 +1367,7 @@ class ApiTest extends TestCase {
 		try {
 			$ocs->createShare($this->filename, \OCP\Constants::PERMISSION_ALL, \OCP\Share::SHARE_TYPE_LINK, null, 'false', '', null, $date->format('Y-m-d'));
 			$this->fail();
-		} catch(OCSException $e) {
+		} catch (OCSException $e) {
 			$this->assertEquals(404, $e->getCode());
 			$this->assertEquals('Expiration date is in the past', $e->getMessage());
 		}

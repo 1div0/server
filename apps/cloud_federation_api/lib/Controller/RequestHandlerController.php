@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2018 Bjoern Schiessle <bjoern@schiessle.org>
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -132,7 +133,7 @@ class RequestHandlerController extends Controller {
 			$shareType === null ||
 			!is_array($protocol) ||
 			!isset($protocol['name']) ||
-			!isset ($protocol['options']) ||
+			!isset($protocol['options']) ||
 			!is_array($protocol['options']) ||
 			!isset($protocol['options']['sharedSecret'])
 		) {
@@ -165,7 +166,7 @@ class RequestHandlerController extends Controller {
 		}
 
 		if ($shareType === 'group') {
-			if(!$this->groupManager->groupExists($shareWith)) {
+			if (!$this->groupManager->groupExists($shareWith)) {
 				return new JSONResponse(
 					['message' => 'Group "' . $shareWith . '" does not exists at ' . $this->urlGenerator->getBaseUrl()],
 					Http::STATUS_BAD_REQUEST
@@ -207,14 +208,13 @@ class RequestHandlerController extends Controller {
 
 		$user = $this->userManager->get($shareWith);
 		$recipientDisplayName = '';
-		if($user) {
+		if ($user) {
 			$recipientDisplayName = $user->getDisplayName();
 		}
 
 		return new JSONResponse(
 			['recipientDisplayName' => $recipientDisplayName],
 			Http::STATUS_CREATED);
-
 	}
 
 	/**
@@ -266,8 +266,7 @@ class RequestHandlerController extends Controller {
 			return new JSONResponse($e->getReturnMessage(), Http::STATUS_BAD_REQUEST);
 		} catch (AuthenticationFailedException $e) {
 			return new JSONResponse(["message" => "RESOURCE_NOT_FOUND"], Http::STATUS_FORBIDDEN);
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			return new JSONResponse(
 				['message' => 'Internal error at ' . $this->urlGenerator->getBaseUrl()],
 				Http::STATUS_BAD_REQUEST
@@ -275,7 +274,6 @@ class RequestHandlerController extends Controller {
 		}
 
 		return new JSONResponse($result,Http::STATUS_CREATED);
-
 	}
 
 	/**
@@ -290,11 +288,10 @@ class RequestHandlerController extends Controller {
 		\OCP\Util::emitHook(
 			'\OCA\Files_Sharing\API\Server2Server',
 			'preLoginNameUsedAsUserName',
-			array('uid' => &$uid)
+			['uid' => &$uid]
 		);
 		$this->logger->debug('shareWith after, ' . $uid, ['app' => $this->appName]);
 
 		return $uid;
 	}
-
 }

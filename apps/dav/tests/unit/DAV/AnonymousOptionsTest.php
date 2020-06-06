@@ -3,6 +3,8 @@
  * @copyright Copyright (c) 2018 Robin Appelman <robin@icewind.nl>
  *
  * @author Bastien Durel <bastien@durel.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Julius Härtl <jus@bitgrid.net>
  * @author Robin Appelman <robin@icewind.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -36,7 +38,7 @@ class AnonymousOptionsTest extends TestCase {
 	private function sendRequest($method, $path, $userAgent = '') {
 		$server = new Server();
 		$server->addPlugin(new AnonymousOptionsPlugin());
-		$server->addPlugin(new Plugin(new BasicCallBack(function() {
+		$server->addPlugin(new Plugin(new BasicCallBack(function () {
 			return false;
 		})));
 
@@ -52,17 +54,35 @@ class AnonymousOptionsTest extends TestCase {
 	public function testAnonymousOptionsRoot() {
 		$response = $this->sendRequest('OPTIONS', '');
 
-		$this->assertEquals(200, $response->getStatus());
+		$this->assertEquals(401, $response->getStatus());
 	}
 
 	public function testAnonymousOptionsNonRoot() {
 		$response = $this->sendRequest('OPTIONS', 'foo');
 
-		$this->assertEquals(200, $response->getStatus());
+		$this->assertEquals(401, $response->getStatus());
 	}
 
 	public function testAnonymousOptionsNonRootSubDir() {
 		$response = $this->sendRequest('OPTIONS', 'foo/bar');
+
+		$this->assertEquals(401, $response->getStatus());
+	}
+
+	public function testAnonymousOptionsRootOffice() {
+		$response = $this->sendRequest('OPTIONS', '', 'Microsoft Office does strange things');
+
+		$this->assertEquals(200, $response->getStatus());
+	}
+
+	public function testAnonymousOptionsNonRootOffice() {
+		$response = $this->sendRequest('OPTIONS', 'foo', 'Microsoft Office does strange things');
+
+		$this->assertEquals(200, $response->getStatus());
+	}
+
+	public function testAnonymousOptionsNonRootSubDirOffice() {
+		$response = $this->sendRequest('OPTIONS', 'foo/bar', 'Microsoft Office does strange things');
 
 		$this->assertEquals(200, $response->getStatus());
 	}
@@ -86,8 +106,6 @@ class SapiMock extends Sapi {
 	 *
 	 * @return void
 	 */
-	static function sendResponse(ResponseInterface $response) {
-
+	public static function sendResponse(ResponseInterface $response) {
 	}
-
 }

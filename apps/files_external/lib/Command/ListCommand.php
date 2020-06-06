@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -58,9 +59,9 @@ class ListCommand extends Base {
 	 */
 	protected $userManager;
 
-	const ALL = -1;
+	public const ALL = -1;
 
-	function __construct(GlobalStoragesService $globalService, UserStoragesService $userService, IUserSession $userSession, IUserManager $userManager) {
+	public function __construct(GlobalStoragesService $globalService, UserStoragesService $userService, IUserSession $userSession, IUserManager $userManager) {
 		parent::__construct();
 		$this->globalService = $globalService;
 		$this->userService = $userService;
@@ -125,7 +126,7 @@ class ListCommand extends Base {
 			} else {
 				if ($userId === self::ALL) {
 					$output->writeln("<info>No mounts configured</info>");
-				} else if ($userId) {
+				} elseif ($userId) {
 					$output->writeln("<info>No mounts configured by $userId</info>");
 				} else {
 					$output->writeln("<info>No admin mounts configured</info>");

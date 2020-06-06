@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -60,7 +61,7 @@ class SystemTagsRelationsCollection extends SimpleCollection {
 				$tagMapper,
 				$userSession,
 				$groupManager,
-				function($name) {
+				function ($name) {
 					$nodes = \OC::$server->getUserFolder()->getById((int)$name);
 					return !empty($nodes);
 				}
@@ -84,12 +85,11 @@ class SystemTagsRelationsCollection extends SimpleCollection {
 		parent::__construct('root', $children);
 	}
 
-	function getName() {
+	public function getName() {
 		return 'systemtags-relations';
 	}
 
-	function setName($name) {
+	public function setName($name) {
 		throw new Forbidden('Permission denied to rename this collection');
 	}
-
 }

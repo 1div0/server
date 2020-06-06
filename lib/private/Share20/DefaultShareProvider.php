@@ -2,9 +2,9 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
- * @author Andrius <andrius.kulbis@ktu.lt>
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
  * @author Jan-Philipp Litza <jplitza@users.noreply.github.com>
  * @author Joas Schilling <coding@schilljs.com>
@@ -44,7 +44,6 @@ use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\IDBConnection;
-use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -53,7 +52,6 @@ use OCP\IUserManager;
 use OCP\Mail\IMailer;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IShare;
-use OCP\Share\IShareHelper;
 use OCP\Share\IShareProvider;
 
 /**
@@ -64,7 +62,7 @@ use OCP\Share\IShareProvider;
 class DefaultShareProvider implements IShareProvider {
 
 	// Special share type for user modified group shares
-	const SHARE_TYPE_USERGROUP = 2;
+	public const SHARE_TYPE_USERGROUP = 2;
 
 	/** @var IDBConnection */
 	private $dbConn;
@@ -153,7 +151,7 @@ class DefaultShareProvider implements IShareProvider {
 			if ($share->getExpirationDate() !== null) {
 				$qb->setValue('expiration', $qb->createNamedParameter($share->getExpirationDate(), 'datetime'));
 			}
-		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
+		} elseif ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
 			//Set the GID of the group we share with
 			$qb->setValue('share_with', $qb->createNamedParameter($share->getSharedWith()));
 
@@ -161,7 +159,7 @@ class DefaultShareProvider implements IShareProvider {
 			if ($share->getExpirationDate() !== null) {
 				$qb->setValue('expiration', $qb->createNamedParameter($share->getExpirationDate(), 'datetime'));
 			}
-		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_LINK) {
+		} elseif ($share->getShareType() === \OCP\Share::SHARE_TYPE_LINK) {
 			//set label for public link
 			$qb->setValue('label', $qb->createNamedParameter($share->getLabel()));
 			//Set the token of the share
@@ -250,7 +248,6 @@ class DefaultShareProvider implements IShareProvider {
 	 * @throws \OCP\Files\NotFoundException
 	 */
 	public function update(\OCP\Share\IShare $share) {
-
 		$originalShare = $this->getShareById($share->getId());
 
 		if ($share->getShareType() === \OCP\Share::SHARE_TYPE_USER) {
@@ -270,7 +267,7 @@ class DefaultShareProvider implements IShareProvider {
 				->set('note', $qb->createNamedParameter($share->getNote()))
 				->set('accepted', $qb->createNamedParameter($share->getStatus()))
 				->execute();
-		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
+		} elseif ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
 			$qb = $this->dbConn->getQueryBuilder();
 			$qb->update('share')
 				->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())))
@@ -307,8 +304,7 @@ class DefaultShareProvider implements IShareProvider {
 				->andWhere($qb->expr()->neq('permissions', $qb->createNamedParameter(0)))
 				->set('permissions', $qb->createNamedParameter($share->getPermissions()))
 				->execute();
-
-		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_LINK) {
+		} elseif ($share->getShareType() === \OCP\Share::SHARE_TYPE_LINK) {
 			$qb = $this->dbConn->getQueryBuilder();
 			$qb->update('share')
 				->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())))
@@ -381,8 +377,7 @@ class DefaultShareProvider implements IShareProvider {
 			} else {
 				$id = $data['id'];
 			}
-
-		} else if ($share->getShareType() === IShare::TYPE_USER) {
+		} elseif ($share->getShareType() === IShare::TYPE_USER) {
 			if ($share->getSharedWith() !== $recipient) {
 				throw new ProviderException('Recipient does not match');
 			}
@@ -432,7 +427,7 @@ class DefaultShareProvider implements IShareProvider {
 			->orderBy('id');
 
 		$cursor = $qb->execute();
-		while($data = $cursor->fetch()) {
+		while ($data = $cursor->fetch()) {
 			$children[] = $this->createShare($data);
 		}
 		$cursor->closeCursor();
@@ -472,7 +467,6 @@ class DefaultShareProvider implements IShareProvider {
 	 */
 	public function deleteFromSelf(IShare $share, $recipient) {
 		if ($share->getShareType() === IShare::TYPE_GROUP) {
-
 			$group = $this->groupManager->get($share->getSharedWith());
 			$user = $this->userManager->get($recipient);
 
@@ -519,9 +513,7 @@ class DefaultShareProvider implements IShareProvider {
 					->where($qb->expr()->eq('id', $qb->createNamedParameter($id)))
 					->execute();
 			}
-
-		} else if ($share->getShareType() === IShare::TYPE_USER) {
-
+		} elseif ($share->getShareType() === IShare::TYPE_USER) {
 			if ($share->getSharedWith() !== $recipient) {
 				throw new ProviderException('Recipient does not match');
 			}
@@ -601,8 +593,7 @@ class DefaultShareProvider implements IShareProvider {
 				->set('file_target', $qb->createNamedParameter($share->getTarget()))
 				->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())))
 				->execute();
-
-		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
+		} elseif ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
 
 			// Check if there is a usergroup share
 			$qb = $this->dbConn->getQueryBuilder();
@@ -738,7 +729,7 @@ class DefaultShareProvider implements IShareProvider {
 
 		$cursor = $qb->execute();
 		$shares = [];
-		while($data = $cursor->fetch()) {
+		while ($data = $cursor->fetch()) {
 			$shares[] = $this->createShare($data);
 		}
 		$cursor->closeCursor();
@@ -817,7 +808,7 @@ class DefaultShareProvider implements IShareProvider {
 			->execute();
 
 		$shares = [];
-		while($data = $cursor->fetch()) {
+		while ($data = $cursor->fetch()) {
 			$shares[] = $this->createShare($data);
 		}
 		$cursor->closeCursor();
@@ -831,7 +822,7 @@ class DefaultShareProvider implements IShareProvider {
 	 */
 	private function isAccessibleResult($data) {
 		// exclude shares leading to deleted file entries
-		if ($data['fileid'] === null) {
+		if ($data['fileid'] === null || $data['path'] === null) {
 			return false;
 		}
 
@@ -839,7 +830,7 @@ class DefaultShareProvider implements IShareProvider {
 		$pathSections = explode('/', $data['path'], 2);
 		// FIXME: would not detect rare md5'd home storage case properly
 		if ($pathSections[0] !== 'files'
-		    	&& in_array(explode(':', $data['storage_string_id'], 2)[0], array('home', 'object'))) {
+				&& in_array(explode(':', $data['storage_string_id'], 2)[0], ['home', 'object'])) {
 			return false;
 		}
 		return true;
@@ -888,22 +879,21 @@ class DefaultShareProvider implements IShareProvider {
 
 			$cursor = $qb->execute();
 
-			while($data = $cursor->fetch()) {
+			while ($data = $cursor->fetch()) {
 				if ($this->isAccessibleResult($data)) {
 					$shares[] = $this->createShare($data);
 				}
 			}
 			$cursor->closeCursor();
-
-		} else if ($shareType === \OCP\Share::SHARE_TYPE_GROUP) {
+		} elseif ($shareType === \OCP\Share::SHARE_TYPE_GROUP) {
 			$user = $this->userManager->get($userId);
-			$allGroups = $this->groupManager->getUserGroups($user);
+			$allGroups = $this->groupManager->getUserGroupIds($user);
 
 			/** @var Share[] $shares2 */
 			$shares2 = [];
 
 			$start = 0;
-			while(true) {
+			while (true) {
 				$groups = array_slice($allGroups, $start, 100);
 				$start += 100;
 
@@ -934,8 +924,7 @@ class DefaultShareProvider implements IShareProvider {
 				}
 
 
-				$groups = array_filter($groups, function($group) { return $group instanceof IGroup; });
-				$groups = array_map(function(IGroup $group) { return $group->getGID(); }, $groups);
+				$groups = array_filter($groups);
 
 				$qb->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_GROUP)))
 					->andWhere($qb->expr()->in('share_with', $qb->createNamedParameter(
@@ -948,7 +937,7 @@ class DefaultShareProvider implements IShareProvider {
 					));
 
 				$cursor = $qb->execute();
-				while($data = $cursor->fetch()) {
+				while ($data = $cursor->fetch()) {
 					if ($offset > 0) {
 						$offset--;
 						continue;
@@ -962,8 +951,8 @@ class DefaultShareProvider implements IShareProvider {
 			}
 
 			/*
- 			 * Resolve all group shares to user specific shares
- 			 */
+			 * Resolve all group shares to user specific shares
+			 */
 			$shares = $this->resolveGroupShares($shares2, $userId);
 		} else {
 			throw new BackendError('Invalid backend');
@@ -1036,9 +1025,9 @@ class DefaultShareProvider implements IShareProvider {
 			if ($user !== null) {
 				$share->setSharedWithDisplayName($user->getDisplayName());
 			}
-		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
+		} elseif ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
 			$share->setSharedWith($data['share_with']);
-		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_LINK) {
+		} elseif ($share->getShareType() === \OCP\Share::SHARE_TYPE_LINK) {
 			$share->setPassword($data['password']);
 			$share->setSendPasswordByTalk((bool)$data['password_by_talk']);
 			$share->setToken($data['token']);
@@ -1078,7 +1067,7 @@ class DefaultShareProvider implements IShareProvider {
 		$result = [];
 
 		$start = 0;
-		while(true) {
+		while (true) {
 			/** @var Share[] $shareSlice */
 			$shareSlice = array_slice($shares, $start, 100);
 			$start += 100;
@@ -1110,7 +1099,7 @@ class DefaultShareProvider implements IShareProvider {
 
 			$stmt = $query->execute();
 
-			while($data = $stmt->fetch()) {
+			while ($data = $stmt->fetch()) {
 				$shareMap[$data['parent']]->setPermissions((int)$data['permissions']);
 				$shareMap[$data['parent']]->setStatus((int)$data['accepted']);
 				$shareMap[$data['parent']]->setTarget($data['file_target']);
@@ -1153,7 +1142,7 @@ class DefaultShareProvider implements IShareProvider {
 					$qb->expr()->eq('share_with', $qb->createNamedParameter($uid))
 				)
 			);
-		} else if ($shareType === \OCP\Share::SHARE_TYPE_GROUP) {
+		} elseif ($shareType === \OCP\Share::SHARE_TYPE_GROUP) {
 			/*
 			 * Delete all group shares that are owned by this user
 			 * Or special user group shares that are received by this user
@@ -1174,7 +1163,7 @@ class DefaultShareProvider implements IShareProvider {
 					$qb->expr()->eq('share_with', $qb->createNamedParameter($uid))
 				)
 			);
-		} else if ($shareType === \OCP\Share::SHARE_TYPE_LINK) {
+		} elseif ($shareType === \OCP\Share::SHARE_TYPE_LINK) {
 			/*
 			 * Delete all link shares owned by this user.
 			 * And all link shares initiated by this user (until #22327 is in)
@@ -1213,7 +1202,7 @@ class DefaultShareProvider implements IShareProvider {
 
 		$cursor = $qb->execute();
 		$ids = [];
-		while($row = $cursor->fetch()) {
+		while ($row = $cursor->fetch()) {
 			$ids[] = (int)$row['id'];
 		}
 		$cursor->closeCursor();
@@ -1256,7 +1245,7 @@ class DefaultShareProvider implements IShareProvider {
 
 		$cursor = $qb->execute();
 		$ids = [];
-		while($row = $cursor->fetch()) {
+		while ($row = $cursor->fetch()) {
 			$ids[] = (int)$row['id'];
 		}
 		$cursor->closeCursor();
@@ -1311,13 +1300,13 @@ class DefaultShareProvider implements IShareProvider {
 
 		$users = [];
 		$link = false;
-		while($row = $cursor->fetch()) {
+		while ($row = $cursor->fetch()) {
 			$type = (int)$row['share_type'];
 			if ($type === \OCP\Share::SHARE_TYPE_USER) {
 				$uid = $row['share_with'];
 				$users[$uid] = isset($users[$uid]) ? $users[$uid] : [];
 				$users[$uid][$row['id']] = $row;
-			} else if ($type === \OCP\Share::SHARE_TYPE_GROUP) {
+			} elseif ($type === \OCP\Share::SHARE_TYPE_GROUP) {
 				$gid = $row['share_with'];
 				$group = $this->groupManager->get($gid);
 
@@ -1331,9 +1320,9 @@ class DefaultShareProvider implements IShareProvider {
 					$users[$uid] = isset($users[$uid]) ? $users[$uid] : [];
 					$users[$uid][$row['id']] = $row;
 				}
-			} else if ($type === \OCP\Share::SHARE_TYPE_LINK) {
+			} elseif ($type === \OCP\Share::SHARE_TYPE_LINK) {
 				$link = true;
-			} else if ($type === self::SHARE_TYPE_USERGROUP && $currentAccess === true) {
+			} elseif ($type === self::SHARE_TYPE_USERGROUP && $currentAccess === true) {
 				$uid = $row['share_with'];
 				$users[$uid] = isset($users[$uid]) ? $users[$uid] : [];
 				$users[$uid][$row['id']] = $row;
@@ -1397,7 +1386,7 @@ class DefaultShareProvider implements IShareProvider {
 		if ($share->getShareType() === \OCP\Share::SHARE_TYPE_USER) {
 			$user = $this->userManager->get($share->getSharedWith());
 			$this->sendNote([$user], $share);
-		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
+		} elseif ($share->getShareType() === \OCP\Share::SHARE_TYPE_GROUP) {
 			$group = $this->groupManager->get($share->getSharedWith());
 			$groupMembers = $group->getUsers();
 			$this->sendNote($groupMembers, $share);
@@ -1412,7 +1401,6 @@ class DefaultShareProvider implements IShareProvider {
 	 * @throws \OCP\Files\NotFoundException
 	 */
 	private function sendNote(array $recipients, IShare $share) {
-
 		$toList = [];
 
 		foreach ($recipients as $recipient) {
@@ -1424,7 +1412,6 @@ class DefaultShareProvider implements IShareProvider {
 		}
 
 		if (!empty($toList)) {
-
 			$filename = $share->getNode()->getName();
 			$initiator = $share->getSharedBy();
 			$note = $share->getNote();
@@ -1476,7 +1463,6 @@ class DefaultShareProvider implements IShareProvider {
 			$message->useTemplate($emailTemplate);
 			$this->mailer->send($message);
 		}
-
 	}
 
 	public function getAllShares(): iterable {
@@ -1493,7 +1479,7 @@ class DefaultShareProvider implements IShareProvider {
 			);
 
 		$cursor = $qb->execute();
-		while($data = $cursor->fetch()) {
+		while ($data = $cursor->fetch()) {
 			try {
 				$share = $this->createShare($data);
 			} catch (InvalidShare $e) {

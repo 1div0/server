@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  *
  * @license AGPL-3.0
@@ -24,17 +25,17 @@
 namespace OCA\User_LDAP\Mapping;
 
 /**
-* Class UserMapping
-* @package OCA\User_LDAP\Mapping
-*/
+ * Class UserMapping
+ * @package OCA\User_LDAP\Mapping
+ */
 class GroupMapping extends AbstractMapping {
 
 	/**
-	* returns the DB table name which holds the mappings
-	* @return string
-	*/
-	protected function getTableName() {
-		return '*PREFIX*ldap_group_mapping';
+	 * returns the DB table name which holds the mappings
+	 * @return string
+	 */
+	protected function getTableName(bool $includePrefix = true) {
+		$p = $includePrefix ? '*PREFIX*' : '';
+		return $p . 'ldap_group_mapping';
 	}
-
 }

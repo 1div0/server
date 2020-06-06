@@ -12,6 +12,7 @@
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author zulan <git@zulan.net>
  *
  * @license AGPL-3.0
@@ -37,13 +38,7 @@ use OC\AppFramework\Utility\TimeFactory;
 use OC\Authentication\Token\IProvider;
 use OC\Authentication\Token\IToken;
 use OC\Server;
-use OCA\Settings\Activity\GroupProvider;
-use OCA\Settings\Activity\GroupSetting;
 use OCA\Settings\Activity\Provider;
-use OCA\Settings\Activity\SecurityFilter;
-use OCA\Settings\Activity\SecurityProvider;
-use OCA\Settings\Activity\SecuritySetting;
-use OCA\Settings\Activity\Setting;
 use OCA\Settings\Hooks;
 use OCA\Settings\Mailer\NewUserMailHelper;
 use OCA\Settings\Middleware\SubadminMiddleware;
@@ -60,13 +55,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Application extends App {
-
+	public const APP_ID = 'settings';
 
 	/**
 	 * @param array $urlParams
 	 */
-	public function __construct(array $urlParams=[]){
-		parent::__construct('settings', $urlParams);
+	public function __construct(array $urlParams=[]) {
+		parent::__construct(self::APP_ID, $urlParams);
 
 		$container = $this->getContainer();
 
@@ -78,19 +73,19 @@ class Application extends App {
 		 * Core class wrappers
 		 */
 		/** FIXME: Remove once OC_User is non-static and mockable */
-		$container->registerService('isAdmin', function() {
+		$container->registerService('isAdmin', function () {
 			return \OC_User::isAdminUser(\OC_User::getUser());
 		});
 		/** FIXME: Remove once OC_SubAdmin is non-static and mockable */
-		$container->registerService('isSubAdmin', function(IContainer $c) {
+		$container->registerService('isSubAdmin', function (IContainer $c) {
 			$userObject = \OC::$server->getUserSession()->getUser();
 			$isSubAdmin = false;
-			if($userObject !== null) {
+			if ($userObject !== null) {
 				$isSubAdmin = \OC::$server->getGroupManager()->getSubAdmin()->isSubAdmin($userObject);
 			}
 			return $isSubAdmin;
 		});
-		$container->registerService('userCertificateManager', function(IContainer $c) {
+		$container->registerService('userCertificateManager', function (IContainer $c) {
 			return $c->query('ServerContainer')->getCertificateManager();
 		}, false);
 		$container->registerService('systemCertificateManager', function (IContainer $c) {
@@ -163,7 +158,6 @@ class Application extends App {
 		/** @var Hooks $hooks */
 		$hooks = $this->getContainer()->query(Hooks::class);
 		$hooks->addUserToGroup($group, $user);
-
 	}
 
 	public function removeUserFromGroup(IGroup $group, IUser $user): void {

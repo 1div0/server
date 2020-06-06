@@ -5,6 +5,7 @@
  *
  * @author Andreas Fischer <bantu@owncloud.com>
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -116,7 +117,7 @@ class AccessTest extends TestCase {
 			->getMock();
 		$helper = new Helper(\OC::$server->getConfig());
 
-		return array($lw, $connector, $um, $helper);
+		return [$lw, $connector, $um, $helper];
 	}
 
 	public function testEscapeFilterPartValidChars() {
@@ -147,9 +148,9 @@ class AccessTest extends TestCase {
 	}
 
 	public function convertSID2StrSuccessData() {
-		return array(
-			array(
-				array(
+		return [
+			[
+				[
 					"\x01",
 					"\x04",
 					"\x00\x00\x00\x00\x00\x05",
@@ -157,20 +158,20 @@ class AccessTest extends TestCase {
 					"\xa6\x81\xe5\x0e",
 					"\x4d\x6c\x6c\x2b",
 					"\xca\x32\x05\x5f",
-				),
+				],
 				'S-1-5-21-249921958-728525901-1594176202',
-			),
-			array(
-				array(
+			],
+			[
+				[
 					"\x01",
 					"\x02",
 					"\xFF\xFF\xFF\xFF\xFF\xFF",
 					"\xFF\xFF\xFF\xFF",
 					"\xFF\xFF\xFF\xFF",
-				),
+				],
 				'S-1-281474976710655-4294967295-4294967295',
-			),
-		);
+			],
+		];
 	}
 
 	public function testConvertSID2StrInputError() {
@@ -187,7 +188,7 @@ class AccessTest extends TestCase {
 		$this->ldap->expects($this->once())
 			->method('explodeDN')
 			->with($inputDN, 0)
-			->will($this->returnValue(explode(',', $inputDN)));
+			->willReturn(explode(',', $inputDN));
 
 		$this->assertSame($domainDN, $this->access->getDomainDNFromDN($inputDN));
 	}
@@ -199,7 +200,7 @@ class AccessTest extends TestCase {
 		$this->ldap->expects($this->once())
 			->method('explodeDN')
 			->with($inputDN, 0)
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$this->assertSame($expected, $this->access->getDomainDNFromDN($inputDN));
 	}
@@ -208,12 +209,12 @@ class AccessTest extends TestCase {
 		return  [[
 			[
 				'input' => 'foo=bar,bar=foo,dc=foobar',
-				'interResult' => array(
+				'interResult' => [
 					'count' => 3,
 					0 => 'foo=bar',
 					1 => 'bar=foo',
 					2 => 'dc=foobar'
-				),
+				],
 				'expectedResult' => true
 			],
 			[
@@ -236,12 +237,12 @@ class AccessTest extends TestCase {
 
 		$lw->expects($this->exactly(1))
 			->method('explodeDN')
-			->will($this->returnCallback(function ($dn) use ($case) {
-				if($dn === $case['input']) {
+			->willReturnCallback(function ($dn) use ($case) {
+				if ($dn === $case['input']) {
 					return $case['interResult'];
 				}
 				return null;
-			}));
+			});
 
 		$this->assertSame($case['expectedResult'], $access->stringResemblesDN($case['input']));
 	}
@@ -257,7 +258,7 @@ class AccessTest extends TestCase {
 		$lw = new LDAP();
 		$access = new Access($con, $lw, $um, $helper, $config, $this->ncUserManager);
 
-		if(!function_exists('ldap_explode_dn')) {
+		if (!function_exists('ldap_explode_dn')) {
 			$this->markTestSkipped('LDAP Module not available');
 		}
 
@@ -294,7 +295,7 @@ class AccessTest extends TestCase {
 		// also returns for userUuidAttribute
 		$this->access->connection->expects($this->any())
 			->method('__get')
-			->will($this->returnValue('displayName'));
+			->willReturn('displayName');
 
 		$this->access->setUserMapper($mapperMock);
 
@@ -319,7 +320,7 @@ class AccessTest extends TestCase {
 
 		$this->userManager->expects($this->exactly(count($data) * 2))
 			->method('get')
-			->will($this->returnValue($userMock));
+			->willReturn($userMock);
 
 		$this->access->batchApplyUserAttributes($data);
 	}
@@ -329,13 +330,13 @@ class AccessTest extends TestCase {
 		$mapperMock = $this->createMock(UserMapping::class);
 		$mapperMock->expects($this->any())
 			->method('getNameByDN')
-			->will($this->returnValue('a_username'));
+			->willReturn('a_username');
 
 		$userMock = $this->createMock(User::class);
 
 		$this->access->connection->expects($this->any())
 			->method('__get')
-			->will($this->returnValue('displayName'));
+			->willReturn('displayName');
 
 		$this->access->setUserMapper($mapperMock);
 
@@ -370,13 +371,13 @@ class AccessTest extends TestCase {
 		$mapperMock = $this->createMock(UserMapping::class);
 		$mapperMock->expects($this->any())
 			->method('getNameByDN')
-			->will($this->returnValue('a_username'));
+			->willReturn('a_username');
 
 		$userMock = $this->createMock(User::class);
 
 		$this->access->connection->expects($this->any())
 			->method('__get')
-			->will($this->returnValue('displayName'));
+			->willReturn('displayName');
 
 		$this->access->setUserMapper($mapperMock);
 
@@ -401,19 +402,19 @@ class AccessTest extends TestCase {
 
 		$this->userManager->expects($this->exactly(count($data) * 2))
 			->method('get')
-			->will($this->returnValue($userMock));
+			->willReturn($userMock);
 
 		$this->access->batchApplyUserAttributes($data);
 	}
 
 	public function dNAttributeProvider() {
 		// corresponds to Access::resemblesDN()
-		return array(
-			'dn' => array('dn'),
-			'uniqueMember' => array('uniquemember'),
-			'member' => array('member'),
-			'memberOf' => array('memberof')
-		);
+		return [
+			'dn' => ['dn'],
+			'uniqueMember' => ['uniquemember'],
+			'member' => ['member'],
+			'memberOf' => ['memberof']
+		];
 	}
 
 	/**
@@ -429,19 +430,19 @@ class AccessTest extends TestCase {
 
 		$lw->expects($this->any())
 			->method('isResource')
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$lw->expects($this->any())
 			->method('getAttributes')
-			->will($this->returnValue(array(
-				$attribute => array('count' => 1, $dnFromServer)
-			)));
+			->willReturn([
+				$attribute => ['count' => 1, $dnFromServer]
+			]);
 
 		$access = new Access($con, $lw, $um, $helper, $config, $this->ncUserManager);
 		$values = $access->readAttribute('uid=whoever,dc=example,dc=org', $attribute);
 		$this->assertSame($values[0], strtolower($dnFromServer));
 	}
 
-	
+
 	public function testSetPasswordWithDisabledChanges() {
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('LDAP password changes are disabled');
@@ -473,7 +474,7 @@ class AccessTest extends TestCase {
 		$this->assertFalse($this->access->setPassword('CN=foo', 'MyPassword'));
 	}
 
-	
+
 	public function testSetPasswordWithRejectedChange() {
 		$this->expectException(\OC\HintException::class);
 		$this->expectExceptionMessage('Password change rejected.');
@@ -537,9 +538,9 @@ class AccessTest extends TestCase {
 			->willReturn($fakeConnection);
 		$this->connection->expects($this->any())
 			->method('__get')
-			->willReturnCallback(function($key) use ($base) {
-				if(stripos($key, 'base') !== false) {
-					return $base;
+			->willReturnCallback(function ($key) use ($base) {
+				if (stripos($key, 'base') !== false) {
+					return [$base];
 				}
 				return null;
 			});
@@ -547,8 +548,8 @@ class AccessTest extends TestCase {
 		$this->ldap
 			->expects($this->any())
 			->method('isResource')
-			->willReturnCallback(function ($resource) use ($fakeConnection) {
-				return $resource === $fakeConnection;
+			->willReturnCallback(function ($resource) {
+				return is_resource($resource);
 			});
 		$this->ldap
 			->expects($this->any())
@@ -557,9 +558,9 @@ class AccessTest extends TestCase {
 		$this->ldap
 			->expects($this->once())
 			->method('search')
-			->willReturn([$fakeSearchResultResource]);
+			->willReturn($fakeSearchResultResource);
 		$this->ldap
-			->expects($this->exactly(count($base)))
+			->expects($this->exactly(1))
 			->method('getEntries')
 			->willReturn($fakeLdapEntries);
 
@@ -571,17 +572,17 @@ class AccessTest extends TestCase {
 	public function testSearchNoPagedSearch() {
 		// scenario: no pages search, 1 search base
 		$filter = 'objectClass=nextcloudUser';
-		$base = ['ou=zombies,dc=foobar,dc=nextcloud,dc=com'];
+		$base = 'ou=zombies,dc=foobar,dc=nextcloud,dc=com';
 
-		$fakeConnection = new \stdClass();
-		$fakeSearchResultResource = new \stdClass();
+		$fakeConnection = ldap_connect();
+		$fakeSearchResultResource = ldap_connect();
 		$fakeLdapEntries = [
 			'count' => 2,
 			[
-				'dn' => 'uid=sgarth,' . $base[0],
+				'dn' => 'uid=sgarth,' . $base,
 			],
 			[
-				'dn' => 'uid=wwilson,' . $base[0],
+				'dn' => 'uid=wwilson,' . $base,
 			]
 		];
 
@@ -597,25 +598,25 @@ class AccessTest extends TestCase {
 
 	public function testFetchListOfUsers() {
 		$filter = 'objectClass=nextcloudUser';
-		$base = ['ou=zombies,dc=foobar,dc=nextcloud,dc=com'];
+		$base = 'ou=zombies,dc=foobar,dc=nextcloud,dc=com';
 		$attrs = ['dn', 'uid'];
 
-		$fakeConnection = new \stdClass();
-		$fakeSearchResultResource = new \stdClass();
+		$fakeConnection = ldap_connect();
+		$fakeSearchResultResource = ldap_connect();
 		$fakeLdapEntries = [
 			'count' => 2,
 			[
-				'dn' => 'uid=sgarth,' . $base[0],
+				'dn' => 'uid=sgarth,' . $base,
 				'uid' => [ 'sgarth' ],
 			],
 			[
-				'dn' => 'uid=wwilson,' . $base[0],
+				'dn' => 'uid=wwilson,' . $base,
 				'uid' => [ 'wwilson' ],
 			]
 		];
 		$expected = $fakeLdapEntries;
 		unset($expected['count']);
-		array_walk($expected, function(&$v) {
+		array_walk($expected, function (&$v) {
 			$v['dn'] = [$v['dn']];	// dn is translated into an array internally for consistency
 		});
 
@@ -627,7 +628,7 @@ class AccessTest extends TestCase {
 
 		$this->userMapper->expects($this->exactly($fakeLdapEntries['count']))
 			->method('getNameByDN')
-			->willReturnCallback(function($fdn) {
+			->willReturnCallback(function ($fdn) {
 				$parts = ldap_explode_dn($fdn, false);
 				return $parts[0];
 			});
@@ -660,7 +661,7 @@ class AccessTest extends TestCase {
 	 * @param $expected
 	 */
 	public function testSanitizeUsername($name, $expected) {
-		if($expected === null) {
+		if ($expected === null) {
 			$this->expectException(\InvalidArgumentException::class);
 		}
 		$sanitizedName = $this->access->sanitizeUsername($name);
@@ -702,5 +703,4 @@ class AccessTest extends TestCase {
 		];
 		$this->access->nextcloudUserNames($records);
 	}
-
 }

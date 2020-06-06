@@ -23,7 +23,6 @@
 
 namespace OCA\ShareByMail\Settings;
 
-
 use OCP\IConfig;
 
 class SettingsManager {
@@ -58,5 +57,4 @@ class SettingsManager {
 		$enforcePassword = $this->config->getAppValue('sharebymail', 'enforcePasswordProtection', $this->enforcePasswordProtectionDefault);
 		return $enforcePassword === 'yes';
 	}
-
 }

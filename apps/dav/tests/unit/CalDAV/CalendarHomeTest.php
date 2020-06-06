@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright Copyright (c) 2017, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -31,7 +32,6 @@ use OCA\DAV\CalDAV\Integration\ExternalCalendar;
 use OCA\DAV\CalDAV\Integration\ICalendarProvider;
 use OCA\DAV\CalDAV\Outbox;
 use Sabre\CalDAV\Schedule\Inbox;
-use Sabre\DAV\Exception\NotFound;
 use Sabre\DAV\MkCol;
 use Test\TestCase;
 
@@ -73,10 +73,10 @@ class CalendarHomeTest extends TestCase {
 		$mkCol = $this->createMock(MkCol::class);
 
 		$mkCol->method('getResourceType')
-			->will($this->returnValue(['{DAV:}collection',
-				'{urn:ietf:params:xml:ns:caldav}calendar']));
+			->willReturn(['{DAV:}collection',
+				'{urn:ietf:params:xml:ns:caldav}calendar']);
 		$mkCol->method('getRemainingValues')
-			->will($this->returnValue(['... properties ...']));
+			->willReturn(['... properties ...']);
 
 		$this->backend->expects($this->once())
 			->method('createCalendar')

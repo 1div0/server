@@ -133,7 +133,6 @@ class MailSettingsControllerTest extends \Test\TestCase {
 			null
 		);
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
-
 	}
 
 	public function testStoreCredentials() {
@@ -153,20 +152,20 @@ class MailSettingsControllerTest extends \Test\TestCase {
 		$user = $this->createMock(User::class);
 		$user->expects($this->any())
 			->method('getUID')
-			->will($this->returnValue('Werner'));
+			->willReturn('Werner');
 		$user->expects($this->any())
 			->method('getDisplayName')
-			->will($this->returnValue('Werner Brösel'));
+			->willReturn('Werner Brösel');
 
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			});
 		$this->userSession
 			->expects($this->any())
 			->method('getUser')
-			->will($this->returnValue($user));
+			->willReturn($user);
 
 		// Ensure that it fails when no mail address has been specified
 		$response = $this->mailController->sendTestMail();
@@ -177,7 +176,7 @@ class MailSettingsControllerTest extends \Test\TestCase {
 		$this->config
 			->expects($this->any())
 			->method('getUserValue')
-			->will($this->returnValue('mail@example.invalid'));
+			->willReturn('mail@example.invalid');
 		$this->mailer->expects($this->once())
 			->method('createMessage')
 			->willReturn($this->createMock(Message::class));
@@ -189,5 +188,4 @@ class MailSettingsControllerTest extends \Test\TestCase {
 		$response = $this->mailController->sendTestMail();
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 	}
-
 }

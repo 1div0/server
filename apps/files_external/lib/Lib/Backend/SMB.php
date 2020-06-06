@@ -38,7 +38,6 @@ use OCP\IL10N;
 use OCP\IUser;
 
 class SMB extends Backend {
-
 	use LegacyDependencyCheckPolyfill;
 
 	public function __construct(IL10N $l, Password $legacyAuth) {
@@ -57,6 +56,10 @@ class SMB extends Backend {
 				(new DefinitionParameter('show_hidden', $l->t('Show hidden files')))
 					->setType(DefinitionParameter::VALUE_BOOLEAN)
 					->setFlag(DefinitionParameter::FLAG_OPTIONAL),
+				(new DefinitionParameter('check_acl', $l->t('Verify ACL access when listing files')))
+					->setType(DefinitionParameter::VALUE_BOOLEAN)
+					->setFlag(DefinitionParameter::FLAG_OPTIONAL)
+					->setTooltip($l->t("Check the ACL's of each file or folder inside a directory to filter out items where the user has no read permissions, comes with a performance penalty")),
 				(new DefinitionParameter('timeout', $l->t('Timeout')))
 					->setType(DefinitionParameter::VALUE_HIDDEN)
 					->setFlag(DefinitionParameter::FLAG_OPTIONAL),
@@ -90,5 +93,4 @@ class SMB extends Backend {
 
 		$storage->setBackendOption('auth', $smbAuth);
 	}
-
 }

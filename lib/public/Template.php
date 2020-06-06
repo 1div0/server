@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -124,7 +125,7 @@ class Template extends \OC_Template {
 	 * @since 8.0.0
 	 * @suppress PhanDeprecatedFunction
 	 */
-	public static function html_select_options($options, $selected, $params=array()) {
+	public static function html_select_options($options, $selected, $params=[]) {
 		return \html_select_options($options, $selected, $params);
 	}
 }

@@ -21,7 +21,7 @@
 
 <template>
 	<div id="security" class="section">
-		<h2>{{ t('settings', 'Devices & sessions') }}</h2>
+		<h2>{{ t('settings', 'Devices & sessions', {}, undefined, {sanitize: false}) }}</h2>
 		<p class="settings-hint hidden-when-empty">
 			{{ t('settings', 'Web, desktop and mobile clients currently logged in to your account.') }}
 		</p>
@@ -36,7 +36,8 @@
 
 <script>
 import axios from '@nextcloud/axios'
-import confirmPassword from 'nextcloud-password-confirmation'
+import confirmPassword from '@nextcloud/password-confirmation'
+import { generateUrl } from '@nextcloud/router'
 
 import AuthTokenList from './AuthTokenList'
 import AuthTokenSetupDialogue from './AuthTokenSetupDialogue'
@@ -80,7 +81,7 @@ export default {
 	},
 	data() {
 		return {
-			baseUrl: OC.generateUrl('/settings/personal/authtokens'),
+			baseUrl: generateUrl('/settings/personal/authtokens'),
 		}
 	},
 	methods: {

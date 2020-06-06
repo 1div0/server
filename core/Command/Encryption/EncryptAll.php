@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Evgeny Golyshev <eugulixes@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Matthew Setter <matthew@matthewsetter.com>
@@ -106,7 +107,7 @@ class EncryptAll extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		if ( !$input->isInteractive() ) {
+		if (!$input->isInteractive()) {
 			$output->writeln('Invalid TTY.');
 			$output->writeln('If you are trying to execute the command in a Docker ');
 			$output->writeln("container, do not forget to execute 'docker exec' with");
@@ -142,5 +143,4 @@ class EncryptAll extends Command {
 			$output->writeln('aborted');
 		}
 	}
-
 }

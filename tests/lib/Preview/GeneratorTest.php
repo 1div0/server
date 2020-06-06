@@ -33,7 +33,6 @@ use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IConfig;
 use OCP\IImage;
 use OCP\IPreview;
-use OCP\Preview\IProvider;
 use OCP\Preview\IProviderV2;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -113,7 +112,7 @@ class GeneratorTest extends \Test\TestCase {
 			->method('dispatch')
 			->with(
 				$this->equalTo(IPreview::EVENT),
-				$this->callback(function(GenericEvent $event) use ($file) {
+				$this->callback(function (GenericEvent $event) use ($file) {
 					return $event->getSubject() === $file &&
 						$event->getArgument('width') === 100 &&
 						$event->getArgument('height') === 100;
@@ -147,9 +146,9 @@ class GeneratorTest extends \Test\TestCase {
 			->willReturn($previewFolder);
 
 		$this->config->method('getSystemValue')
-			->will($this->returnCallback(function($key, $defult) {
+			->willReturnCallback(function ($key, $defult) {
 				return $defult;
-			}));
+			});
 
 		$invalidProvider = $this->createMock(IProviderV2::class);
 		$invalidProvider->method('isAvailable')
@@ -169,20 +168,20 @@ class GeneratorTest extends \Test\TestCase {
 			]);
 
 		$this->helper->method('getProvider')
-			->will($this->returnCallback(function($provider) use ($invalidProvider, $validProvider, $unavailableProvider) {
+			->willReturnCallback(function ($provider) use ($invalidProvider, $validProvider, $unavailableProvider) {
 				if ($provider === 'wrongProvider') {
 					$this->fail('Wrongprovider should not be constructed!');
-				} else if ($provider === 'brokenProvider') {
+				} elseif ($provider === 'brokenProvider') {
 					return false;
-				} else if ($provider === 'invalidProvider') {
+				} elseif ($provider === 'invalidProvider') {
 					return $invalidProvider;
-				} else if ($provider === 'validProvider') {
+				} elseif ($provider === 'validProvider') {
 					return $validProvider;
-				} else if ($provider === 'unavailableProvider') {
+				} elseif ($provider === 'unavailableProvider') {
 					return $unavailableProvider;
 				}
 				$this->fail('Unexpected provider requested');
-			}));
+			});
 
 		$image = $this->createMock(IImage::class);
 		$image->method('width')->willReturn(2048);
@@ -191,13 +190,13 @@ class GeneratorTest extends \Test\TestCase {
 		$image->method('dataMimeType')->willReturn('image/png');
 
 		$this->helper->method('getThumbnail')
-			->will($this->returnCallback(function ($provider, $file, $x, $y) use ($invalidProvider, $validProvider, $image) {
+			->willReturnCallback(function ($provider, $file, $x, $y) use ($invalidProvider, $validProvider, $image) {
 				if ($provider === $validProvider) {
 					return $image;
 				} else {
 					return false;
 				}
-			}));
+			});
 
 		$image->method('data')
 			->willReturn('my data');
@@ -211,14 +210,14 @@ class GeneratorTest extends \Test\TestCase {
 		$previewFolder->method('getDirectoryListing')
 			->willReturn([]);
 		$previewFolder->method('newFile')
-			->will($this->returnCallback(function($filename) use ($maxPreview, $previewFile) {
+			->willReturnCallback(function ($filename) use ($maxPreview, $previewFile) {
 				if ($filename === '2048-2048-max.png') {
 					return $maxPreview;
-				} else if ($filename === '256-256.png') {
+				} elseif ($filename === '256-256.png') {
 					return $previewFile;
 				}
 				$this->fail('Unexpected file');
-			}));
+			});
 
 		$maxPreview->expects($this->once())
 			->method('putContent')
@@ -228,18 +227,10 @@ class GeneratorTest extends \Test\TestCase {
 			->with($this->equalTo('256-256.png'))
 			->willThrowException(new NotFoundException());
 
-		$image = $this->createMock(IImage::class);
+		$image = $this->getMockImage(2048, 2048, 'my resized data');
 		$this->helper->method('getImage')
 			->with($this->equalTo($maxPreview))
 			->willReturn($image);
-
-		$image->expects($this->once())
-			->method('resize')
-			->with(256);
-		$image->method('data')
-			->willReturn('my resized data');
-		$image->method('valid')->willReturn(true);
-		$image->method('dataMimeType')->willReturn('image/png');
 
 		$previewFile->expects($this->once())
 			->method('putContent')
@@ -249,7 +240,7 @@ class GeneratorTest extends \Test\TestCase {
 			->method('dispatch')
 			->with(
 				$this->equalTo(IPreview::EVENT),
-				$this->callback(function(GenericEvent $event) use ($file) {
+				$this->callback(function (GenericEvent $event) use ($file) {
 					return $event->getSubject() === $file &&
 					$event->getArgument('width') === 100 &&
 					$event->getArgument('height') === 100;
@@ -275,7 +266,7 @@ class GeneratorTest extends \Test\TestCase {
 			->method('dispatch')
 			->with(
 				$this->equalTo(IPreview::EVENT),
-				$this->callback(function(GenericEvent $event) use ($file) {
+				$this->callback(function (GenericEvent $event) use ($file) {
 					return $event->getSubject() === $file &&
 					$event->getArgument('width') === 0 &&
 					$event->getArgument('height') === 0 &&
@@ -315,7 +306,7 @@ class GeneratorTest extends \Test\TestCase {
 			->method('dispatch')
 			->with(
 				$this->equalTo(IPreview::EVENT),
-				$this->callback(function(GenericEvent $event) use ($file) {
+				$this->callback(function (GenericEvent $event) use ($file) {
 					return $event->getSubject() === $file &&
 					$event->getArgument('width') === 100 &&
 					$event->getArgument('height') === 100;
@@ -324,6 +315,27 @@ class GeneratorTest extends \Test\TestCase {
 
 		$this->expectException(NotFoundException::class);
 		$this->generator->getPreview($file, 100, 100);
+	}
+
+	private function getMockImage($width, $height, $data = null) {
+		$image = $this->createMock(IImage::class);
+		$image->method('height')->willReturn($width);
+		$image->method('width')->willReturn($height);
+		$image->method('valid')->willReturn(true);
+		$image->method('dataMimeType')->willReturn('image/png');
+		$image->method('data')->willReturn($data);
+
+		$image->method('resizeCopy')->willReturnCallback(function ($size) use ($data) {
+			return $this->getMockImage($size, $size, $data);
+		});
+		$image->method('preciseResizeCopy')->willReturnCallback(function ($width, $height) use ($data) {
+			return $this->getMockImage($width, $height, $data);
+		});
+		$image->method('cropCopy')->willReturnCallback(function ($x, $y, $width, $height) use ($data) {
+			return $this->getMockImage($width, $height, $data);
+		});
+
+		return $image;
 	}
 
 	public function dataSize() {
@@ -410,14 +422,10 @@ class GeneratorTest extends \Test\TestCase {
 			->with($this->equalTo($filename))
 			->willThrowException(new NotFoundException());
 
-		$image = $this->createMock(IImage::class);
+		$image = $this->getMockImage($maxX, $maxY);
 		$this->helper->method('getImage')
 			->with($this->equalTo($maxPreview))
 			->willReturn($image);
-		$image->method('height')->willReturn($maxY);
-		$image->method('width')->willReturn($maxX);
-		$image->method('valid')->willReturn(true);
-		$image->method('dataMimeType')->willReturn('image/png');
 
 		$preview = $this->createMock(ISimpleFile::class);
 		$previewFolder->method('newFile')
@@ -428,7 +436,7 @@ class GeneratorTest extends \Test\TestCase {
 			->method('dispatch')
 			->with(
 				$this->equalTo(IPreview::EVENT),
-				$this->callback(function(GenericEvent $event) use ($file, $reqX, $reqY, $crop, $mode) {
+				$this->callback(function (GenericEvent $event) use ($file, $reqX, $reqY, $crop, $mode) {
 					return $event->getSubject() === $file &&
 					$event->getArgument('width') === $reqX &&
 					$event->getArgument('height') === $reqY &&

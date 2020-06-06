@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Arthur Schiwon <blizzz@arthur-schiwon.de>
@@ -27,6 +28,7 @@ namespace OCA\WorkflowEngine\Settings;
 use OCA\WorkflowEngine\AppInfo\Application;
 use OCA\WorkflowEngine\Manager;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\Settings\ISettings;
@@ -49,31 +51,39 @@ abstract class ASettings implements ISettings {
 	private $eventDispatcher;
 
 	/** @var Manager */
-	private $manager;
+	protected $manager;
 
 	/** @var IInitialStateService */
 	private $initialStateService;
+
+	/** @var IConfig */
+	private $config;
 
 	/**
 	 * @param string $appName
 	 * @param IL10N $l
 	 * @param EventDispatcherInterface $eventDispatcher
+	 * @param Manager $manager
+	 * @param IInitialStateService $initialStateService
+	 * @param IConfig $config
 	 */
 	public function __construct(
 		$appName,
 		IL10N $l,
 		EventDispatcherInterface $eventDispatcher,
 		Manager $manager,
-		IInitialStateService $initialStateService
+		IInitialStateService $initialStateService,
+		IConfig $config
 	) {
 		$this->appName = $appName;
 		$this->l10n = $l;
 		$this->eventDispatcher = $eventDispatcher;
 		$this->manager = $manager;
 		$this->initialStateService = $initialStateService;
+		$this->config = $config;
 	}
 
-	abstract function getScope(): int;
+	abstract public function getScope(): int;
 
 	/**
 	 * @return TemplateResponse
@@ -108,6 +118,12 @@ abstract class ASettings implements ISettings {
 			$this->getScope()
 		);
 
+		$this->initialStateService->provideInitialState(
+			Application::APP_ID,
+			'appstoreenabled',
+			$this->config->getSystemValueBool('appstoreenabled', true)
+		);
+
 		return new TemplateResponse(Application::APP_ID, 'settings', [], 'blank');
 	}
 
@@ -131,7 +147,7 @@ abstract class ASettings implements ISettings {
 
 	private function entitiesToArray(array $entities) {
 		return array_map(function (IEntity $entity) {
-			$events = array_map(function(IEntityEvent $entityEvent) {
+			$events = array_map(function (IEntityEvent $entityEvent) {
 				return [
 					'eventName' => $entityEvent->getEventName(),
 					'displayName' => $entityEvent->getDisplayName()
@@ -148,7 +164,7 @@ abstract class ASettings implements ISettings {
 	}
 
 	private function operatorsToArray(array $operators) {
-		$operators = array_filter($operators, function(IOperation $operator) {
+		$operators = array_filter($operators, function (IOperation $operator) {
 			return $operator->isAvailableForScope($this->getScope());
 		});
 
@@ -166,7 +182,7 @@ abstract class ASettings implements ISettings {
 	}
 
 	private function checksToArray(array $checks) {
-		$checks = array_filter($checks, function(ICheck $check) {
+		$checks = array_filter($checks, function (ICheck $check) {
 			return $check->isAvailableForScope($this->getScope());
 		});
 

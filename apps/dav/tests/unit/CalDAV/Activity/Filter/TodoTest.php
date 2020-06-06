@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -44,7 +45,7 @@ class TodoTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function($string, $args) {
+			->willReturnCallback(function ($string, $args) {
 				return vsprintf($string, $args);
 			});
 

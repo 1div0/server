@@ -6,9 +6,10 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2019, Thomas Citharel
  * @copyright Copyright (c) 2019, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -36,16 +37,13 @@ use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\L10N\IFactory as L10NFactory;
-use OCP\Mail\IAttachment;
 use OCP\Mail\IEMailTemplate;
 use OCP\Mail\IMailer;
 use OCP\Mail\IMessage;
 use Sabre\VObject\Component\VCalendar;
-use Test\TestCase;
 
 class EmailProviderTest extends AbstractNotificationProviderTest {
-
-	const USER_EMAIL = 'frodo@hobb.it';
+	public const USER_EMAIL = 'frodo@hobb.it';
 
 	/** @var ILogger|\PHPUnit\Framework\MockObject\MockObject */
 	protected $logger;
@@ -118,15 +116,15 @@ class EmailProviderTest extends AbstractNotificationProviderTest {
 
 		$enL10N = $this->createMock(IL10N::class);
 		$enL10N->method('t')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 		$enL10N->method('l')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 
 		$deL10N = $this->createMock(IL10N::class);
 		$deL10N->method('t')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 		$deL10N->method('l')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 
 		$this->l10nFactory->expects($this->at(0))
 			->method('findLanguage')
@@ -240,15 +238,15 @@ class EmailProviderTest extends AbstractNotificationProviderTest {
 
 		$enL10N = $this->createMock(IL10N::class);
 		$enL10N->method('t')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 		$enL10N->method('l')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 
 		$deL10N = $this->createMock(IL10N::class);
 		$deL10N->method('t')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 		$deL10N->method('l')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 
 		$this->l10nFactory->expects($this->at(0))
 			->method('findLanguage')

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -88,11 +89,11 @@ class SystemTagMappingNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($this->once())
 			->method('canUserSeeTag')
 			->with($node->getSystemTag())
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->tagManager->expects($this->once())
 			->method('canUserAssignTag')
 			->with($node->getSystemTag())
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->tagManager->expects($this->never())
 			->method('deleteTags');
 		$this->tagMapper->expects($this->once())
@@ -124,11 +125,11 @@ class SystemTagMappingNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($this->any())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue($tag->isUserVisible()));
+			->willReturn($tag->isUserVisible());
 		$this->tagManager->expects($this->any())
 			->method('canUserAssignTag')
 			->with($tag)
-			->will($this->returnValue($tag->isUserAssignable()));
+			->willReturn($tag->isUserAssignable());
 		$this->tagManager->expects($this->never())
 			->method('deleteTags');
 		$this->tagMapper->expects($this->never())
@@ -154,11 +155,11 @@ class SystemTagMappingNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($this->once())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue($tag->isUserVisible()));
+			->willReturn($tag->isUserVisible());
 		$this->tagManager->expects($this->once())
 			->method('canUserAssignTag')
 			->with($tag)
-			->will($this->returnValue($tag->isUserAssignable()));
+			->willReturn($tag->isUserAssignable());
 		$this->tagMapper->expects($this->once())
 			->method('unassignTags')
 			->with(123, 'files', 1)

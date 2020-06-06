@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019, Thomas Citharel
  *
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -38,5 +38,4 @@ class NotificationTypeDoesNotExistException extends \Exception {
 	public function __construct(string $type) {
 		parent::__construct("Type $type is not an accepted type of notification");
 	}
-
 }

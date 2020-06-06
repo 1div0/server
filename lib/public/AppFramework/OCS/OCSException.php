@@ -2,6 +2,7 @@
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -31,4 +32,5 @@ use Exception;
  * @package OCP\AppFramework
  * @since 9.1.0
  */
-class OCSException extends Exception {}
+class OCSException extends Exception {
+}

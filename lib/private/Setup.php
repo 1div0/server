@@ -25,6 +25,7 @@
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Sean Comeau <sean@ftlnetworks.ca>
  * @author Serge Martin <edb@sigluy.net>
+ * @author Simounet <contact@simounet.net>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  * @author Vincent Petry <pvince81@owncloud.com>
  *
@@ -59,7 +60,6 @@ use OCP\Defaults;
 use OCP\IGroup;
 use OCP\IL10N;
 use OCP\ILogger;
-use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
 class Setup {
@@ -105,7 +105,7 @@ class Setup {
 		$this->installer = $installer;
 	}
 
-	static protected $dbSetupClasses = [
+	protected static $dbSetupClasses = [
 		'mysql' => \OC\Setup\MySQL::class,
 		'pgsql' => \OC\Setup\PostgreSQL::class,
 		'oci' => \OC\Setup\OCI::class,
@@ -182,7 +182,7 @@ class Setup {
 			throw new Exception('Supported databases are not properly configured.');
 		}
 
-		$supportedDatabases = array();
+		$supportedDatabases = [];
 
 		foreach ($configuredDatabases as $database) {
 			if (array_key_exists($database, $availableDatabases)) {
@@ -263,7 +263,7 @@ class Setup {
 			];
 		}
 
-		return array(
+		return [
 			'hasSQLite' => isset($databases['sqlite']),
 			'hasMySQL' => isset($databases['mysql']),
 			'hasPostgreSQL' => isset($databases['pgsql']),
@@ -272,7 +272,7 @@ class Setup {
 			'directory' => $dataDir,
 			'htaccessWorking' => $htAccessWorking,
 			'errors' => $errors,
-		);
+		];
 	}
 
 	/**
@@ -282,7 +282,7 @@ class Setup {
 	public function install($options) {
 		$l = $this->l10n;
 
-		$error = array();
+		$error = [];
 		$dbType = $options['dbtype'];
 
 		if (empty($options['adminlogin'])) {
@@ -310,7 +310,7 @@ class Setup {
 
 		// validate the data directory
 		if ((!is_dir($dataDir) && !mkdir($dataDir)) || !is_writable($dataDir)) {
-			$error[] = $l->t("Can't create or write into the data directory %s", array($dataDir));
+			$error[] = $l->t("Can't create or write into the data directory %s", [$dataDir]);
 		}
 
 		if (!empty($error)) {
@@ -543,6 +543,7 @@ class Setup {
 			$content .= "\n  RewriteCond %{REQUEST_FILENAME} !/ocs-provider/";
 			$content .= "\n  RewriteCond %{REQUEST_FILENAME} !/ocm-provider/";
 			$content .= "\n  RewriteCond %{REQUEST_URI} !^/\\.well-known/(acme-challenge|pki-validation)/.*";
+			$content .= "\n  RewriteCond %{REQUEST_FILENAME} !/richdocumentscode/proxy.php$";
 			$content .= "\n  RewriteRule . index.php [PT,E=PATH_INFO:$1]";
 			$content .= "\n  RewriteBase " . $rewriteBase;
 			$content .= "\n  <IfModule mod_env.c>";

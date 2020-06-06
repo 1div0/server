@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -104,7 +105,8 @@ class Manager {
 		// Write the private and public key to the disk
 		try {
 			$this->appData->newFolder($id);
-		} catch (\Exception $e) {}
+		} catch (\Exception $e) {
+		}
 		$folder = $this->appData->getFolder($id);
 		$folder->newFile('private')
 			->putContent($this->crypto->encrypt($privateKey));
@@ -167,6 +169,4 @@ class Manager {
 		}
 		$this->logger->critical('Something is wrong with your openssl setup: ' . implode(', ', $errors));
 	}
-
-
 }

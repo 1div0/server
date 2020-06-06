@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -60,7 +61,7 @@ class CommentsPropertiesPluginTest extends \Test\TestCase {
 
 	public function nodeProvider() {
 		$mocks = [];
-		foreach(['\OCA\DAV\Connector\Sabre\File', '\OCA\DAV\Connector\Sabre\Directory', '\Sabre\DAV\INode'] as $class) {
+		foreach (['\OCA\DAV\Connector\Sabre\File', '\OCA\DAV\Connector\Sabre\Directory', '\Sabre\DAV\INode'] as $class) {
 			$mocks[] = 	$this->getMockBuilder($class)
 				->disableOriginalConstructor()
 				->getMock();
@@ -83,7 +84,7 @@ class CommentsPropertiesPluginTest extends \Test\TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 
-		if($expectedSuccessful) {
+		if ($expectedSuccessful) {
 			$propFind->expects($this->exactly(3))
 				->method('handle');
 		} else {
@@ -114,11 +115,11 @@ class CommentsPropertiesPluginTest extends \Test\TestCase {
 			->getMock();
 		$node->expects($this->any())
 			->method('getId')
-			->will($this->returnValue($fid));
+			->willReturn($fid);
 
 		$this->server->expects($this->once())
 			->method('getBaseUri')
-			->will($this->returnValue($baseUri));
+			->willReturn($baseUri);
 
 		$href = $this->plugin->getCommentsLink($node);
 		$this->assertSame($expectedHref, $href);
@@ -145,22 +146,21 @@ class CommentsPropertiesPluginTest extends \Test\TestCase {
 			->getMock();
 		$node->expects($this->any())
 			->method('getId')
-			->will($this->returnValue('4567'));
+			->willReturn('4567');
 
 		$this->userSession->expects($this->once())
 			->method('getUser')
-			->will($this->returnValue($user));
+			->willReturn($user);
 
 		$this->commentsManager->expects($this->any())
 			->method('getNumberOfCommentsForObject')
-			->will($this->returnValue(42));
+			->willReturn(42);
 
 		$unread = $this->plugin->getUnreadCount($node);
-		if(is_null($user)) {
+		if (is_null($user)) {
 			$this->assertNull($unread);
 		} else {
 			$this->assertSame($unread, 42);
 		}
 	}
-
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright 2018, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -51,7 +52,7 @@ class FederatedSharesDiscoverJob extends TimedJob {
 			->from('share_external');
 
 		$result = $qb->execute();
-		while($row = $result->fetch()) {
+		while ($row = $result->fetch()) {
 			$this->discoveryService->discover($row['remote'], 'FEDERATED_SHARING', true);
 		}
 		$result->closeCursor();

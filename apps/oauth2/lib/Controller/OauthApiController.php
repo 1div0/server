@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Lukas Reschke <lukas@statuscode.ch>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -99,7 +100,7 @@ class OauthApiController extends Controller {
 		}
 
 		// We handle the initial and refresh tokens the same way
-		if ($grant_type === 'refresh_token' ) {
+		if ($grant_type === 'refresh_token') {
 			$code = $refresh_token;
 		}
 

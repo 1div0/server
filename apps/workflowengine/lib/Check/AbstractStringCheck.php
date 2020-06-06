@@ -21,7 +21,6 @@
 
 namespace OCA\WorkflowEngine\Check;
 
-
 use OCP\IL10N;
 use OCP\WorkflowEngine\ICheck;
 use OCP\WorkflowEngine\IManager;
@@ -51,7 +50,7 @@ abstract class AbstractStringCheck implements ICheck {
 	 * @param string $value
 	 * @return bool
 	 */
-	public function executeCheck($operator, $value)  {
+	public function executeCheck($operator, $value) {
 		$actualValue = $this->getActualValue();
 		return $this->executeStringCheck($operator, $value, $actualValue);
 	}
@@ -65,7 +64,7 @@ abstract class AbstractStringCheck implements ICheck {
 	protected function executeStringCheck($operator, $checkValue, $actualValue) {
 		if ($operator === 'is') {
 			return $checkValue === $actualValue;
-		} else if ($operator === '!is') {
+		} elseif ($operator === '!is') {
 			return $checkValue !== $actualValue;
 		} else {
 			$match = $this->match($checkValue, $actualValue);

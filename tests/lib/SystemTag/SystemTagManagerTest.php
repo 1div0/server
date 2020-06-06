@@ -6,7 +6,7 @@
  * later.
  * See the COPYING-README file.
  *
-*/
+ */
 
 namespace Test\SystemTag;
 
@@ -15,7 +15,6 @@ use OC\SystemTag\SystemTagObjectMapper;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUser;
-use OCP\IUserManager;
 use OCP\SystemTag\ISystemTag;
 use OCP\SystemTag\ISystemTagManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -439,13 +438,13 @@ class SystemTagManagerTest extends TestCase {
 		$user = $this->getMockBuilder(IUser::class)->getMock();
 		$user->expects($this->any())
 			->method('getUID')
-			->will($this->returnValue('test'));
+			->willReturn('test');
 		$tag1 = $this->tagManager->createTag('one', $userVisible, $userAssignable);
 
 		$this->groupManager->expects($this->any())
 			->method('isAdmin')
 			->with('test')
-			->will($this->returnValue($isAdmin));
+			->willReturn($isAdmin);
 
 		$this->assertEquals($expectedResult, $this->tagManager->canUserSeeTag($tag1, $user));
 	}
@@ -486,18 +485,18 @@ class SystemTagManagerTest extends TestCase {
 		$user = $this->getMockBuilder(IUser::class)->getMock();
 		$user->expects($this->any())
 			->method('getUID')
-			->will($this->returnValue('test'));
+			->willReturn('test');
 		$tag1 = $this->tagManager->createTag('one', $userVisible, $userAssignable);
 		$this->tagManager->setTagGroups($tag1, $tagGroupIds);
 
 		$this->groupManager->expects($this->any())
 			->method('isAdmin')
 			->with('test')
-			->will($this->returnValue($isAdmin));
+			->willReturn($isAdmin);
 		$this->groupManager->expects($this->any())
 			->method('getUserGroupIds')
 			->with($user)
-			->will($this->returnValue($userGroupIds));
+			->willReturn($userGroupIds);
 
 		$this->assertEquals($expectedResult, $this->tagManager->canUserAssignTag($tag1, $user));
 	}
@@ -538,5 +537,4 @@ class SystemTagManagerTest extends TestCase {
 		$this->assertEquals($tag1->isUserVisible(), $tag2->isUserVisible());
 		$this->assertEquals($tag1->isUserAssignable(), $tag2->isUserAssignable());
 	}
-
 }

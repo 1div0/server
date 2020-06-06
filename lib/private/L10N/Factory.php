@@ -16,7 +16,7 @@
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license AGPL-3.0
  *
@@ -72,7 +72,7 @@ class Factory implements IFactory {
 	 */
 	protected $pluralFunctions = [];
 
-	const COMMON_LANGUAGE_CODES = [
+	public const COMMON_LANGUAGE_CODES = [
 		'en', 'es', 'fr', 'de', 'de_DE', 'ja', 'ar', 'ru', 'nl', 'it',
 		'pt_BR', 'pt_PT', 'da', 'fi_FI', 'nb_NO', 'sv', 'tr', 'zh_CN', 'ko'
 	];
@@ -114,11 +114,10 @@ class Factory implements IFactory {
 	 * @return \OCP\IL10N
 	 */
 	public function get($app, $lang = null, $locale = null) {
-		return new LazyL10N(function() use ($app, $lang, $locale) {
-
+		return new LazyL10N(function () use ($app, $lang, $locale) {
 			$app = \OC_App::cleanAppId($app);
 			if ($lang !== null) {
-				$lang = str_replace(array('\0', '/', '\\', '..'), '', (string)$lang);
+				$lang = str_replace(['\0', '/', '\\', '..'], '', (string)$lang);
 			}
 
 			$forceLang = $this->config->getSystemValue('force_language', false);
@@ -264,7 +263,7 @@ class Factory implements IFactory {
 		if ($this->languageExists($app, $locale)) {
 			return $locale;
 		}
-		
+
 		// Try to split e.g: fr_FR => fr
 		$locale = explode('_', $locale)[0];
 		if ($this->languageExists($app, $locale)) {
@@ -353,7 +352,7 @@ class Factory implements IFactory {
 
 	public function getLanguageIterator(IUser $user = null): ILanguageIterator {
 		$user = $user ?? $this->userSession->getUser();
-		if($user === null) {
+		if ($user === null) {
 			throw new \RuntimeException('Failed to get an IUser instance');
 		}
 		return new LanguageIterator($user, $this->config);
@@ -369,7 +368,7 @@ class Factory implements IFactory {
 		}
 
 		$locales = $this->findAvailableLocales();
-		$userLocale = array_filter($locales, function($value) use ($locale) {
+		$userLocale = array_filter($locales, function ($value) use ($locale) {
 			return $locale === $value['code'];
 		});
 
@@ -505,7 +504,7 @@ class Factory implements IFactory {
 			if (file_exists($this->serverRoot . '/' . $app . '/l10n/')) {
 				return $this->serverRoot . '/' . $app . '/l10n/';
 			}
-		} else if ($app && \OC_App::getAppPath($app) !== false) {
+		} elseif ($app && \OC_App::getAppPath($app) !== false) {
 			// Check if the app is in the app folder
 			return \OC_App::getAppPath($app) . '/l10n/';
 		}
@@ -526,14 +525,14 @@ class Factory implements IFactory {
 			return $this->pluralFunctions[$string];
 		}
 
-		if (preg_match( '/^\s*nplurals\s*=\s*(\d+)\s*;\s*plural=(.*)$/u', $string, $matches)) {
+		if (preg_match('/^\s*nplurals\s*=\s*(\d+)\s*;\s*plural=(.*)$/u', $string, $matches)) {
 			// sanitize
-			$nplurals = preg_replace( '/[^0-9]/', '', $matches[1] );
-			$plural = preg_replace( '#[^n0-9:\(\)\?\|\&=!<>+*/\%-]#', '', $matches[2] );
+			$nplurals = preg_replace('/[^0-9]/', '', $matches[1]);
+			$plural = preg_replace('#[^n0-9:\(\)\?\|\&=!<>+*/\%-]#', '', $matches[2]);
 
 			$body = str_replace(
-				array( 'plural', 'n', '$n$plurals', ),
-				array( '$plural', '$n', '$nplurals', ),
+				[ 'plural', 'n', '$n$plurals', ],
+				[ '$plural', '$n', '$nplurals', ],
 				'nplurals='. $nplurals . '; plural=' . $plural
 			);
 
@@ -543,9 +542,9 @@ class Factory implements IFactory {
 			$res = '';
 			$p = 0;
 			$length = strlen($body);
-			for($i = 0; $i < $length; $i++) {
+			for ($i = 0; $i < $length; $i++) {
 				$ch = $body[$i];
-				switch ( $ch ) {
+				switch ($ch) {
 					case '?':
 						$res .= ' ? (';
 						$p++;
@@ -554,7 +553,7 @@ class Factory implements IFactory {
 						$res .= ') : (';
 						break;
 					case ';':
-						$res .= str_repeat( ')', $p ) . ';';
+						$res .= str_repeat(')', $p) . ';';
 						$p = 0;
 						break;
 					default:
@@ -586,7 +585,16 @@ class Factory implements IFactory {
 	public function getLanguages() {
 		$forceLanguage = $this->config->getSystemValue('force_language', false);
 		if ($forceLanguage !== false) {
-			return [];
+			$l = $this->get('lib', $forceLanguage);
+			$potentialName = (string) $l->t('__language_name__');
+
+			return [
+				'commonlanguages' => [[
+					'code' => $forceLanguage,
+					'name' => $potentialName,
+				]],
+				'languages' => [],
+			];
 		}
 
 		$languageCodes = $this->findAvailableLanguages();
@@ -594,25 +602,25 @@ class Factory implements IFactory {
 		$commonLanguages = [];
 		$languages = [];
 
-		foreach($languageCodes as $lang) {
+		foreach ($languageCodes as $lang) {
 			$l = $this->get('lib', $lang);
 			// TRANSLATORS this is the language name for the language switcher in the personal settings and should be the localized version
 			$potentialName = (string) $l->t('__language_name__');
 			if ($l->getLanguageCode() === $lang && $potentialName[0] !== '_') {//first check if the language name is in the translation file
-				$ln = array(
+				$ln = [
 					'code' => $lang,
 					'name' => $potentialName
-				);
-			} else if ($lang === 'en') {
-				$ln = array(
+				];
+			} elseif ($lang === 'en') {
+				$ln = [
 					'code' => $lang,
 					'name' => 'English (US)'
-				);
+				];
 			} else {//fallback to language code
-				$ln = array(
+				$ln = [
 					'code' => $lang,
 					'name' => $lang
-				);
+				];
 			}
 
 			// put appropriate languages into appropriate arrays, to print them sorted
@@ -627,7 +635,7 @@ class Factory implements IFactory {
 		ksort($commonLanguages);
 
 		// sort now by displayed language not the iso-code
-		usort( $languages, function ($a, $b) {
+		usort($languages, function ($a, $b) {
 			if ($a['code'] === $a['name'] && $b['code'] !== $b['name']) {
 				// If a doesn't have a name, but b does, list b before a
 				return 1;

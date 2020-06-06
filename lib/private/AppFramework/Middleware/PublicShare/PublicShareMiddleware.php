@@ -26,7 +26,6 @@ namespace OC\AppFramework\Middleware\PublicShare;
 use OC\AppFramework\Middleware\PublicShare\Exceptions\NeedAuthenticationException;
 use OCP\AppFramework\AuthPublicShareController;
 use OCP\AppFramework\Http\NotFoundResponse;
-use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\PublicShareController;
 use OCP\Files\NotFoundException;
@@ -90,7 +89,6 @@ class PublicShareMiddleware extends Middleware {
 		}
 
 		throw new NotFoundException();
-
 	}
 
 	public function afterException($controller, $methodName, \Exception $exception) {
@@ -124,7 +122,7 @@ class PublicShareMiddleware extends Middleware {
 		}
 
 		// Check whether public sharing is enabled
-		if($this->config->getAppValue('core', 'shareapi_allow_links', 'yes') !== 'yes') {
+		if ($this->config->getAppValue('core', 'shareapi_allow_links', 'yes') !== 'yes') {
 			return false;
 		}
 

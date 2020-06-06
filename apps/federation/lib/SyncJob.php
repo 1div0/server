@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -48,7 +49,7 @@ class SyncJob extends TimedJob {
 	}
 
 	protected function run($argument) {
-		$this->syncService->syncThemAll(function($url, $ex) {
+		$this->syncService->syncThemAll(function ($url, $ex) {
 			if ($ex instanceof \Exception) {
 				$this->logger->logException($ex, [
 					'message' => "Error while syncing $url.",

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Juan Pablo Villafáñez <jvillafanez@solidgear.es>
  * @author Robin Appelman <robin@icewind.nl>
@@ -26,7 +27,6 @@
  */
 
 namespace OCA\Files_External\Controller;
-
 
 use OCA\Files_External\NotFoundException;
 use OCA\Files_External\Service\GlobalStoragesService;
@@ -113,7 +113,7 @@ class GlobalStoragesController extends StoragesController {
 		$this->updateStorageStatus($newStorage);
 
 		return new DataResponse(
-			$newStorage,
+			$this->formatStorageForUI($newStorage),
 			Http::STATUS_CREATED
 		);
 	}
@@ -171,7 +171,7 @@ class GlobalStoragesController extends StoragesController {
 		} catch (NotFoundException $e) {
 			return new DataResponse(
 				[
-					'message' => (string)$this->l10n->t('Storage with ID "%d" not found', array($id))
+					'message' => (string)$this->l10n->t('Storage with ID "%d" not found', [$id])
 				],
 				Http::STATUS_NOT_FOUND
 			);
@@ -180,11 +180,8 @@ class GlobalStoragesController extends StoragesController {
 		$this->updateStorageStatus($storage, $testOnly);
 
 		return new DataResponse(
-			$storage,
+			$this->formatStorageForUI($storage),
 			Http::STATUS_OK
 		);
-
 	}
-
-
 }

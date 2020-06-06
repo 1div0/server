@@ -2,6 +2,7 @@
 /**
  * @copyright 2019, Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -150,7 +151,7 @@ trait PrincipalProxyTrait {
 					$proxy->setPermissions($proxy->getPermissions() | $permission);
 					$this->proxyMapper->update($proxy);
 
-					$proxies = array_filter($proxies, function(Proxy $p) use ($proxy) {
+					$proxies = array_filter($proxies, function (Proxy $p) use ($proxy) {
 						return $p->getId() !== $proxy->getId();
 					});
 					break;
@@ -193,7 +194,6 @@ trait PrincipalProxyTrait {
 
 		return $proxy === 'calendar-proxy-read'
 			|| $proxy === 'calendar-proxy-write';
-
 	}
 
 	/**

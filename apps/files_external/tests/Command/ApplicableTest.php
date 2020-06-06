@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -36,11 +37,11 @@ class ApplicableTest extends CommandTest {
 
 		$userManager->expects($this->any())
 			->method('userExists')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$groupManager->expects($this->any())
 			->method('groupExists')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		return new Applicable($storageService, $userManager, $groupManager);
 	}

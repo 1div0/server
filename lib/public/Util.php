@@ -5,6 +5,7 @@
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Individual IT Services <info@individual-it.net>
@@ -59,23 +60,23 @@ class Util {
 	/**
 	 * @deprecated 14.0.0 use \OCP\ILogger::DEBUG
 	 */
-	const DEBUG=0;
+	public const DEBUG=0;
 	/**
 	 * @deprecated 14.0.0 use \OCP\ILogger::INFO
 	 */
-	const INFO=1;
+	public const INFO=1;
 	/**
 	 * @deprecated 14.0.0 use \OCP\ILogger::WARN
 	 */
-	const WARN=2;
+	public const WARN=2;
 	/**
 	 * @deprecated 14.0.0 use \OCP\ILogger::ERROR
 	 */
-	const ERROR=3;
+	public const ERROR=3;
 	/**
 	 * @deprecated 14.0.0 use \OCP\ILogger::FATAL
 	 */
-	const FATAL=4;
+	public const FATAL=4;
 
 	/** \OCP\Share\IManager */
 	private static $shareManager;
@@ -97,7 +98,8 @@ class Util {
 			/** @var \OCP\Support\Subscription\IRegistry */
 			$subscriptionRegistry = \OC::$server->query(\OCP\Support\Subscription\IRegistry::class);
 			return $subscriptionRegistry->delegateHasExtendedSupport();
-		} catch (AppFramework\QueryException $e) {}
+		} catch (AppFramework\QueryException $e) {
+		}
 		return \OC::$server->getConfig()->getSystemValueBool('extendedSupport', false);
 	}
 
@@ -127,7 +129,7 @@ class Util {
 	 * @since 4.0.0
 	 * @deprecated 13.0.0 use log of \OCP\ILogger
 	 */
-	public static function writeLog( $app, $message, $level ) {
+	public static function writeLog($app, $message, $level) {
 		$context = ['app' => $app];
 		\OC::$server->getLogger()->log($level, $message, $context);
 	}
@@ -169,8 +171,8 @@ class Util {
 	 * @param string $file
 	 * @since 4.0.0
 	 */
-	public static function addStyle( $application, $file = null ) {
-		\OC_Util::addStyle( $application, $file );
+	public static function addStyle($application, $file = null) {
+		\OC_Util::addStyle($application, $file);
 	}
 
 	/**
@@ -179,8 +181,8 @@ class Util {
 	 * @param string $file
 	 * @since 4.0.0
 	 */
-	public static function addScript( $application, $file = null ) {
-		\OC_Util::addScript( $application, $file );
+	public static function addScript($application, $file = null) {
+		\OC_Util::addScript($application, $file);
 	}
 
 	/**
@@ -215,7 +217,7 @@ class Util {
 	 * @return string the url
 	 * @since 4.0.0 - parameter $args was added in 4.5.0
 	 */
-	public static function linkToAbsolute( $app, $file, $args = array() ) {
+	public static function linkToAbsolute($app, $file, $args = []) {
 		$urlGenerator = \OC::$server->getURLGenerator();
 		return $urlGenerator->getAbsoluteURL(
 			$urlGenerator->linkTo($app, $file, $args)
@@ -228,7 +230,7 @@ class Util {
 	 * @return string the url
 	 * @since 4.0.0
 	 */
-	public static function linkToRemote( $service ) {
+	public static function linkToRemote($service) {
 		$urlGenerator = \OC::$server->getURLGenerator();
 		$remoteBase = $urlGenerator->linkTo('', 'remote.php') . '/' . $service;
 		return $urlGenerator->getAbsoluteURL(
@@ -260,7 +262,7 @@ class Util {
 		$host_name = \OC::$server->getRequest()->getServerHost();
 		// strip away port number (if existing)
 		$colon_pos = strpos($host_name, ':');
-		if ($colon_pos != FALSE) {
+		if ($colon_pos != false) {
 			$host_name = substr($host_name, 0, $colon_pos);
 		}
 		return $host_name;
@@ -334,7 +336,7 @@ class Util {
 	 * TODO: write example
 	 * @since 4.0.0
 	 */
-	static public function connectHook($signalClass, $signalName, $slotClass, $slotName) {
+	public static function connectHook($signalClass, $signalName, $slotClass, $slotName) {
 		return \OC_Hook::connect($signalClass, $signalName, $slotClass, $slotName);
 	}
 
@@ -348,7 +350,7 @@ class Util {
 	 * TODO: write example
 	 * @since 4.0.0
 	 */
-	static public function emitHook($signalclass, $signalname, $params = array()) {
+	public static function emitHook($signalclass, $signalname, $params = []) {
 		return \OC_Hook::emit($signalclass, $signalname, $params);
 	}
 
@@ -365,7 +367,7 @@ class Util {
 	 * @since 4.5.0
 	 */
 	public static function callRegister() {
-		if(self::$token === '') {
+		if (self::$token === '') {
 			self::$token = \OC::$server->getCsrfTokenManager()->getToken()->getEncryptedValue();
 		}
 		return self::$token;

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -25,7 +26,6 @@
  */
 
 namespace OCA\Federation;
-
 
 use OC\Files\Filesystem;
 use OC\HintException;
@@ -303,7 +303,7 @@ class DbHandler {
 
 		if (strpos($url, 'https://') === 0) {
 			$normalized = substr($url, strlen('https://'));
-		} else if (strpos($url, 'http://') === 0) {
+		} elseif (strpos($url, 'http://') === 0) {
 			$normalized = substr($url, strlen('http://'));
 		}
 
@@ -331,5 +331,4 @@ class DbHandler {
 		$statement->closeCursor();
 		return !empty($result);
 	}
-
 }

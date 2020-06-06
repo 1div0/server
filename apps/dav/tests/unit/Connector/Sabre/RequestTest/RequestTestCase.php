@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -69,7 +70,8 @@ abstract class RequestTestCase extends TestCase {
 				->disableOriginalConstructor()
 				->getMock(),
 			\OC::$server->getPreviewManager(),
-			\OC::$server->getEventDispatcher()
+			\OC::$server->getEventDispatcher(),
+			\OC::$server->getL10N('dav')
 		);
 	}
 
@@ -92,7 +94,7 @@ abstract class RequestTestCase extends TestCase {
 	 * @return \Sabre\HTTP\Response
 	 * @throws \Exception
 	 */
-	protected function request($view, $user, $password, $method, $url, $body = null, $headers = null) {
+	protected function request($view, $user, $password, $method, $url, $body = null, $headers = []) {
 		if (is_string($body)) {
 			$body = $this->getStream($body);
 		}

@@ -12,7 +12,9 @@ import _ from 'underscore'
 import $ from 'jquery'
 import DOMPurify from 'dompurify'
 import Handlebars from 'handlebars'
+import identity from 'lodash/fp/identity'
 import escapeHTML from 'escape-html'
+import { generateFilePath } from '@nextcloud/router'
 
 import OC from './index'
 import {
@@ -48,7 +50,7 @@ const L10n = {
 		}
 
 		const self = this
-		const url = OC.filePath(appName, 'l10n', OC.getLocale() + '.json')
+		const url = generateFilePath(appName, 'l10n', OC.getLocale() + '.json')
 
 		// load JSON translation bundle per AJAX
 		return $.get(url)
@@ -84,14 +86,19 @@ const L10n = {
 	 * @param {number} [count] number to replace %n with
 	 * @param {array} [options] options array
 	 * @param {bool} [options.escape=true] enable/disable auto escape of placeholders (by default enabled)
+	 * @param {bool} [options.sanitize=true] enable/disable sanitization (by default enabled)
 	 * @returns {string}
 	 */
 	translate: function(app, text, vars, count, options) {
 		const defaultOptions = {
 			escape: true,
+			sanitize: true,
 		}
 		const allOptions = options || {}
 		_.defaults(allOptions, defaultOptions)
+
+		const optSanitize = allOptions.sanitize ? DOMPurify.sanitize : identity
+		const optEscape = allOptions.escape ? escapeHTML : identity
 
 		// TODO: cache this function to avoid inline recreation
 		// of the same function over and over again in case
@@ -101,13 +108,9 @@ const L10n = {
 				function(a, b) {
 					const r = vars[b]
 					if (typeof r === 'string' || typeof r === 'number') {
-						if (allOptions.escape) {
-							return DOMPurify.sanitize(escapeHTML(r))
-						} else {
-							return DOMPurify.sanitize(r)
-						}
+						return optSanitize(optEscape(r))
 					} else {
-						return DOMPurify.sanitize(a)
+						return optSanitize(a)
 					}
 				}
 			)
@@ -120,9 +123,9 @@ const L10n = {
 		}
 
 		if (typeof vars === 'object' || count !== undefined) {
-			return DOMPurify.sanitize(_build(translation, vars, count))
+			return optSanitize(_build(translation, vars, count))
 		} else {
-			return DOMPurify.sanitize(translation)
+			return optSanitize(translation)
 		}
 	},
 
@@ -319,16 +322,6 @@ const L10n = {
 }
 
 export default L10n
-
-/**
- * Returns the user's locale as a BCP 47 compliant language tag
- *
- * @returns {String} locale string
- */
-export const getCanonicalLocale = () => {
-	const locale = getLocale()
-	return typeof locale === 'string' ? locale.replace(/_/g, '-') : locale
-}
 
 /**
  * Returns the user's locale

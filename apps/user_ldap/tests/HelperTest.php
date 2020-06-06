@@ -2,6 +2,7 @@
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -23,7 +24,6 @@
  */
 
 namespace OCA\User_LDAP\Tests;
-
 
 use OCA\User_LDAP\Helper;
 use OCP\IConfig;
@@ -67,7 +67,7 @@ class HelperTest extends \Test\TestCase {
 			]);
 
 		$this->config->method('getAppValue')
-			->will($this->returnCallback(function($app, $key, $default) {
+			->willReturnCallback(function ($app, $key, $default) {
 				if ($app !== 'user_ldap') {
 					$this->fail('wrong app');
 				}
@@ -75,7 +75,7 @@ class HelperTest extends \Test\TestCase {
 					return '1';
 				}
 				return $default;
-			}));
+			});
 
 		$result = $this->helper->getServerConfigurationPrefixes(true);
 
@@ -93,7 +93,7 @@ class HelperTest extends \Test\TestCase {
 			]);
 
 		$this->config->method('getAppValue')
-			->will($this->returnCallback(function($app, $key, $default) {
+			->willReturnCallback(function ($app, $key, $default) {
 				if ($app !== 'user_ldap') {
 					$this->fail('wrong app');
 				}
@@ -104,7 +104,7 @@ class HelperTest extends \Test\TestCase {
 					return 'foo.bar.com';
 				}
 				return $default;
-			}));
+			});
 
 		$result = $this->helper->getServerConfigurationHosts();
 

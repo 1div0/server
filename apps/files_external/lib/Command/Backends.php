@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  *
  * @license AGPL-3.0
@@ -35,7 +36,7 @@ class Backends extends Base {
 	/** @var BackendService */
 	private $backendService;
 
-	function __construct(BackendService $backendService
+	public function __construct(BackendService $backendService
 	) {
 		parent::__construct();
 

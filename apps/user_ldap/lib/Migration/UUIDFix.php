@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,7 +24,6 @@
 
 namespace OCA\User_LDAP\Migration;
 
-
 use OC\BackgroundJob\QueuedJob;
 use OCA\User_LDAP\Mapping\AbstractMapping;
 use OCA\User_LDAP\Proxy;
@@ -38,14 +38,14 @@ abstract class UUIDFix extends QueuedJob {
 
 	public function run($argument) {
 		$isUser = $this->proxy instanceof User_Proxy;
-		foreach($argument['records'] as $record) {
+		foreach ($argument['records'] as $record) {
 			$access = $this->proxy->getLDAPAccess($record['name']);
 			$uuid = $access->getUUID($record['dn'], $isUser);
-			if($uuid === false) {
+			if ($uuid === false) {
 				// record not found, no prob, continue with the next
 				continue;
 			}
-			if($uuid !== $record['uuid']) {
+			if ($uuid !== $record['uuid']) {
 				$this->mapper->setUUIDbyDN($uuid, $record['dn']);
 			}
 		}

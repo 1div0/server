@@ -23,11 +23,9 @@
 
 namespace Test\AppFramework\Http;
 
-
 use OCP\AppFramework\Http\DownloadResponse;
 
 class ChildDownloadResponse extends DownloadResponse {
-
 };
 
 
@@ -50,6 +48,4 @@ class DownloadResponseTest extends \Test\TestCase {
 		$this->assertContains('attachment; filename="file"', $headers['Content-Disposition']);
 		$this->assertContains('content', $headers['Content-Type']);
 	}
-
-
 }

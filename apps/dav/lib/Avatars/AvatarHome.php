@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud GmbH
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -23,7 +24,6 @@
  */
 
 namespace OCA\DAV\Avatars;
-
 
 use OCP\IAvatarManager;
 use Sabre\DAV\Exception\Forbidden;
@@ -80,7 +80,7 @@ class AvatarHome implements ICollection {
 			return [
 				$this->getChild('96.jpeg')
 			];
-		} catch(NotFound $exception) {
+		} catch (NotFound $exception) {
 			return [];
 		}
 	}
@@ -117,6 +117,4 @@ class AvatarHome implements ICollection {
 	public function getLastModified() {
 		return null;
 	}
-
-
 }

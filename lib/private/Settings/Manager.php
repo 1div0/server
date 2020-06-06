@@ -5,7 +5,6 @@
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -33,7 +32,6 @@
 namespace OC\Settings;
 
 use Closure;
-use OC\Settings\Personal\PersonalInfo;
 use OCP\AppFramework\QueryException;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -232,7 +230,7 @@ class Manager implements IManager {
 	 */
 	public function getAdminSettings($section, bool $subAdminOnly = false): array {
 		if ($subAdminOnly) {
-			$subAdminSettingsFilter = function(ISettings $settings) {
+			$subAdminSettingsFilter = function (ISettings $settings) {
 				return $settings instanceof ISubAdminSettings;
 			};
 			$appSettings = $this->getSettings('admin', $section, $subAdminSettingsFilter);

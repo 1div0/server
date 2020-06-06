@@ -2,8 +2,10 @@
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Härtl <jus@bitgrid.net>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -24,10 +26,11 @@
 
 namespace OCA\DAV\CalDAV\Activity\Provider;
 
-use OCA\DAV\CalDAV\CalDavBackend;
+use OC_App;
 use OCP\Activity\IEvent;
 use OCP\Activity\IEventMerger;
 use OCP\Activity\IManager;
+use OCP\App\IAppManager;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -35,10 +38,9 @@ use OCP\IUserManager;
 use OCP\L10N\IFactory;
 
 class Event extends Base {
-
-	const SUBJECT_OBJECT_ADD = 'object_add';
-	const SUBJECT_OBJECT_UPDATE = 'object_update';
-	const SUBJECT_OBJECT_DELETE = 'object_delete';
+	public const SUBJECT_OBJECT_ADD = 'object_add';
+	public const SUBJECT_OBJECT_UPDATE = 'object_update';
+	public const SUBJECT_OBJECT_DELETE = 'object_delete';
 
 	/** @var IFactory */
 	protected $languageFactory;
@@ -46,14 +48,14 @@ class Event extends Base {
 	/** @var IL10N */
 	protected $l;
 
-	/** @var IURLGenerator */
-	protected $url;
-
 	/** @var IManager */
 	protected $activityManager;
 
 	/** @var IEventMerger */
 	protected $eventMerger;
+
+	/** @var IAppManager */
+	protected $appManager;
 
 	/**
 	 * @param IFactory $languageFactory
@@ -62,13 +64,50 @@ class Event extends Base {
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
 	 * @param IEventMerger $eventMerger
+	 * @param IAppManager $appManager
 	 */
-	public function __construct(IFactory $languageFactory, IURLGenerator $url, IManager $activityManager, IUserManager $userManager, IGroupManager $groupManager, IEventMerger $eventMerger) {
-		parent::__construct($userManager, $groupManager);
+	public function __construct(IFactory $languageFactory, IURLGenerator $url, IManager $activityManager, IUserManager $userManager, IGroupManager $groupManager, IEventMerger $eventMerger, IAppManager $appManager) {
+		parent::__construct($userManager, $groupManager, $url);
 		$this->languageFactory = $languageFactory;
-		$this->url = $url;
 		$this->activityManager = $activityManager;
 		$this->eventMerger = $eventMerger;
+		$this->appManager = $appManager;
+	}
+
+	/**
+	 * @param array $eventData
+	 * @return array
+	 */
+	protected function generateObjectParameter(array $eventData) {
+		if (!isset($eventData['id']) || !isset($eventData['name'])) {
+			throw new \InvalidArgumentException();
+		}
+
+		$params = [
+			'type' => 'calendar-event',
+			'id' => $eventData['id'],
+			'name' => $eventData['name'],
+
+		];
+		if (isset($eventData['link']) && is_array($eventData['link']) && $this->appManager->isEnabledForUser('calendar')) {
+			try {
+				// The calendar app needs to be manually loaded for the routes to be loaded
+				OC_App::loadApp('calendar');
+				$linkData = $eventData['link'];
+				$objectId = base64_encode('/remote.php/dav/calendars/' . $linkData['owner'] . '/' . $linkData['calendar_uri'] . '/' . $linkData['object_uri']);
+				$link = [
+					'view' => 'dayGridMonth',
+					'timeRange' => 'now',
+					'mode' => 'sidebar',
+					'objectId' => $objectId,
+					'recurrenceId' => 'next'
+				];
+				$params['link'] = $this->url->linkToRouteAbsolute('calendar.view.indexview.timerange.edit', $link);
+			} catch (\Exception $error) {
+				// Do nothing
+			}
+		}
+		return $params;
 	}
 
 	/**
@@ -94,15 +133,15 @@ class Event extends Base {
 
 		if ($event->getSubject() === self::SUBJECT_OBJECT_ADD . '_event') {
 			$subject = $this->l->t('{actor} created event {event} in calendar {calendar}');
-		} else if ($event->getSubject() === self::SUBJECT_OBJECT_ADD . '_event_self') {
+		} elseif ($event->getSubject() === self::SUBJECT_OBJECT_ADD . '_event_self') {
 			$subject = $this->l->t('You created event {event} in calendar {calendar}');
-		} else if ($event->getSubject() === self::SUBJECT_OBJECT_DELETE . '_event') {
+		} elseif ($event->getSubject() === self::SUBJECT_OBJECT_DELETE . '_event') {
 			$subject = $this->l->t('{actor} deleted event {event} from calendar {calendar}');
-		} else if ($event->getSubject() === self::SUBJECT_OBJECT_DELETE . '_event_self') {
+		} elseif ($event->getSubject() === self::SUBJECT_OBJECT_DELETE . '_event_self') {
 			$subject = $this->l->t('You deleted event {event} from calendar {calendar}');
-		} else if ($event->getSubject() === self::SUBJECT_OBJECT_UPDATE . '_event') {
+		} elseif ($event->getSubject() === self::SUBJECT_OBJECT_UPDATE . '_event') {
 			$subject = $this->l->t('{actor} updated event {event} in calendar {calendar}');
-		} else if ($event->getSubject() === self::SUBJECT_OBJECT_UPDATE . '_event_self') {
+		} elseif ($event->getSubject() === self::SUBJECT_OBJECT_UPDATE . '_event_self') {
 			$subject = $this->l->t('You updated event {event} in calendar {calendar}');
 		} else {
 			throw new \InvalidArgumentException();

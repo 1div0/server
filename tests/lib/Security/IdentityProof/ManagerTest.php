@@ -33,10 +33,9 @@ use OCP\ILogger;
 use OCP\IUser;
 use OCP\Security\ICrypto;
 use PHPUnit\Framework\MockObject\MockObject;
-use SebastianBergmann\Comparator\MockObjectComparator;
 use Test\TestCase;
 
-class ManagerTest extends TestCase  {
+class ManagerTest extends TestCase {
 	/** @var Factory|MockObject */
 	private $factory;
 	/** @var IAppData|MockObject */
@@ -215,7 +214,6 @@ class ManagerTest extends TestCase  {
 			->willReturn($key);
 
 		$this->assertSame($key, $manager->getSystemKey());
-
 	}
 
 

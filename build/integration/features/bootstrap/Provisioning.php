@@ -2,6 +2,7 @@
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
@@ -274,7 +275,7 @@ trait Provisioning {
 		];
 
 		$this->response = $client->get($fullUrl, $options);
-		$groups = array($group);
+		$groups = [$group];
 		$respondedArray = $this->getArrayOfGroupsResponded($this->response);
 		Assert::assertNotEquals($groups, $respondedArray, "", 0.0, 10, true);
 		Assert::assertEquals(200, $this->response->getStatusCode());
@@ -379,7 +380,6 @@ trait Provisioning {
 		$this->userExists($user);
 		$this->groupExists($group);
 		$this->addingUserToGroup($user, $group);
-
 	}
 
 	/**
@@ -538,7 +538,6 @@ trait Provisioning {
 			$respondedArray = $this->getArrayOfUsersResponded($this->response);
 			Assert::assertEquals($usersSimplified, $respondedArray, "", 0.0, 10, true);
 		}
-
 	}
 
 	/**
@@ -552,7 +551,6 @@ trait Provisioning {
 			$respondedArray = $this->getArrayOfGroupsResponded($this->response);
 			Assert::assertEquals($groupsSimplified, $respondedArray, "", 0.0, 10, true);
 		}
-
 	}
 
 	/**
@@ -566,7 +564,6 @@ trait Provisioning {
 			$respondedArray = $this->getArrayOfSubadminsResponded($this->response);
 			Assert::assertEquals($groupsSimplified, $respondedArray, "", 0.0, 10, true);
 		}
-
 	}
 
 	/**
@@ -580,7 +577,6 @@ trait Provisioning {
 			$respondedArray = $this->getArrayOfAppsResponded($this->response);
 			Assert::assertEquals($appsSimplified, $respondedArray, "", 0.0, 10, true);
 		}
-
 	}
 
 	/**
@@ -816,5 +812,4 @@ trait Provisioning {
 		}
 		$this->usingServer($previousServer);
 	}
-
 }

@@ -27,7 +27,7 @@ OC.L10N.register(
     "{loadedSize} of {totalSize} ({bitrate})" : "{loadedSize} de {totalSize} ({bitrate})",
     "Uploading that item is not supported" : "Subir este archivo no es compatible",
     "Target folder does not exist any more" : "La carpeta destino ya no existe",
-    "Error when assembling chunks, status code {status}" : "Error al reunir las partes, código de estado {status}",
+    "Error when assembling chunks, status code {status}" : "Error al reunir los trozos, código de estado {status}",
     "Actions" : "Acciones",
     "Rename" : "Renombrar",
     "Copy" : "Copiar",
@@ -158,7 +158,7 @@ OC.L10N.register(
     "Transfer {path} to {userid}" : "Transferir {path} a {userid}",
     "Invalid path selected" : "Ruta de archivo seleccionada no válida.",
     "Ownership transfer request sent" : "Enviada la solicitud de transferencia de propiedad",
-    "Cannot transfter ownership of a file or folder you don't own" : "No se puede transferir la propiedad de un archivo o carpeta que no te pertenece",
+    "Cannot transfer ownership of a file or folder you don't own" : "No se puede transferir la propiedad de un archivo o carpeta que no te pertenece",
     "Tags" : "Etiquetas",
     "Error while loading the file data" : "Error al cargar los datos del archivo",
     "Unable to change the favourite state of the file" : "No se ha podido cambiar el estado de favorito del fichero",
@@ -168,7 +168,7 @@ OC.L10N.register(
     "Settings" : "Ajustes",
     "Show hidden files" : "Mostrar archivos ocultos",
     "WebDAV" : "WebDAV",
-    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Usa esta dirección para <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">acceder a tus archivos vía WebDAV</a>",
+    "Use this address to access your Files via WebDAV" : "Use esta dirección para acceder a tus archivos vía WebDAV",
     "Toggle grid view" : "Alternar vista de cuadrícula",
     "No files in here" : "Aquí no hay archivos",
     "Upload some content or sync with your devices!" : "¡Suba contenidos o sincronice sus dispositivos!",
@@ -187,7 +187,7 @@ OC.L10N.register(
     "Pending shares" : "Recursos compartidos pendientes",
     "Text file" : "Archivo de texto",
     "New text file.txt" : "Nuevo archivo.txt",
-    "%s of %s used" : "%s de %s usado",
-    "%1$s%% of %2$s used" : "%1$s %% de %2$s usados"
+    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Usa esta dirección para <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">acceder a tus archivos vía WebDAV</a>",
+    "Cannot transfter ownership of a file or folder you don't own" : "No se puede transferir la propiedad de un archivo o carpeta que no te pertenece"
 },
 "nplurals=2; plural=(n != 1);");

@@ -55,29 +55,6 @@ describe('Core base tests', function() {
 			expect(OC.filePath('files', 'ajax', 'test.php')).toEqual('http://localhost/index.php/apps/files/ajax/test.php');
 		});
 	});
-	describe('getCanonicalLocale', function() {
-		var oldLocale;
-
-		beforeEach(function() {
-			oldLocale = $('html').data('locale')
-		});
-		afterEach(function() {
-			$('html').data('locale', oldLocale)
-		});
-
-		it("Returns primary locales as is", function() {
-			$('html').data('locale', 'de')
-			expect(OC.getCanonicalLocale()).toEqual('de');
-			$('html').data('locale', 'zu')
-			expect(OC.getCanonicalLocale()).toEqual('zu');
-		});
-		it("Returns extended locales with hyphens", function() {
-			$('html').data('locale', 'az_Cyrl_AZ')
-			expect(OC.getCanonicalLocale()).toEqual('az-Cyrl-AZ');
-			$('html').data('locale', 'de_DE')
-			expect(OC.getCanonicalLocale()).toEqual('de-DE');
-		});
-	});
 	describe('Link functions', function() {
 		var TESTAPP = 'testapp';
 		var TESTAPP_ROOT = OC.getRootPath() + '/appsx/testapp';
@@ -364,71 +341,6 @@ describe('Core base tests', function() {
 		});
 	});
 	describe('Util', function() {
-		var locale;
-		var localeStub;
-
-		beforeEach(function() {
-			locale = OC.getCanonicalLocale();
-			localeStub = sinon.stub(OC, 'getCanonicalLocale');
-			localeStub.returns(locale);
-		});
-
-		afterEach(function() {
-			localeStub.restore();
-		});
-
-		describe('humanFileSize', function() {
-			// cit() will skip tests if toLocaleString() is not supported.
-			// See https://github.com/ariya/phantomjs/issues/12581
-			//
-			// Please run these tests in Chrome/Firefox manually.
-			var cit = 4.2.toLocaleString("de") !== "4,2" ? xit : it;
-
-			it('renders file sizes with the correct unit', function() {
-				var data = [
-					[0, '0 B'],
-					["0", '0 B'],
-					["A", 'NaN B'],
-					[125, '125 B'],
-					[128000, '125 KB'],
-					[128000000, '122.1 MB'],
-					[128000000000, '119.2 GB'],
-					[128000000000000, '116.4 TB']
-				];
-				for (var i = 0; i < data.length; i++) {
-					expect(OC.Util.humanFileSize(data[i][0])).toEqual(data[i][1]);
-				}
-			});
-			it('renders file sizes with the correct unit for small sizes', function() {
-				var data = [
-					[0, '0 KB'],
-					[125, '< 1 KB'],
-					[128000, '125 KB'],
-					[128000000, '122.1 MB'],
-					[128000000000, '119.2 GB'],
-					[128000000000000, '116.4 TB']
-				];
-				for (var i = 0; i < data.length; i++) {
-					expect(OC.Util.humanFileSize(data[i][0], true)).toEqual(data[i][1]);
-				}
-			});
-			cit('renders file sizes with the correct locale', function() {
-				localeStub.returns("de");
-				var data = [
-					[0, '0 B'],
-					["0", '0 B'],
-					["A", 'NaN B'],
-					[125, '125 B'],
-					[128000, '125 KB'],
-					[128000000, '122,1 MB'],
-					[128000000000, '119,2 GB'],
-					[128000000000000, '116,4 TB']
-				];
-				for (var i = 0; i < data.length; i++) {
-					expect(OC.Util.humanFileSize(data[i][0])).toEqual(data[i][1]);
-				}
-			});
-		});
 		describe('computerFileSize', function() {
 			it('correctly parses file sizes from a human readable formated string', function() {
 				var data = [
@@ -677,7 +589,6 @@ describe('Core base tests', function() {
 		});
 	});
 	describe('Notifications', function() {
-		var showSpy;
 		var showHtmlSpy;
 		var clock;
 
@@ -694,68 +605,56 @@ describe('Core base tests', function() {
 
 		beforeEach(function() {
 			clock = sinon.useFakeTimers();
-			showSpy = sinon.spy(OCP.Toast, 'message');
-
-			$('#testArea').append('<div id="content"></div>');
 		});
 		afterEach(function() {
-			showSpy.restore();
 			// jump past animations
 			clock.tick(10000);
 			clock.restore();
-			$('#testArea .toastify').remove();
+			$('body .toastify').remove();
 		});
 		describe('showTemporary', function() {
 			it('shows a plain text notification with default timeout', function() {
 				OC.Notification.showTemporary('My notification test');
 
-				expect(showSpy.calledOnce).toEqual(true);
-				expect(showSpy.firstCall.args[0]).toEqual('My notification test');
-				//expect(showSpy.firstCall.args[1]).toEqual({isHTML: false, timeout: 7});
-
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 				expect(getNotificationText($row)).toEqual('My notification test');
 			});
 			it('shows a HTML notification with default timeout', function() {
 				OC.Notification.showTemporary('<a>My notification test</a>', { isHTML: true });
 
-				expect(showSpy.calledOnce).toEqual(true);
-				expect(showSpy.firstCall.args[0]).toEqual('<a>My notification test</a>');
-				expect(showSpy.firstCall.args[1].isHTML).toEqual(true)
-
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 				expect(getNotificationText($row)).toEqual('<a>My notification test</a>');
 			});
 			it('hides itself after 7 seconds', function() {
 				OC.Notification.showTemporary('');
 
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				// travel in time +7000 milliseconds
 				clock.tick(7500);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(0);
 			});
 			it('hides itself after a given time', function() {
 				OC.Notification.showTemporary('', {timeout: 10});
 
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				// travel in time +7000 milliseconds
 				clock.tick(7500);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				// travel in time another 4000 milliseconds
 				clock.tick(4000);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(0);
 			});
 		});
@@ -763,24 +662,24 @@ describe('Core base tests', function() {
 			it('hides itself after a given time', function() {
 				OC.Notification.show('', {timeout: 10});
 
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				clock.tick(11500);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(0);
 			});
 			it('does not hide itself if no timeout given to show', function() {
 				OC.Notification.show('');
 
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				// travel in time +1000 seconds
 				clock.tick(1000000);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(1);
 			});
 		});
@@ -788,24 +687,24 @@ describe('Core base tests', function() {
 			it('hides itself after a given time', function() {
 				OC.Notification.showHtml('<p></p>', {timeout: 10});
 
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				clock.tick(11500);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(0);
 			});
 			it('does not hide itself if no timeout given to show', function() {
 				OC.Notification.showHtml('<p></p>');
 
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				// travel in time +1000 seconds
 				clock.tick(1000000);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(1);
 			});
 		});
@@ -815,7 +714,7 @@ describe('Core base tests', function() {
 
 				var notification = OC.Notification.showTemporary('');
 
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				OC.Notification.hide(notification, hideCallback);
@@ -823,7 +722,7 @@ describe('Core base tests', function() {
 				// Give time to the hide animation to finish
 				clock.tick(1000);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(0);
 
 				expect(hideCallback.calledOnce).toEqual(true);
@@ -833,7 +732,7 @@ describe('Core base tests', function() {
 
 				var notification = OC.Notification.show('', {timeout: 10});
 
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				OC.Notification.hide(notification, hideCallback);
@@ -841,7 +740,7 @@ describe('Core base tests', function() {
 				// Give time to the hide animation to finish
 				clock.tick(1000);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(0);
 
 				expect(hideCallback.calledOnce).toEqual(true);
@@ -851,7 +750,7 @@ describe('Core base tests', function() {
 
 				var notification = OC.Notification.show('');
 
-				var $row = $('#testArea .toastify');
+				var $row = $('body .toastify');
 				expect($row.length).toEqual(1);
 
 				OC.Notification.hide(notification, hideCallback);
@@ -859,7 +758,7 @@ describe('Core base tests', function() {
 				// Give time to the hide animation to finish
 				clock.tick(1000);
 
-				$row = $('#testArea .toastify');
+				$row = $('body .toastify');
 				expect($row.length).toEqual(0);
 
 				expect(hideCallback.calledOnce).toEqual(true);
@@ -870,7 +769,7 @@ describe('Core base tests', function() {
 			var $row2 = OC.Notification.showTemporary('Two', {timeout: 2});
 			var $row3 = OC.Notification.showTemporary('Three');
 
-			var $el = $('#testArea');
+			var $el = $('body');
 			var $rows = $el.find('.toastify');
 			expect($rows.length).toEqual(3);
 
@@ -890,7 +789,7 @@ describe('Core base tests', function() {
 			var $row1 = OC.Notification.show('One');
 			var $row2 = OC.Notification.show('Two');
 
-			var $el = $('#testArea');
+			var $el = $('body');
 			var $rows = $el.find('.toastify');
 			expect($rows.length).toEqual(2);
 

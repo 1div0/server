@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license AGPL-3.0
  *
@@ -22,7 +23,6 @@
 
 namespace OCA\FederatedFileSharing;
 
-
 use OCP\Security\ISecureRandom;
 
 /**
@@ -31,8 +31,7 @@ use OCP\Security\ISecureRandom;
  * @package OCA\FederatedFileSharing
  */
 class TokenHandler {
-
-	const TOKEN_LENGTH = 15;
+	public const TOKEN_LENGTH = 15;
 
 	/** @var ISecureRandom */
 	private $secureRandom;
@@ -57,5 +56,4 @@ class TokenHandler {
 			ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_UPPER . ISecureRandom::CHAR_DIGITS);
 		return $token;
 	}
-
 }

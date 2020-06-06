@@ -4,6 +4,7 @@
  *
  * @author Bart Visscher <bartv@thisnet.nl>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
  * @author Jakob Sack <mail@jakobsack.de>
  * @author Jan-Philipp Litza <jplitza@users.noreply.github.com>
@@ -40,6 +41,7 @@ namespace OCA\DAV\Connector\Sabre;
 use Icewind\Streams\CallbackWrapper;
 use OC\AppFramework\Http\Request;
 use OC\Files\Filesystem;
+use OC\Files\Stream\HashWrapper;
 use OC\Files\View;
 use OCA\DAV\Connector\Sabre\Exception\EntityTooLarge;
 use OCA\DAV\Connector\Sabre\Exception\FileLocked;
@@ -69,7 +71,6 @@ use Sabre\DAV\Exception\ServiceUnavailable;
 use Sabre\DAV\IFile;
 
 class File extends Node implements IFile {
-
 	protected $request;
 
 	/**
@@ -173,17 +174,26 @@ class File extends Node implements IFile {
 				$this->changeLock(ILockingProvider::LOCK_EXCLUSIVE);
 			}
 
-			if ($partStorage->instanceOfStorage(Storage\IWriteStreamStorage::class)) {
-
-				if (!is_resource($data)) {
-					$tmpData = fopen('php://temp', 'r+');
-					if ($data !== null) {
-						fwrite($tmpData, $data);
-						rewind($tmpData);
-					}
-					$data = $tmpData;
+			if (!is_resource($data)) {
+				$tmpData = fopen('php://temp', 'r+');
+				if ($data !== null) {
+					fwrite($tmpData, $data);
+					rewind($tmpData);
 				}
+				$data = $tmpData;
+			}
 
+			$data = HashWrapper::wrap($data, 'md5', function ($hash) {
+				$this->header('X-Hash-MD5: ' . $hash);
+			});
+			$data = HashWrapper::wrap($data, 'sha1', function ($hash) {
+				$this->header('X-Hash-SHA1: ' . $hash);
+			});
+			$data = HashWrapper::wrap($data, 'sha256', function ($hash) {
+				$this->header('X-Hash-SHA256: ' . $hash);
+			});
+
+			if ($partStorage->instanceOfStorage(Storage\IWriteStreamStorage::class)) {
 				$isEOF = false;
 				$wrappedData = CallbackWrapper::wrap($data, null, null, null, null, function ($stream) use (&$isEOF) {
 					$isEOF = feof($stream);
@@ -198,7 +208,6 @@ class File extends Node implements IFile {
 						$result = feof($wrappedData);
 					}
 				}
-
 			} else {
 				$target = $partStorage->fopen($internalPartPath, 'wb');
 				if ($target === false) {
@@ -229,7 +238,6 @@ class File extends Node implements IFile {
 					throw new BadRequest('Expected filesize of ' . $expected . ' bytes but read (from Nextcloud client) and wrote (to Nextcloud storage) ' . $count . ' bytes. Could either be a network problem on the sending side or a problem writing to the storage on the server side.');
 				}
 			}
-
 		} catch (\Exception $e) {
 			$context = [];
 
@@ -263,7 +271,7 @@ class File extends Node implements IFile {
 
 					try {
 						$this->acquireLock(ILockingProvider::LOCK_EXCLUSIVE);
-					} catch (LockedException $e) {
+					} catch (LockedException $ex) {
 						if ($needsPartFile) {
 							$partStorage->unlink($internalPartPath);
 						}
@@ -327,11 +335,10 @@ class File extends Node implements IFile {
 				$checksum = trim($this->request->server['HTTP_OC_CHECKSUM']);
 				$this->fileView->putFileInfo($this->path, ['checksum' => $checksum]);
 				$this->refreshInfo();
-			} else if ($this->getChecksum() !== null && $this->getChecksum() !== '') {
+			} elseif ($this->getChecksum() !== null && $this->getChecksum() !== '') {
 				$this->fileView->putFileInfo($this->path, ['checksum' => '']);
 				$this->refreshInfo();
 			}
-
 		} catch (StorageNotAvailableException $e) {
 			throw new ServiceUnavailable("Failed to check file size: " . $e->getMessage(), 0, $e);
 		}
@@ -359,20 +366,20 @@ class File extends Node implements IFile {
 		$run = true;
 
 		if (!$exists) {
-			\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_create, array(
+			\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_create, [
 				\OC\Files\Filesystem::signal_param_path => $hookPath,
 				\OC\Files\Filesystem::signal_param_run => &$run,
-			));
+			]);
 		} else {
-			\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_update, array(
+			\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_update, [
 				\OC\Files\Filesystem::signal_param_path => $hookPath,
 				\OC\Files\Filesystem::signal_param_run => &$run,
-			));
+			]);
 		}
-		\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_write, array(
+		\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_write, [
 			\OC\Files\Filesystem::signal_param_path => $hookPath,
 			\OC\Files\Filesystem::signal_param_run => &$run,
-		));
+		]);
 		return $run;
 	}
 
@@ -385,17 +392,17 @@ class File extends Node implements IFile {
 		}
 		$hookPath = Filesystem::getView()->getRelativePath($this->fileView->getAbsolutePath($path));
 		if (!$exists) {
-			\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_post_create, array(
+			\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_post_create, [
 				\OC\Files\Filesystem::signal_param_path => $hookPath
-			));
+			]);
 		} else {
-			\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_post_update, array(
+			\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_post_update, [
 				\OC\Files\Filesystem::signal_param_path => $hookPath
-			));
+			]);
 		}
-		\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_post_write, array(
+		\OC_Hook::emit(\OC\Files\Filesystem::CLASSNAME, \OC\Files\Filesystem::signal_post_write, [
 			\OC\Files\Filesystem::signal_param_path => $hookPath
-		));
+		]);
 	}
 
 	/**
@@ -511,7 +518,7 @@ class File extends Node implements IFile {
 		$bytesWritten = $chunk_handler->store($info['index'], $data);
 
 		//detect aborted upload
-		if (isset ($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'PUT') {
+		if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'PUT') {
 			if (isset($_SERVER['CONTENT_LENGTH'])) {
 				$expected = (int)$_SERVER['CONTENT_LENGTH'];
 				if ($bytesWritten !== $expected) {
@@ -591,7 +598,7 @@ class File extends Node implements IFile {
 				if (isset($this->request->server['HTTP_OC_CHECKSUM'])) {
 					$checksum = trim($this->request->server['HTTP_OC_CHECKSUM']);
 					$this->fileView->putFileInfo($targetPath, ['checksum' => $checksum]);
-				} else if ($info->getChecksum() !== null && $info->getChecksum() !== '') {
+				} elseif ($info->getChecksum() !== null && $info->getChecksum() !== '') {
 					$this->fileView->putFileInfo($this->path, ['checksum' => '']);
 				}
 
@@ -669,6 +676,8 @@ class File extends Node implements IFile {
 	}
 
 	protected function header($string) {
-		\header($string);
+		if (!\OC::$CLI) {
+			\header($string);
+		}
 	}
 }

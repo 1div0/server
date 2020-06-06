@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -38,7 +39,9 @@ class LegacyDAVACL extends DavAclPlugin {
 	public function getCurrentUserPrincipals() {
 		$principalV2 = $this->getCurrentUserPrincipal();
 
-		if (is_null($principalV2)) return [];
+		if (is_null($principalV2)) {
+			return [];
+		}
 
 		$principalV1 = $this->convertPrincipal($principalV2, false);
 		return array_merge(

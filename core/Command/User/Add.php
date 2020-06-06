@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Laurens Post <lkpost@scept.re>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -154,11 +155,11 @@ class Add extends Command {
 			if (!$group) {
 				$this->groupManager->createGroup($groupName);
 				$group = $this->groupManager->get($groupName);
-				if($group instanceof IGroup) {
+				if ($group instanceof IGroup) {
 					$output->writeln('Created group "' . $group->getGID() . '"');
 				}
 			}
-			if($group instanceof IGroup) {
+			if ($group instanceof IGroup) {
 				$group->addUser($user);
 				$output->writeln('User "' . $user->getUID() . '" added to group "' . $group->getGID() . '"');
 			}

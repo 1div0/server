@@ -21,6 +21,7 @@
  */
 
 namespace Test\Cache;
+
 use OC\Files\Storage\Local;
 
 /**
@@ -48,7 +49,7 @@ class FileCacheTest extends TestCache {
 	 * */
 	private $rootView;
 
-	function skip() {
+	public function skip() {
 		//$this->skipUnless(OC_User::isLoggedIn());
 	}
 
@@ -61,8 +62,8 @@ class FileCacheTest extends TestCache {
 		//set up temporary storage
 		$this->storage = \OC\Files\Filesystem::getStorage('/');
 		\OC\Files\Filesystem::clearMounts();
-		$storage = new \OC\Files\Storage\Temporary(array());
-		\OC\Files\Filesystem::mount($storage,array(),'/');
+		$storage = new \OC\Files\Storage\Temporary([]);
+		\OC\Files\Filesystem::mount($storage,[],'/');
 		$datadir = str_replace('local::', '', $storage->getId());
 		$config = \OC::$server->getConfig();
 		$this->datadir = $config->getSystemValue('cachedirectory', \OC::$SERVERROOT.'/data/cache');
@@ -106,7 +107,7 @@ class FileCacheTest extends TestCache {
 
 		// Restore the original mount point
 		\OC\Files\Filesystem::clearMounts();
-		\OC\Files\Filesystem::mount($this->storage, array(), '/');
+		\OC\Files\Filesystem::mount($this->storage, [], '/');
 
 		parent::tearDown();
 	}
@@ -117,7 +118,7 @@ class FileCacheTest extends TestCache {
 			->setConstructorArgs([['datadir' => \OC::$server->getTempManager()->getTemporaryFolder()]])
 			->getMock();
 
-		\OC\Files\Filesystem::mount($mockStorage, array(), '/test/cache');
+		\OC\Files\Filesystem::mount($mockStorage, [], '/test/cache');
 
 		return $mockStorage;
 	}
@@ -127,11 +128,11 @@ class FileCacheTest extends TestCache {
 
 		$mockStorage->expects($this->atLeastOnce())
 			->method('filemtime')
-			->will($this->returnValue(100));
+			->willReturn(100);
 		$mockStorage->expects($this->once())
 			->method('unlink')
 			->with('key1')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->instance->set('key1', 'value1');
 		$this->instance->gc();
@@ -142,7 +143,7 @@ class FileCacheTest extends TestCache {
 
 		$mockStorage->expects($this->atLeastOnce())
 			->method('filemtime')
-			->will($this->returnValue(time() + 3600));
+			->willReturn(time() + 3600);
 		$mockStorage->expects($this->never())
 			->method('unlink')
 			->with('key1');
@@ -165,7 +166,7 @@ class FileCacheTest extends TestCache {
 
 		$mockStorage->expects($this->atLeastOnce())
 			->method('filemtime')
-			->will($this->returnValue(100));
+			->willReturn(100);
 		$mockStorage->expects($this->atLeastOnce())
 			->method('unlink')
 			->will($this->onConsecutiveCalls(

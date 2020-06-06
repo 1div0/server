@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Markus Goetz <markus@woboq.com>
  * @author Robin Appelman <robin@icewind.nl>
@@ -91,7 +92,7 @@ class AssemblyStream implements \Icewind\Streams\File {
 	public function stream_seek($offset, $whence = SEEK_SET) {
 		if ($whence === SEEK_CUR) {
 			$offset = $this->stream_tell() + $offset;
-		} else if ($whence === SEEK_END) {
+		} elseif ($whence === SEEK_END) {
 			$offset = $this->size + $offset;
 		}
 
@@ -115,7 +116,7 @@ class AssemblyStream implements \Icewind\Streams\File {
 
 		$stream = $this->getStream($this->nodes[$nodeIndex]);
 		$nodeOffset = $offset - $nodeStart;
-		if(fseek($stream, $nodeOffset) === -1) {
+		if (fseek($stream, $nodeOffset) === -1) {
 			return false;
 		}
 		$this->currentNode = $nodeIndex;

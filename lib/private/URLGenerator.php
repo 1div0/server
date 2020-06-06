@@ -7,6 +7,7 @@ declare(strict_types=1);
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Felix Epp <work@felixepp.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
@@ -77,7 +78,7 @@ class URLGenerator implements IURLGenerator {
 	 *
 	 * Returns a url to the given route.
 	 */
-	public function linkToRoute(string $route, array $parameters = array()): string {
+	public function linkToRoute(string $route, array $parameters = []): string {
 		// TODO: mock router
 		return \OC::$server->getRouter()->generate($route, $parameters);
 	}
@@ -90,7 +91,7 @@ class URLGenerator implements IURLGenerator {
 	 *
 	 * Returns an absolute url to the given route.
 	 */
-	public function linkToRouteAbsolute(string $routeName, array $arguments = array()): string {
+	public function linkToRouteAbsolute(string $routeName, array $arguments = []): string {
 		return $this->getAbsoluteURL($this->linkToRoute($routeName, $arguments));
 	}
 
@@ -118,15 +119,14 @@ class URLGenerator implements IURLGenerator {
 	 *
 	 * Returns a url to the given app and file.
 	 */
-	public function linkTo(string $app, string $file, array $args = array()): string {
+	public function linkTo(string $app, string $file, array $args = []): string {
 		$frontControllerActive = ($this->config->getSystemValue('htaccess.IgnoreFrontController', false) === true || getenv('front_controller_active') === 'true');
 
-		if( $app !== '' ) {
+		if ($app !== '') {
 			$app_path = \OC_App::getAppPath($app);
 			// Check if the app is in the app folder
 			if ($app_path && file_exists($app_path . '/' . $file)) {
 				if (substr($file, -3) === 'php') {
-
 					$urlLinkTo = \OC::$WEBROOT . '/index.php/apps/' . $app;
 					if ($frontControllerActive) {
 						$urlLinkTo = \OC::$WEBROOT . '/apps/' . $app;
@@ -169,7 +169,7 @@ class URLGenerator implements IURLGenerator {
 	public function imagePath(string $app, string $image): string {
 		$cache = $this->cacheFactory->createDistributed('imagePath-'.md5($this->getBaseUrl()).'-');
 		$cacheKey = $app.'-'.$image;
-		if($key = $cache->get($cacheKey)) {
+		if ($key = $cache->get($cacheKey)) {
 			return $key;
 		}
 
@@ -185,7 +185,7 @@ class URLGenerator implements IURLGenerator {
 		$path = '';
 		$themingEnabled = $this->config->getSystemValue('installed', false) && \OCP\App::isEnabled('theming') && \OC_App::isAppLoaded('theming');
 		$themingImagePath = false;
-		if($themingEnabled) {
+		if ($themingEnabled) {
 			$themingDefaults = \OC::$server->getThemingDefaults();
 			if ($themingDefaults instanceof ThemingDefaults) {
 				$themingImagePath = $themingDefaults->replaceImagePath($app, $image);
@@ -207,7 +207,7 @@ class URLGenerator implements IURLGenerator {
 		} elseif (!file_exists(\OC::$SERVERROOT . "/themes/$theme/core/img/$basename.svg")
 			&& file_exists(\OC::$SERVERROOT . "/themes/$theme/core/img/$basename.png")) {
 			$path =  \OC::$WEBROOT . "/themes/$theme/core/img/$basename.png";
-		} elseif($themingEnabled && $themingImagePath) {
+		} elseif ($themingEnabled && $themingImagePath) {
 			$path = $themingImagePath;
 		} elseif ($appPath && file_exists($appPath . "/img/$image")) {
 			$path =  \OC_App::getAppWebPath($app) . "/img/$image";
@@ -226,7 +226,7 @@ class URLGenerator implements IURLGenerator {
 			$path =  \OC::$WEBROOT . "/themes/$theme/core/img/$basename.png";
 		}
 
-		if($path !== '') {
+		if ($path !== '') {
 			$cache->set($cacheKey, $path);
 			return $path;
 		}
@@ -247,7 +247,7 @@ class URLGenerator implements IURLGenerator {
 			return rtrim($this->config->getSystemValue('overwrite.cli.url'), '/') . '/' . ltrim($url, '/');
 		}
 		// The ownCloud web root can already be prepended.
-		if(\OC::$WEBROOT !== '' && strpos($url, \OC::$WEBROOT) === 0) {
+		if (\OC::$WEBROOT !== '' && strpos($url, \OC::$WEBROOT) === 0) {
 			$url = substr($url, \strlen(\OC::$WEBROOT));
 		}
 

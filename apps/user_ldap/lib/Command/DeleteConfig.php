@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Martin Konrad <info@martin-konrad.net>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -24,7 +25,6 @@
  */
 
 namespace OCA\User_LDAP\Command;
-
 
 use OCA\User_LDAP\Helper;
 use Symfony\Component\Console\Command\Command;
@@ -52,7 +52,7 @@ class DeleteConfig extends Command {
 					'configID',
 					InputArgument::REQUIRED,
 					'the configuration ID'
-				     )
+					 )
 		;
 	}
 
@@ -62,7 +62,7 @@ class DeleteConfig extends Command {
 
 		$success = $this->helper->deleteServerConfiguration($configPrefix);
 
-		if($success) {
+		if ($success) {
 			$output->writeln("Deleted configuration with configID '{$configPrefix}'");
 		} else {
 			$output->writeln("Cannot delete configuration with configID '{$configPrefix}'");

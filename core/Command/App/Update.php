@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018, michag86 (michag86@arcor.de)
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author michag86 <micha_g@arcor.de>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -83,15 +84,14 @@ class Update extends Command {
 		$singleAppId = $input->getArgument('app-id');
 
 		if ($singleAppId) {
-			$apps = array($singleAppId);
+			$apps = [$singleAppId];
 			try {
 				$this->manager->getAppPath($singleAppId);
 			} catch (\OCP\App\AppPathNotFoundException $e) {
 				$output->writeln($singleAppId . ' not installed');
 				return 1;
 			}
-
-		} else if ($input->getOption('all') || $input->getOption('showonly')) {
+		} elseif ($input->getOption('all') || $input->getOption('showonly')) {
 			$apps = \OC_App::getAllApps();
 		} else {
 			$output->writeln("<error>Please specify an app to update or \"--all\" to update all updatable apps\"</error>");
@@ -107,7 +107,7 @@ class Update extends Command {
 				if (!$input->getOption('showonly')) {
 					try {
 						$result = $this->installer->updateAppstoreApp($appId);
-					} catch(\Exception $e) {
+					} catch (\Exception $e) {
 						$this->logger->logException($e, ['message' => 'Failure during update of app "' . $appId . '"','app' => 'app:update']);
 						$output->writeln('Error: ' . $e->getMessage());
 						$return = 1;
@@ -116,7 +116,7 @@ class Update extends Command {
 					if ($result === false) {
 						$output->writeln($appId . ' couldn\'t be updated');
 						$return = 1;
-					} else if($result === true) {
+					} elseif ($result === true) {
 						$output->writeln($appId . ' updated');
 					}
 				}

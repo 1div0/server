@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -27,7 +28,6 @@
  */
 
 namespace OCA\FederatedFileSharing\AppInfo;
-
 
 use OC\AppFramework\Utility\SimpleContainer;
 use OCA\FederatedFileSharing\AddressHandler;
@@ -53,7 +53,7 @@ class Application extends App {
 		$cloudFederationManager = $server->getCloudFederationProviderManager();
 		$cloudFederationManager->addCloudFederationProvider('file',
 			'Federated Files Sharing',
-			function() use ($container) {
+			function () use ($container) {
 				$server = $container->getServer();
 				return new CloudFederationProviderFiles(
 					$server->getAppManager(),
@@ -73,7 +73,7 @@ class Application extends App {
 				);
 			});
 
-		$container->registerService('RequestHandlerController', function(SimpleContainer $c) use ($server) {
+		$container->registerService('RequestHandlerController', function (SimpleContainer $c) use ($server) {
 			$addressHandler = new AddressHandler(
 				$server->getURLGenerator(),
 				$server->getL10N('federatedfilesharing'),
@@ -112,13 +112,12 @@ class Application extends App {
 		
 		$eventDispatcher->addListener(
 			'OCA\Files::loadAdditionalScripts',
-			function() use ($federatedShareProvider) {
+			function () use ($federatedShareProvider) {
 				if ($federatedShareProvider->isIncomingServer2serverShareEnabled()) {
 					\OCP\Util::addScript('federatedfilesharing', 'external');
 				}
 			}
 		);
-
 	}
 
 	/**
@@ -171,5 +170,4 @@ class Application extends App {
 
 		);
 	}
-
 }

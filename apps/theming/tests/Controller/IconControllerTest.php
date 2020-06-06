@@ -27,14 +27,12 @@
 
 namespace OCA\Theming\Tests\Controller;
 
-
 use OC\Files\SimpleFS\SimpleFile;
 use OC\IntegrityCheck\Helpers\FileAccessHelper;
 use OCA\Theming\Controller\IconController;
 use OCA\Theming\IconBuilder;
 use OCA\Theming\ImageManager;
 use OCA\Theming\ThemingDefaults;
-use OCA\Theming\Util;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
@@ -207,5 +205,4 @@ class IconControllerTest extends TestCase {
 		$expected->cacheFor(86400);
 		$this->assertEquals($expected, $this->iconController->getTouchIcon());
 	}
-
 }

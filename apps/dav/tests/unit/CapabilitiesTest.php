@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  *
  * @license GNU AGPL version 3 or any later version
@@ -29,7 +30,7 @@ use Test\TestCase;
 /**
  * @package OCA\DAV\Tests\unit
  */
-class CapabilitiesTest extends TestCase  {
+class CapabilitiesTest extends TestCase {
 	public function testGetCapabilities() {
 		$capabilities = new Capabilities();
 		$expected = [

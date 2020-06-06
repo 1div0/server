@@ -5,6 +5,7 @@
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jakob Sack <mail@jakobsack.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -49,8 +50,7 @@ use Sabre\DAV\Exception\ServiceUnavailable;
 use Sabre\DAV\IFile;
 use Sabre\DAV\INode;
 
-class Directory extends \OCA\DAV\Connector\Sabre\Node
-	implements \Sabre\DAV\ICollection, \Sabre\DAV\IQuota, \Sabre\DAV\IMoveTarget {
+class Directory extends \OCA\DAV\Connector\Sabre\Node implements \Sabre\DAV\ICollection, \Sabre\DAV\IQuota, \Sabre\DAV\IMoveTarget {
 
 	/**
 	 * Cached directory content
@@ -117,7 +117,6 @@ class Directory extends \OCA\DAV\Connector\Sabre\Node
 	 * @throws \Sabre\DAV\Exception\ServiceUnavailable
 	 */
 	public function createFile($name, $data = null) {
-
 		try {
 			// for chunked upload also updating a existing file is a "createFile"
 			// because we create all the chunks before re-assemble them to the existing file.
@@ -130,7 +129,6 @@ class Directory extends \OCA\DAV\Connector\Sabre\Node
 				) {
 					throw new \Sabre\DAV\Exception\Forbidden();
 				}
-
 			} else {
 				// For non-chunked upload it is enough to check if we can create a new file
 				if (!$this->fileView->isCreatable($this->path)) {
@@ -267,7 +265,7 @@ class Directory extends \OCA\DAV\Connector\Sabre\Node
 			throw new Locked();
 		}
 
-		$nodes = array();
+		$nodes = [];
 		foreach ($folderContent as $info) {
 			$node = $this->getChild($info->getName(), $info);
 			$nodes[] = $node;
@@ -292,7 +290,6 @@ class Directory extends \OCA\DAV\Connector\Sabre\Node
 		// TODO: resolve chunk file name here and implement "updateFile"
 		$path = $this->path . '/' . $name;
 		return $this->fileView->file_exists($path);
-
 	}
 
 	/**
@@ -303,7 +300,6 @@ class Directory extends \OCA\DAV\Connector\Sabre\Node
 	 * @throws \Sabre\DAV\Exception\Forbidden
 	 */
 	public function delete() {
-
 		if ($this->path === '' || $this->path === '/' || !$this->info->isDeletable()) {
 			throw new \Sabre\DAV\Exception\Forbidden();
 		}
@@ -330,19 +326,20 @@ class Directory extends \OCA\DAV\Connector\Sabre\Node
 			return $this->quotaInfo;
 		}
 		try {
-			$storageInfo = \OC_Helper::getStorageInfo($this->info->getPath(), $this->info);
+			$info = $this->fileView->getFileInfo($this->path, false);
+			$storageInfo = \OC_Helper::getStorageInfo($this->info->getPath(), $info);
 			if ($storageInfo['quota'] === \OCP\Files\FileInfo::SPACE_UNLIMITED) {
 				$free = \OCP\Files\FileInfo::SPACE_UNLIMITED;
 			} else {
 				$free = $storageInfo['free'];
 			}
-			$this->quotaInfo = array(
+			$this->quotaInfo = [
 				$storageInfo['used'],
 				$free
-			);
+			];
 			return $this->quotaInfo;
 		} catch (\OCP\Files\StorageNotAvailableException $e) {
-			return array(0, 0);
+			return [0, 0];
 		}
 	}
 

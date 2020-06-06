@@ -32,7 +32,6 @@ declare(strict_types=1);
 
 namespace OCA\LookupServerConnector\BackgroundJobs;
 
-
 use OC\Security\IdentityProof\Signer;
 use OCP\Accounts\IAccountManager;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -177,7 +176,6 @@ class RetryJob extends Job {
 				'lookup_server_connector',
 				'update_retries'
 			);
-
 		} catch (\Exception $e) {
 			// An error occurred, retry later
 			$this->retainJob = true;

@@ -5,6 +5,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
+ * @author Julius Härtl <jus@bitgrid.net>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -40,7 +42,9 @@ class SystemAddressbook extends AddressBook {
 	}
 
 	public function getChildren() {
-		if ($this->config->getAppValue('core', 'shareapi_allow_share_dialog_user_enumeration', 'yes') !== 'yes') {
+		$shareEnumeration = $this->config->getAppValue('core', 'shareapi_allow_share_dialog_user_enumeration', 'yes') === 'yes';
+		$restrictShareEnumeration = $this->config->getAppValue('core', 'shareapi_restrict_user_enumeration_to_group', 'no') === 'yes';
+		if (!$shareEnumeration || ($shareEnumeration && $restrictShareEnumeration)) {
 			return [];
 		}
 

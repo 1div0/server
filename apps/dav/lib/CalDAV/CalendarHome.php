@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -73,7 +74,7 @@ class CalendarHome extends \Sabre\CalDAV\CalendarHome {
 	/**
 	 * @inheritdoc
 	 */
-	function createExtendedCollection($name, MkCol $mkCol) {
+	public function createExtendedCollection($name, MkCol $mkCol) {
 		$reservedNames = [BirthdayService::BIRTHDAY_CALENDAR_URI];
 
 		if (\in_array($name, $reservedNames, true) || ExternalCalendar::doesViolateReservedName($name)) {
@@ -86,7 +87,7 @@ class CalendarHome extends \Sabre\CalDAV\CalendarHome {
 	/**
 	 * @inheritdoc
 	 */
-	function getChildren() {
+	public function getChildren() {
 		$calendars = $this->caldavBackend->getCalendarsForUser($this->principalInfo['uri']);
 		$objects = [];
 		foreach ($calendars as $calendar) {
@@ -128,7 +129,7 @@ class CalendarHome extends \Sabre\CalDAV\CalendarHome {
 	/**
 	 * @inheritdoc
 	 */
-	function getChild($name) {
+	public function getChild($name) {
 		// Special nodes
 		if ($name === 'inbox' && $this->caldavBackend instanceof SchedulingSupport) {
 			return new Inbox($this->caldavBackend, $this->principalInfo['uri']);
@@ -182,7 +183,7 @@ class CalendarHome extends \Sabre\CalDAV\CalendarHome {
 	 * @param integer|null $limit
 	 * @param integer|null $offset
 	 */
-	function calendarSearch(array $filters, $limit=null, $offset=null) {
+	public function calendarSearch(array $filters, $limit=null, $offset=null) {
 		$principalUri = $this->principalInfo['uri'];
 		return $this->caldavBackend->calendarSearch($principalUri, $filters, $limit, $offset);
 	}

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -130,6 +131,10 @@ class ExternalSharesController extends Controller {
 	 * @return DataResponse
 	 */
 	public function testRemote($remote) {
+		if (strpos($remote, '#') !== false || strpos($remote, '?') !== false || strpos($remote, ';') !== false) {
+			return new DataResponse(false);
+		}
+
 		if (
 			$this->testUrl('https://' . $remote . '/ocs-provider/') ||
 			$this->testUrl('https://' . $remote . '/ocs-provider/index.php') ||
@@ -146,5 +151,4 @@ class ExternalSharesController extends Controller {
 			return new DataResponse(false);
 		}
 	}
-
 }

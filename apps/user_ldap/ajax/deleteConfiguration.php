@@ -4,6 +4,7 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -32,9 +33,9 @@
 
 $prefix = (string)$_POST['ldap_serverconfig_chooser'];
 $helper = new \OCA\User_LDAP\Helper(\OC::$server->getConfig());
-if($helper->deleteServerConfiguration($prefix)) {
+if ($helper->deleteServerConfiguration($prefix)) {
 	\OC_JSON::success();
 } else {
 	$l = \OC::$server->getL10N('user_ldap');
-	\OC_JSON::error(array('message' => $l->t('Failed to delete the server configuration')));
+	\OC_JSON::error(['message' => $l->t('Failed to delete the server configuration')]);
 }

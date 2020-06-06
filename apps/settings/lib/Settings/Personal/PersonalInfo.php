@@ -10,7 +10,7 @@
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -95,7 +95,7 @@ class PersonalInfo implements ISettings {
 	public function getForm() {
 		$federatedFileSharingEnabled = $this->appManager->isEnabledForUser('federatedfilesharing');
 		$lookupServerUploadEnabled = false;
-		if($federatedFileSharingEnabled) {
+		if ($federatedFileSharingEnabled) {
 			$federatedFileSharing = \OC::$server->query(Application::class);
 			$shareProvider = $federatedFileSharing->getFederatedShareProvider();
 			$lookupServerUploadEnabled = $shareProvider->isLookupServerUploadEnabled();
@@ -175,7 +175,7 @@ class PersonalInfo implements ISettings {
 	 */
 	private function getGroups(IUser $user) {
 		$groups = array_map(
-			function(IGroup $group) {
+			function (IGroup $group) {
 				return $group->getDisplayName();
 			},
 			$this->groupManager->getUserGroups($user)
@@ -194,7 +194,7 @@ class PersonalInfo implements ISettings {
 	 */
 	private function getLanguages(IUser $user) {
 		$forceLanguage = $this->config->getSystemValue('force_language', false);
-		if($forceLanguage !== false) {
+		if ($forceLanguage !== false) {
 			return [];
 		}
 
@@ -220,14 +220,14 @@ class PersonalInfo implements ISettings {
 		}
 
 		return array_merge(
-			array('activelanguage' => $userLang),
+			['activelanguage' => $userLang],
 			$languages
 		);
 	}
 
 	private function getLocales(IUser $user) {
 		$forceLanguage = $this->config->getSystemValue('force_locale', false);
-		if($forceLanguage !== false) {
+		if ($forceLanguage !== false) {
 			return [];
 		}
 
@@ -239,16 +239,15 @@ class PersonalInfo implements ISettings {
 
 		$localeCodes = $this->l10nFactory->findAvailableLocales();
 
-		$userLocale = array_filter($localeCodes, function($value) use ($userLocaleString) {
+		$userLocale = array_filter($localeCodes, function ($value) use ($userLocaleString) {
 			return $userLocaleString === $value['code'];
 		});
 
-		if (!empty($userLocale))
-		{
+		if (!empty($userLocale)) {
 			$userLocale = reset($userLocale);
 		}
 
-		$localesForLanguage = array_filter($localeCodes, function($localeCode) use ($userLang) {
+		$localesForLanguage = array_filter($localeCodes, function ($localeCode) use ($userLang) {
 			return 0 === strpos($localeCode['code'], $userLang);
 		});
 
@@ -289,5 +288,4 @@ class PersonalInfo implements ISettings {
 		}
 		return $messageParameters;
 	}
-
 }

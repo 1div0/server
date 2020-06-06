@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jesús Macias <jmacias@solidgear.es>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -36,8 +37,8 @@ use OCA\Files_External\Lib\Backend\Backend;
  * External storage configuration
  */
 class StorageConfig implements \JsonSerializable {
-	const MOUNT_TYPE_ADMIN = 1;
-	const MOUNT_TYPE_PERSONAl = 2;
+	public const MOUNT_TYPE_ADMIN = 1;
+	public const MOUNT_TYPE_PERSONAl = 2;
 
 	/**
 	 * Storage config id
@@ -215,10 +216,10 @@ class StorageConfig implements \JsonSerializable {
 	 * @param array $backendOptions backend options
 	 */
 	public function setBackendOptions($backendOptions) {
-		if($this->getBackend() instanceof  Backend) {
+		if ($this->getBackend() instanceof  Backend) {
 			$parameters = $this->getBackend()->getParameters();
-			foreach($backendOptions as $key => $value) {
-				if(isset($parameters[$key])) {
+			foreach ($backendOptions as $key => $value) {
+				if (isset($parameters[$key])) {
 					switch ($parameters[$key]->getType()) {
 						case \OCA\Files_External\Lib\DefinitionParameter::VALUE_BOOLEAN:
 							$value = (bool)$value;

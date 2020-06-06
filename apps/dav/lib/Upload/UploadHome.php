@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -59,7 +60,7 @@ class UploadHome implements ICollection {
 	}
 
 	public function getChildren(): array {
-		return array_map(function($node) {
+		return array_map(function ($node) {
 			return new UploadFolder($node, $this->cleanupService);
 		}, $this->impl()->getChildren());
 	}

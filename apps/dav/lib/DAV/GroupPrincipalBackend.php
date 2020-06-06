@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright Copyright (c) 2018, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -36,8 +37,7 @@ use Sabre\DAV\PropPatch;
 use Sabre\DAVACL\PrincipalBackend\BackendInterface;
 
 class GroupPrincipalBackend implements BackendInterface {
-
-	const PRINCIPAL_PREFIX = 'principals/groups';
+	public const PRINCIPAL_PREFIX = 'principals/groups';
 
 	/** @var IGroupManager */
 	private $groupManager;
@@ -78,7 +78,7 @@ class GroupPrincipalBackend implements BackendInterface {
 		$principals = [];
 
 		if ($prefixPath === self::PRINCIPAL_PREFIX) {
-			foreach($this->groupManager->search('') as $user) {
+			foreach ($this->groupManager->search('') as $user) {
 				$principals[] = $this->groupToPrincipal($user);
 			}
 		}
@@ -134,7 +134,7 @@ class GroupPrincipalBackend implements BackendInterface {
 			return [];
 		}
 
-		return array_map(function($user) {
+		return array_map(function ($user) {
 			return $this->userToPrincipal($user);
 		}, $group->getUsers());
 	}
@@ -168,7 +168,7 @@ class GroupPrincipalBackend implements BackendInterface {
 	 * @param PropPatch $propPatch
 	 * @return int
 	 */
-	function updatePrincipal($path, PropPatch $propPatch) {
+	public function updatePrincipal($path, PropPatch $propPatch) {
 		return 0;
 	}
 
@@ -178,7 +178,7 @@ class GroupPrincipalBackend implements BackendInterface {
 	 * @param string $test
 	 * @return array
 	 */
-	function searchPrincipals($prefixPath, array $searchProperties, $test = 'allof') {
+	public function searchPrincipals($prefixPath, array $searchProperties, $test = 'allof') {
 		$results = [];
 
 		if (\count($searchProperties) === 0) {
@@ -210,7 +210,7 @@ class GroupPrincipalBackend implements BackendInterface {
 				case '{DAV:}displayname':
 					$groups = $this->groupManager->search($value);
 
-					$results[] = array_reduce($groups, function(array $carry, IGroup $group) use ($restrictGroups) {
+					$results[] = array_reduce($groups, function (array $carry, IGroup $group) use ($restrictGroups) {
 						$gid = $group->getGID();
 						// is sharing restricted to groups only?
 						if ($restrictGroups !== false) {
@@ -258,7 +258,7 @@ class GroupPrincipalBackend implements BackendInterface {
 	 * @param string $principalPrefix
 	 * @return string
 	 */
-	function findByUri($uri, $principalPrefix) {
+	public function findByUri($uri, $principalPrefix) {
 		// If sharing is disabled, return the empty array
 		$shareAPIEnabled = $this->shareManager->shareApiEnabled();
 		if (!$shareAPIEnabled) {

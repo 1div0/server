@@ -5,6 +5,7 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Guillaume COMPAGNON <gcompagnon@outlook.com>
  * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
@@ -145,8 +146,8 @@ class ThemingDefaults extends \OC_Defaults {
 		return $this->config->getAppValue('theming', 'url', $this->url);
 	}
 
-	public function getSlogan() {
-		return \OCP\Util::sanitizeHTML($this->config->getAppValue('theming', 'slogan', parent::getSlogan()));
+	public function getSlogan(?string $lang = null) {
+		return \OCP\Util::sanitizeHTML($this->config->getAppValue('theming', 'slogan', parent::getSlogan($lang)));
 	}
 
 	public function getImprintUrl() {
@@ -180,7 +181,7 @@ class ThemingDefaults extends \OC_Defaults {
 		];
 
 		$navigation = $this->navigationManager->getAll(INavigationManager::TYPE_GUEST);
-		$guestNavigation = array_map(function($nav) {
+		$guestNavigation = array_map(function ($nav) {
 			return [
 				'text' => $nav['name'],
 				'url' => $nav['href']
@@ -188,9 +189,10 @@ class ThemingDefaults extends \OC_Defaults {
 		}, $navigation);
 		$links = array_merge($links, $guestNavigation);
 
-		$legalLinks = ''; $divider = '';
-		foreach($links as $link) {
-			if($link['url'] !== ''
+		$legalLinks = '';
+		$divider = '';
+		foreach ($links as $link) {
+			if ($link['url'] !== ''
 				&& filter_var($link['url'], FILTER_VALIDATE_URL)
 			) {
 				$legalLinks .= $divider . '<a href="' . $link['url'] . '" class="legal" target="_blank"' .
@@ -198,7 +200,7 @@ class ThemingDefaults extends \OC_Defaults {
 				$divider = ' · ';
 			}
 		}
-		if($legalLinks !== '' ) {
+		if ($legalLinks !== '') {
 			$footer .= '<br/>' . $legalLinks;
 		}
 
@@ -232,8 +234,8 @@ class ThemingDefaults extends \OC_Defaults {
 
 		$cacheBusterCounter = $this->config->getAppValue('theming', 'cachebuster', '0');
 
-		if(!$logo || !$logoExists) {
-			if($useSvg) {
+		if (!$logo || !$logoExists) {
+			if ($useSvg) {
 				$logo = $this->urlGenerator->imagePath('core', 'logo/logo.svg');
 			} else {
 				$logo = $this->urlGenerator->imagePath('core', 'logo/logo.png');
@@ -309,7 +311,7 @@ class ThemingDefaults extends \OC_Defaults {
 		}
 
 		$variables['has-legal-links'] = 'false';
-		if($this->getImprintUrl() !== '' || $this->getPrivacyUrl() !== '') {
+		if ($this->getImprintUrl() !== '' || $this->getPrivacyUrl() !== '') {
 			$variables['has-legal-links'] = 'true';
 		}
 
@@ -350,10 +352,11 @@ class ThemingDefaults extends \OC_Defaults {
 				if (file_exists($appPath . '/img/manifest.json')) {
 					return false;
 				}
-			} catch (AppPathNotFoundException $e) {}
+			} catch (AppPathNotFoundException $e) {
+			}
 			$route = $this->urlGenerator->linkToRoute('theming.Theming.getManifest');
 		}
-		if (strpos($image, 'filetypes/') === 0 && file_exists(\OC::$SERVERROOT . '/core/img/' . $image )) {
+		if (strpos($image, 'filetypes/') === 0 && file_exists(\OC::$SERVERROOT . '/core/img/' . $image)) {
 			$route = $this->urlGenerator->linkToRoute('theming.Icon.getThemedIcon', ['app' => $app, 'image' => $image]);
 		}
 
@@ -372,7 +375,6 @@ class ThemingDefaults extends \OC_Defaults {
 		$this->config->setAppValue('theming', 'cachebuster', (int)$cacheBusterKey+1);
 		$this->cacheFactory->createDistributed('theming-')->clear();
 		$this->cacheFactory->createDistributed('imagePath')->clear();
-
 	}
 
 	/**

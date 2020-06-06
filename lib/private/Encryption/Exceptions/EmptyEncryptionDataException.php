@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -25,6 +26,5 @@ namespace OC\Encryption\Exceptions;
 
 use OCP\Encryption\Exceptions\GenericEncryptionException;
 
-class EmptyEncryptionDataException extends GenericEncryptionException{
-
+class EmptyEncryptionDataException extends GenericEncryptionException {
 }

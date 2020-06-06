@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Vincent Petry <pvince81@owncloud.com>
  *
  * @license AGPL-3.0
@@ -30,4 +31,5 @@ namespace OCP\SystemTag;
  *
  * @since 9.0.0
  */
-class TagAlreadyExistsException extends \RuntimeException {}
+class TagAlreadyExistsException extends \RuntimeException {
+}

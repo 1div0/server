@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017, Christoph Seitz <christoph.seitz@posteo.de>
  *
  * @author Christoph Seitz <christoph.seitz@posteo.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,7 +24,6 @@
 
 namespace OCA\DAV\CalDAV\Principal;
 
-
 /**
  * Class Collection
  *
@@ -37,8 +37,7 @@ class Collection extends \Sabre\CalDAV\Principal\Collection {
 	 * @param array $principalInfo
 	 * @return User
 	 */
-	function getChildForPrincipal(array $principalInfo) {
+	public function getChildForPrincipal(array $principalInfo) {
 		return new User($this->principalBackend, $principalInfo);
 	}
-
 }

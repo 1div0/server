@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  *
@@ -40,7 +41,7 @@ class PersonalMountTest extends TestCase {
 
 		$storage->expects($this->any())
 			->method('getId')
-			->will($this->returnValue('dummy'));
+			->willReturn('dummy');
 
 		$mount = new PersonalMount($storageService, 10, $storage, '/foo');
 

@@ -1,7 +1,11 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -24,8 +28,16 @@
 
 namespace OCA\DAV\CardDAV;
 
+use OCA\DAV\AppInfo\PluginManager;
+use OCA\DAV\CardDAV\Integration\IAddressBookProvider;
+use OCA\DAV\CardDAV\Integration\ExternalAddressBook;
 use OCP\IConfig;
 use OCP\IL10N;
+use Sabre\CardDAV\Backend;
+use Sabre\DAV\Exception\MethodNotAllowed;
+use Sabre\CardDAV\IAddressBook;
+use function array_map;
+use Sabre\DAV\MkCol;
 
 class UserAddressBooks extends \Sabre\CardDAV\AddressBookHome {
 
@@ -35,12 +47,22 @@ class UserAddressBooks extends \Sabre\CardDAV\AddressBookHome {
 	/** @var IConfig */
 	protected $config;
 
+	/** @var PluginManager */
+	private $pluginManager;
+
+	public function __construct(Backend\BackendInterface $carddavBackend,
+								string $principalUri,
+								PluginManager $pluginManager) {
+		parent::__construct($carddavBackend, $principalUri);
+		$this->pluginManager = $pluginManager;
+	}
+
 	/**
-	 * Returns a list of addressbooks
+	 * Returns a list of address books
 	 *
-	 * @return array
+	 * @return IAddressBook[]
 	 */
-	function getChildren() {
+	public function getChildren() {
 		if ($this->l10n === null) {
 			$this->l10n = \OC::$server->getL10N('dav');
 		}
@@ -49,16 +71,28 @@ class UserAddressBooks extends \Sabre\CardDAV\AddressBookHome {
 		}
 
 		$addressBooks = $this->carddavBackend->getAddressBooksForUser($this->principalUri);
-		$objects = [];
-		foreach($addressBooks as $addressBook) {
+		/** @var IAddressBook[] $objects */
+		$objects = array_map(function (array $addressBook) {
 			if ($addressBook['principaluri'] === 'principals/system/system') {
-				$objects[] = new SystemAddressbook($this->carddavBackend, $addressBook, $this->l10n, $this->config);
-			} else {
-				$objects[] = new AddressBook($this->carddavBackend, $addressBook, $this->l10n);
+				return new SystemAddressbook($this->carddavBackend, $addressBook, $this->l10n, $this->config);
 			}
-		}
-		return $objects;
 
+			return new AddressBook($this->carddavBackend, $addressBook, $this->l10n);
+		}, $addressBooks);
+		/** @var IAddressBook[][] $objectsFromPlugins */
+		$objectsFromPlugins = array_map(function (IAddressBookProvider $plugin): array {
+			return $plugin->fetchAllForAddressBookHome($this->principalUri);
+		}, $this->pluginManager->getAddressBookPlugins());
+
+		return array_merge($objects, ...$objectsFromPlugins);
+	}
+
+	public function createExtendedCollection($name, MkCol $mkCol) {
+		if (ExternalAddressBook::doesViolateReservedName($name)) {
+			throw new MethodNotAllowed('The resource you tried to create has a reserved name');
+		}
+
+		parent::createExtendedCollection($name, $mkCol);
 	}
 
 	/**
@@ -73,18 +107,16 @@ class UserAddressBooks extends \Sabre\CardDAV\AddressBookHome {
 	 *
 	 * @return array
 	 */
-	function getACL() {
-
+	public function getACL() {
 		$acl = parent::getACL();
 		if ($this->principalUri === 'principals/system/system') {
 			$acl[] = [
-					'privilege' => '{DAV:}read',
-					'principal' => '{DAV:}authenticated',
-					'protected' => true,
+				'privilege' => '{DAV:}read',
+				'principal' => '{DAV:}authenticated',
+				'protected' => true,
 			];
 		}
 
 		return $acl;
 	}
-
 }

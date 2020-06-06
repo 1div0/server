@@ -38,7 +38,7 @@ class UtilTest extends \Test\TestCase {
 		$this->assertTrue(is_string($edition));
 	}
 
-	function testSanitizeHTML() {
+	public function testSanitizeHTML() {
 		$badArray = [
 			'While it is unusual to pass an array',
 			'this function actually <blink>supports</blink> it.',
@@ -71,7 +71,7 @@ class UtilTest extends \Test\TestCase {
 		$this->assertEquals('This is a good string without HTML.', $result);
 	}
 
-	function testEncodePath() {
+	public function testEncodePath() {
 		$component = '/§#@test%&^ä/-child';
 		$result = OC_Util::encodePath($component);
 		$this->assertEquals("/%C2%A7%23%40test%25%26%5E%C3%A4/-child", $result);
@@ -82,12 +82,12 @@ class UtilTest extends \Test\TestCase {
 		$this->assertEquals($expected, \OC_Util::fileInfoLoaded());
 	}
 
-	function testGetDefaultEmailAddress() {
+	public function testGetDefaultEmailAddress() {
 		$email = \OCP\Util::getDefaultEmailAddress("no-reply");
 		$this->assertEquals('no-reply@localhost', $email);
 	}
 
-	function testGetDefaultEmailAddressFromConfig() {
+	public function testGetDefaultEmailAddressFromConfig() {
 		$config = \OC::$server->getConfig();
 		$config->setSystemValue('mail_domain', 'example.com');
 		$email = \OCP\Util::getDefaultEmailAddress("no-reply");
@@ -95,7 +95,7 @@ class UtilTest extends \Test\TestCase {
 		$config->deleteSystemValue('mail_domain');
 	}
 
-	function testGetConfiguredEmailAddressFromConfig() {
+	public function testGetConfiguredEmailAddressFromConfig() {
 		$config = \OC::$server->getConfig();
 		$config->setSystemValue('mail_domain', 'example.com');
 		$config->setSystemValue('mail_from_address', 'owncloud');
@@ -105,7 +105,7 @@ class UtilTest extends \Test\TestCase {
 		$config->deleteSystemValue('mail_from_address');
 	}
 
-	function testGetInstanceIdGeneratesValidId() {
+	public function testGetInstanceIdGeneratesValidId() {
 		\OC::$server->getConfig()->deleteSystemValue('instanceid');
 		$instanceId = OC_Util::getInstanceId();
 		$this->assertStringStartsWith('oc', $instanceId);
@@ -178,7 +178,7 @@ class UtilTest extends \Test\TestCase {
 	 * @param array $excludedGroups groups which should be excluded from sharing
 	 * @param bool $expected expected result
 	 */
-	function testIsSharingDisabledForUser($groups, $membership, $excludedGroups, $expected) {
+	public function testIsSharingDisabledForUser($groups, $membership, $excludedGroups, $expected) {
 		$config = $this->getMockBuilder(IConfig::class)->disableOriginalConstructor()->getMock();
 		$groupManager = $this->getMockBuilder('OCP\IGroupManager')->disableOriginalConstructor()->getMock();
 		$user = $this->getMockBuilder(IUser::class)->disableOriginalConstructor()->getMock();
@@ -187,18 +187,18 @@ class UtilTest extends \Test\TestCase {
 				->expects($this->at(0))
 				->method('getAppValue')
 				->with('core', 'shareapi_exclude_groups', 'no')
-				->will($this->returnValue('yes'));
+				->willReturn('yes');
 		$config
 				->expects($this->at(1))
 				->method('getAppValue')
 				->with('core', 'shareapi_exclude_groups_list')
-				->will($this->returnValue(json_encode($excludedGroups)));
+				->willReturn(json_encode($excludedGroups));
 
 		$groupManager
 				->expects($this->at(0))
 				->method('getUserGroupIds')
 				->with($user)
-				->will($this->returnValue($membership));
+				->willReturn($membership);
 
 		$result = \OC_Util::isSharingDisabledForUser($config, $groupManager, $user);
 
@@ -206,16 +206,16 @@ class UtilTest extends \Test\TestCase {
 	}
 
 	public function dataProviderForTestIsSharingDisabledForUser() {
-		return array(
+		return [
 			// existing groups, groups the user belong to, groups excluded from sharing, expected result
-			array(array('g1', 'g2', 'g3'), array(), array('g1'), false),
-			array(array('g1', 'g2', 'g3'), array(), array(), false),
-			array(array('g1', 'g2', 'g3'), array('g2'), array('g1'), false),
-			array(array('g1', 'g2', 'g3'), array('g2'), array(), false),
-			array(array('g1', 'g2', 'g3'), array('g1', 'g2'), array('g1'), false),
-			array(array('g1', 'g2', 'g3'), array('g1', 'g2'), array('g1', 'g2'), true),
-			array(array('g1', 'g2', 'g3'), array('g1', 'g2'), array('g1', 'g2', 'g3'), true),
-		);
+			[['g1', 'g2', 'g3'], [], ['g1'], false],
+			[['g1', 'g2', 'g3'], [], [], false],
+			[['g1', 'g2', 'g3'], ['g2'], ['g1'], false],
+			[['g1', 'g2', 'g3'], ['g2'], [], false],
+			[['g1', 'g2', 'g3'], ['g1', 'g2'], ['g1'], false],
+			[['g1', 'g2', 'g3'], ['g1', 'g2'], ['g1', 'g2'], true],
+			[['g1', 'g2', 'g3'], ['g1', 'g2'], ['g1', 'g2', 'g3'], true],
+		];
 	}
 
 	/**
@@ -224,7 +224,7 @@ class UtilTest extends \Test\TestCase {
 	 * @dataProvider defaultAppsProvider
 	 * @group DB
 	 */
-	function testDefaultApps($defaultAppConfig, $expectedPath, $enabledApps) {
+	public function testDefaultApps($defaultAppConfig, $expectedPath, $enabledApps) {
 		$oldDefaultApps = \OC::$server->getConfig()->getSystemValue('defaultapp', '');
 		// CLI is doing messy stuff with the webroot, so need to work it around
 		$oldWebRoot = \OC::$WEBROOT;
@@ -233,9 +233,9 @@ class UtilTest extends \Test\TestCase {
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->expects($this->any())
 			->method('isEnabledForUser')
-			->will($this->returnCallback(function($appId) use ($enabledApps){
+			->willReturnCallback(function ($appId) use ($enabledApps) {
 				return in_array($appId, $enabledApps);
-		}));
+			});
 		Dummy_OC_Util::$appManager = $appManager;
 
 		// need to set a user id to make sure enabled apps are read from cache
@@ -249,33 +249,33 @@ class UtilTest extends \Test\TestCase {
 		\OC_User::setUserId(null);
 	}
 
-	function defaultAppsProvider() {
-		return array(
+	public function defaultAppsProvider() {
+		return [
 			// none specified, default to files
-			array(
+			[
 				'',
 				'index.php/apps/files/',
-				array('files'),
-			),
+				['files'],
+			],
 			// unexisting or inaccessible app specified, default to files
-			array(
+			[
 				'unexist',
 				'index.php/apps/files/',
-				array('files'),
-			),
+				['files'],
+			],
 			// non-standard app
-			array(
+			[
 				'calendar',
 				'index.php/apps/calendar/',
-				array('files', 'calendar'),
-			),
+				['files', 'calendar'],
+			],
 			// non-standard app with fallback
-			array(
+			[
 				'contacts,calendar',
 				'index.php/apps/calendar/',
-				array('files', 'calendar'),
-			),
-		);
+				['files', 'calendar'],
+			],
+		];
 	}
 
 	public function testGetDefaultPageUrlWithRedirectUrlWithoutFrontController() {
@@ -319,14 +319,14 @@ class UtilTest extends \Test\TestCase {
 		$this->assertFalse(\OCP\Util::needUpgrade());
 
 		$config->setSystemValue('version', '7.0.0.0');
-		\OC::$server->getSession()->set('OC_Version', array(7, 0, 0, 1));
-		self::invokePrivate(new \OCP\Util, 'needUpgradeCache', array(null));
+		\OC::$server->getSession()->set('OC_Version', [7, 0, 0, 1]);
+		self::invokePrivate(new \OCP\Util, 'needUpgradeCache', [null]);
 
 		$this->assertTrue(\OCP\Util::needUpgrade());
 
 		$config->setSystemValue('version', $oldConfigVersion);
 		\OC::$server->getSession()->set('OC_Version', $oldSessionVersion);
-		self::invokePrivate(new \OCP\Util, 'needUpgradeCache', array(null));
+		self::invokePrivate(new \OCP\Util, 'needUpgradeCache', [null]);
 
 		$this->assertFalse(\OCP\Util::needUpgrade());
 	}

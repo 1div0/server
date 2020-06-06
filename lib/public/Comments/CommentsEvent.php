@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  *
  * @license AGPL-3.0
@@ -32,11 +33,10 @@ use OCP\EventDispatcher\Event;
  * @since 9.0.0
  */
 class CommentsEvent extends Event {
-
-	const EVENT_ADD        = 'OCP\Comments\ICommentsManager::addComment';
-	const EVENT_PRE_UPDATE = 'OCP\Comments\ICommentsManager::preUpdateComment';
-	const EVENT_UPDATE     = 'OCP\Comments\ICommentsManager::updateComment';
-	const EVENT_DELETE     = 'OCP\Comments\ICommentsManager::deleteComment';
+	public const EVENT_ADD        = 'OCP\Comments\ICommentsManager::addComment';
+	public const EVENT_PRE_UPDATE = 'OCP\Comments\ICommentsManager::preUpdateComment';
+	public const EVENT_UPDATE     = 'OCP\Comments\ICommentsManager::updateComment';
+	public const EVENT_DELETE     = 'OCP\Comments\ICommentsManager::deleteComment';
 
 	/** @var string */
 	protected $event;

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -24,7 +25,6 @@
  */
 
 namespace OCA\FederatedFileSharing;
-
 
 use OC\HintException;
 use OCP\Contacts\IManager;
@@ -208,7 +208,7 @@ class Notifier implements INotifier {
 		$user = $cloudId->getUser();
 		if (strpos($server, 'http://') === 0) {
 			$server = substr($server, strlen('http://'));
-		} else if (strpos($server, 'https://') === 0) {
+		} elseif (strpos($server, 'https://') === 0) {
 			$server = substr($server, strlen('https://'));
 		}
 

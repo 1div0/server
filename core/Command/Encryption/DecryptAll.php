@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author davitol <dtoledo@solidgear.es>
  * @author Evgeny Golyshev <eugulixes@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
@@ -125,7 +126,7 @@ class DecryptAll extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		if ( !$input->isInteractive() ) {
+		if (!$input->isInteractive()) {
 			$output->writeln('Invalid TTY.');
 			$output->writeln('If you are trying to execute the command in a Docker ');
 			$output->writeln("container, do not forget to execute 'docker exec' with");
@@ -175,7 +176,7 @@ class DecryptAll extends Command {
 					$output->writeln(' aborted.');
 					$output->writeln('Server side encryption remains enabled');
 					$this->config->setAppValue('core', 'encryption_enabled', 'yes');
-				} else if ($uid !== '') {
+				} elseif ($uid !== '') {
 					$output->writeln('Server side encryption remains enabled');
 					$this->config->setAppValue('core', 'encryption_enabled', 'yes');
 				}
@@ -192,6 +193,5 @@ class DecryptAll extends Command {
 			$this->resetMaintenanceAndTrashbin();
 			throw $e;
 		}
-
 	}
 }

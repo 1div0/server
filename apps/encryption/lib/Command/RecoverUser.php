@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2018 Bjoern Schiessle <bjoern@schiessle.org>
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,12 +24,6 @@
 
 namespace OCA\Encryption\Command;
 
-
-use OC\Files\Filesystem;
-use OC\User\NoUserException;
-use OCA\Encryption\Crypto\Crypt;
-use OCA\Encryption\KeyManager;
-use OCA\Encryption\Recovery;
 use OCA\Encryption\Util;
 use OCP\IConfig;
 use OCP\IUserManager;
@@ -60,7 +55,6 @@ class RecoverUser extends Command {
 								IConfig $config,
 								IUserManager $userManager,
 								QuestionHelper $questionHelper) {
-
 		$this->util = $util;
 		$this->questionHelper = $questionHelper;
 		$this->userManager = $userManager;
@@ -80,10 +74,9 @@ class RecoverUser extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-
 		$isMasterKeyEnabled = $this->util->isMasterKeyEnabled();
 
-		if($isMasterKeyEnabled) {
+		if ($isMasterKeyEnabled) {
 			$output->writeln('You use the master key, no individual user recovery needed.');
 			return;
 		}
@@ -96,7 +89,7 @@ class RecoverUser extends Command {
 		}
 
 		$recoveryKeyEnabled = $this->util->isRecoveryEnabledForUser($uid);
-		if($recoveryKeyEnabled === false) {
+		if ($recoveryKeyEnabled === false) {
 			$output->writeln('Recovery key is not enabled for: ' . $uid);
 			return;
 		}
@@ -114,7 +107,5 @@ class RecoverUser extends Command {
 		$output->write('Start to recover users files... This can take some time...');
 		$this->userManager->get($uid)->setPassword($newLoginPassword, $recoveryPassword);
 		$output->writeln('Done.');
-
 	}
-
 }

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -24,7 +25,6 @@
  */
 
 namespace OCA\Encryption\Users;
-
 
 use OCA\Encryption\Crypto\Crypt;
 use OCA\Encryption\KeyManager;
@@ -64,7 +64,7 @@ class Setup {
 		$this->user = $userSession && $userSession->isLoggedIn() ? $userSession->getUser()->getUID() : false;
 		$this->crypt = $crypt;
 		$this->keyManager = $keyManager;
- 	}
+	}
 
 	/**
 	 * @param string $uid user id

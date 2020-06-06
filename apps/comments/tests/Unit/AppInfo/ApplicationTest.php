@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -64,7 +65,7 @@ class ApplicationTest extends TestCase {
 			Notifier::class,
 		];
 
-		foreach($services as $service) {
+		foreach ($services as $service) {
 			$s = $c->query($service);
 			$this->assertInstanceOf($service, $s);
 		}

@@ -2,9 +2,10 @@
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -27,13 +28,10 @@ namespace OCA\DAV\Command;
 
 use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\DAV\CalDAV\Calendar;
-use OCA\DAV\Connector\Sabre\Principal;
 use OCP\IConfig;
-use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserManager;
-use OCP\IUserSession;
 use OCP\Share\IManager as IShareManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -65,7 +63,7 @@ class MoveCalendar extends Command {
 	/** @var CalDavBackend */
 	private $calDav;
 
-	const URI_USERS = 'principals/users/';
+	public const URI_USERS = 'principals/users/';
 
 	/**
 	 * @param IUserManager $userManager
@@ -75,7 +73,7 @@ class MoveCalendar extends Command {
 	 * @param IL10N $l10n
 	 * @param CalDavBackend $calDav
 	 */
-	function __construct(
+	public function __construct(
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IShareManager $shareManager,
@@ -149,8 +147,7 @@ class MoveCalendar extends Command {
 	 * @param string $userDestination
 	 * @param bool $force
 	 */
-	private function checkShares(array $calendar, string $userOrigin, string $userDestination, bool $force = false)
-	{
+	private function checkShares(array $calendar, string $userOrigin, string $userDestination, bool $force = false) {
 		$shares = $this->calDav->getShares($calendar['id']);
 		foreach ($shares as $share) {
 			list(, $prefix, $userOrGroup) = explode('/', $share['href'], 3);
@@ -183,7 +180,7 @@ class MoveCalendar extends Command {
 		 */
 		if (count($shares) > 0) {
 			$this->io->note([
-				"Please note that moving calendar " . $calendar['uri'] . " from user <$userOrigin> to <$userDestination> has caused share links to change.", 
+				"Please note that moving calendar " . $calendar['uri'] . " from user <$userOrigin> to <$userDestination> has caused share links to change.",
 				"Sharees will need to change \"example.com/remote.php/dav/calendars/uid/" . $calendar['uri'] . "_shared_by_$userOrigin\" to \"example.com/remote.php/dav/calendars/uid/" . $calendar['uri'] . "_shared_by_$userDestination\""
 			]);
 		}

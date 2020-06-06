@@ -64,7 +64,7 @@ export default {
 			 * ! This allow vue to make the Share class state reactive
 			 * ! do not remove it ot you'll lose all reactivity here
 			 */
-			reactiveState: this.share && this.share.state,
+			reactiveState: this.share?.state,
 
 			SHARE_TYPES: {
 				SHARE_TYPE_USER: OC.Share.SHARE_TYPE_USER,
@@ -224,30 +224,35 @@ export default {
 		/**
 		 * Send an update of the share to the queue
 		 *
-		 * @param {string} property the property to sync
+		 * @param {string} propertyNames the properties to sync
 		 */
-		queueUpdate(property) {
+		queueUpdate(...propertyNames) {
+			if (propertyNames.length === 0) {
+				// Nothing to update
+				return
+			}
+
 			if (this.share.id) {
+				const properties = {}
 				// force value to string because that is what our
 				// share api controller accepts
-				const value = this.share[property].toString()
+				propertyNames.map(p => (properties[p] = this.share[p].toString()))
 
 				this.updateQueue.add(async() => {
 					this.saving = true
 					this.errors = {}
 					try {
-						await this.updateShare(this.share.id, {
-							property,
-							value,
-						})
+						await this.updateShare(this.share.id, properties)
 
 						// clear any previous errors
-						this.$delete(this.errors, property)
+						this.$delete(this.errors, propertyNames[0])
 
 						// reset password state after sync
 						this.$delete(this.share, 'newPassword')
-					} catch ({ property, message }) {
-						this.onSyncError(property, message)
+					} catch ({ message }) {
+						if (message && message !== '') {
+							this.onSyncError(propertyNames[0], message)
+						}
 					} finally {
 						this.saving = false
 					}
@@ -286,6 +291,14 @@ export default {
 				}
 				break
 			}
+			case 'sendPasswordByTalk': {
+				// show error
+				this.$set(this.errors, property, message)
+
+				// Restore previous state
+				this.share.sendPasswordByTalk = !this.share.sendPasswordByTalk
+				break
+			}
 			}
 		},
 
@@ -298,5 +311,16 @@ export default {
 		debounceQueueUpdate: debounce(function(property) {
 			this.queueUpdate(property)
 		}, 500),
+
+		/**
+		 * Returns which dates are disabled for the datepicker
+		 * @param {Date} date date to check
+		 * @returns {boolean}
+		 */
+		disabledDate(date) {
+			const dateMoment = moment(date)
+			return (this.dateTomorrow && dateMoment.isBefore(this.dateTomorrow, 'day'))
+				|| (this.dateMaxEnforced && dateMoment.isSameOrAfter(this.dateMaxEnforced, 'day'))
+		},
 	},
 }

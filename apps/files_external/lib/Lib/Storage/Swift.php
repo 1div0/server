@@ -10,6 +10,7 @@ declare(strict_types=1);
  * @author Benjamin Liles <benliles@arch.tamu.edu>
  * @author Christian Berendt <berendt@b1-systems.de>
  * @author Christopher Bartz <bartz@dkrz.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Felix Moeller <mail@felixmoeller.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
@@ -100,7 +101,7 @@ class Swift extends \OC\Files\Storage\Common {
 		return $path;
 	}
 
-	const SUBCONTAINER_FILE = '.subcontainers';
+	public const SUBCONTAINER_FILE = '.subcontainers';
 
 	/**
 	 * translate directory path to container name
@@ -315,7 +316,6 @@ class Swift extends \OC\Files\Storage\Common {
 			]);
 			return false;
 		}
-
 	}
 
 	public function stat($path) {
@@ -323,7 +323,7 @@ class Swift extends \OC\Files\Storage\Common {
 
 		if ($path === '.') {
 			$path = '';
-		} else if ($this->is_dir($path)) {
+		} elseif ($this->is_dir($path)) {
 			$path .= '/';
 		}
 
@@ -351,7 +351,7 @@ class Swift extends \OC\Files\Storage\Common {
 			$mtime = floor($mtime);
 		}
 
-		$stat = array();
+		$stat = [];
 		$stat['size'] = (int)$object->contentLength;
 		$stat['mtime'] = $mtime;
 		$stat['atime'] = time();
@@ -504,8 +504,7 @@ class Swift extends \OC\Files\Storage\Common {
 				]);
 				return false;
 			}
-
-		} else if ($fileType === 'dir') {
+		} elseif ($fileType === 'dir') {
 			try {
 				$source = $this->fetchObject($path1 . '/');
 				$source->copy([
@@ -532,7 +531,6 @@ class Swift extends \OC\Files\Storage\Common {
 				$target = $path2 . '/' . $file;
 				$this->copy($source, $target);
 			}
-
 		} else {
 			//file does not exist
 			return false;
@@ -602,7 +600,7 @@ class Swift extends \OC\Files\Storage\Common {
 		}
 		$path = $this->normalizePath($path);
 		$dh = $this->opendir($path);
-		$content = array();
+		$content = [];
 		while (($file = readdir($dh)) !== false) {
 			$content[] = $file;
 		}
@@ -624,5 +622,4 @@ class Swift extends \OC\Files\Storage\Common {
 	public static function checkDependencies() {
 		return true;
 	}
-
 }

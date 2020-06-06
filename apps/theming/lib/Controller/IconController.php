@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Julius Haertl <jus@bitgrid.net>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Haertl <jus@bitgrid.net>
  * @author Julius Härtl <jus@bitgrid.net>
@@ -133,7 +134,7 @@ class IconController extends Controller {
 				$response = new FileDisplayResponse($iconFile, Http::STATUS_OK, ['Content-Type' => 'image/x-icon']);
 			}
 		}
-		if($response === null) {
+		if ($response === null) {
 			$fallbackLogo = \OC::$SERVERROOT . '/core/img/favicon.png';
 			$response = new DataDisplayResponse($this->fileAccessHelper->file_get_contents($fallbackLogo), Http::STATUS_OK, ['Content-Type' => 'image/x-icon']);
 		}
@@ -169,7 +170,7 @@ class IconController extends Controller {
 				$response = new FileDisplayResponse($iconFile, Http::STATUS_OK, ['Content-Type' => 'image/png']);
 			}
 		}
-		if($response === null) {
+		if ($response === null) {
 			$fallbackLogo = \OC::$SERVERROOT . '/core/img/favicon-touch.png';
 			$response = new DataDisplayResponse($this->fileAccessHelper->file_get_contents($fallbackLogo), Http::STATUS_OK, ['Content-Type' => 'image/png']);
 		}

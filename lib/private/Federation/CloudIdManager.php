@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017, Robin Appelman <robin@icewind.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -51,9 +52,9 @@ class CloudIdManager implements ICloudIdManager {
 
 		if ($posSlash === false && $posColon === false) {
 			$invalidPos = \strlen($id);
-		} else if ($posSlash === false) {
+		} elseif ($posSlash === false) {
 			$invalidPos = $posColon;
-		} else if ($posColon === false) {
+		} elseif ($posColon === false) {
 			$invalidPos = $posSlash;
 		} else {
 			$invalidPos = min($posSlash, $posColon);

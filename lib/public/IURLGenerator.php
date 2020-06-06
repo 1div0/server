@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -42,7 +43,7 @@ interface IURLGenerator {
 	 * @return string the url
 	 * @since 6.0.0
 	 */
-	public function linkToRoute(string $routeName, array $arguments = array()): string;
+	public function linkToRoute(string $routeName, array $arguments = []): string;
 
 	/**
 	 * Returns the absolute URL for a route
@@ -51,7 +52,7 @@ interface IURLGenerator {
 	 * @return string the absolute url
 	 * @since 8.0.0
 	 */
-	public function linkToRouteAbsolute(string $routeName, array $arguments = array()): string;
+	public function linkToRouteAbsolute(string $routeName, array $arguments = []): string;
 
 	/**
 	 * @param string $routeName
@@ -70,7 +71,7 @@ interface IURLGenerator {
 	 * @return string the url
 	 * @since 6.0.0
 	 */
-	public function linkTo(string $appName, string $file, array $args = array()): string;
+	public function linkTo(string $appName, string $file, array $args = []): string;
 
 	/**
 	 * Returns the link to an image, like linkTo but only with prepending img/

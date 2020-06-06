@@ -21,7 +21,6 @@
 
 namespace Tests\Core\Command\Log;
 
-
 use OC\Core\Command\Log\Manage;
 use OCP\IConfig;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,9 +52,9 @@ class ManageTest extends TestCase {
 
 	public function testChangeBackend() {
 		$this->consoleInput->method('getOption')
-			->will($this->returnValueMap([
+			->willReturnMap([
 				['backend', 'syslog']
-			]));
+			]);
 		$this->config->expects($this->once())
 			->method('setSystemValue')
 			->with('log_type', 'syslog');
@@ -65,9 +64,9 @@ class ManageTest extends TestCase {
 
 	public function testChangeLevel() {
 		$this->consoleInput->method('getOption')
-			->will($this->returnValueMap([
+			->willReturnMap([
 				['level', 'debug']
-			]));
+			]);
 		$this->config->expects($this->once())
 			->method('setSystemValue')
 			->with('loglevel', 0);
@@ -77,9 +76,9 @@ class ManageTest extends TestCase {
 
 	public function testChangeTimezone() {
 		$this->consoleInput->method('getOption')
-			->will($this->returnValueMap([
+			->willReturnMap([
 				['timezone', 'UTC']
-			]));
+			]);
 		$this->config->expects($this->once())
 			->method('setSystemValue')
 			->with('logtimezone', 'UTC');
@@ -182,5 +181,4 @@ class ManageTest extends TestCase {
 
 		self::invokePrivate($this->command, 'execute', [$this->consoleInput, $this->consoleOutput]);
 	}
-
 }

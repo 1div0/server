@@ -5,6 +5,7 @@
  * @author Bart Visscher <bartv@thisnet.nl>
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Christopher Schäpers <kondou@ts.unde.re>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
  * @author Guillaume COMPAGNON <gcompagnon@outlook.com>
@@ -22,7 +23,7 @@
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
  * @license AGPL-3.0
@@ -48,10 +49,10 @@ use OC\Template\JSCombiner;
 use OC\Template\JSConfigHelper;
 use OC\Template\SCSSCacher;
 use OCP\Defaults;
+use OCP\IInitialStateService;
 use OCP\Support\Subscription\IRegistry;
 
 class TemplateLayout extends \OC_Template {
-
 	private static $versionHash = '';
 
 	/**
@@ -63,41 +64,41 @@ class TemplateLayout extends \OC_Template {
 	 * @param string $renderAs
 	 * @param string $appId application id
 	 */
-	public function __construct( $renderAs, $appId = '' ) {
+	public function __construct($renderAs, $appId = '') {
 
 		// yes - should be injected ....
 		$this->config = \OC::$server->getConfig();
 
-		if(\OCP\Util::isIE()) {
+		if (\OCP\Util::isIE()) {
 			\OC_Util::addStyle('ie');
 		}
 
 		// Decide which page we show
-		if($renderAs === 'user') {
-			parent::__construct( 'core', 'layout.user' );
-			if(in_array(\OC_App::getCurrentApp(), ['settings','admin', 'help']) !== false) {
+		if ($renderAs === 'user') {
+			parent::__construct('core', 'layout.user');
+			if (in_array(\OC_App::getCurrentApp(), ['settings','admin', 'help']) !== false) {
 				$this->assign('bodyid', 'body-settings');
-			}else{
+			} else {
 				$this->assign('bodyid', 'body-user');
 			}
 
 			// Add navigation entry
-			$this->assign( 'application', '');
-			$this->assign( 'appid', $appId );
+			$this->assign('application', '');
+			$this->assign('appid', $appId);
 			$navigation = \OC::$server->getNavigationManager()->getAll();
-			$this->assign( 'navigation', $navigation);
+			$this->assign('navigation', $navigation);
 			$settingsNavigation = \OC::$server->getNavigationManager()->getAll('settings');
-			$this->assign( 'settingsnavigation', $settingsNavigation);
-			foreach($navigation as $entry) {
+			$this->assign('settingsnavigation', $settingsNavigation);
+			foreach ($navigation as $entry) {
 				if ($entry['active']) {
-					$this->assign( 'application', $entry['name'] );
+					$this->assign('application', $entry['name']);
 					break;
 				}
 			}
 
-			foreach($settingsNavigation as $entry) {
+			foreach ($settingsNavigation as $entry) {
 				if ($entry['active']) {
-					$this->assign( 'application', $entry['name'] );
+					$this->assign('application', $entry['name']);
 					break;
 				}
 			}
@@ -122,13 +123,12 @@ class TemplateLayout extends \OC_Template {
 			} catch (\OCP\AutoloadNotAllowedException $e) {
 				$this->assign('themingInvertMenu', false);
 			}
-
-		} else if ($renderAs === 'error') {
+		} elseif ($renderAs === 'error') {
 			parent::__construct('core', 'layout.guest', '', false);
 			$this->assign('bodyid', 'body-login');
 			$this->assign('user_displayname', '');
 			$this->assign('user_uid', '');
-		} else if ($renderAs === 'guest') {
+		} elseif ($renderAs === 'guest') {
 			parent::__construct('core', 'layout.guest');
 			\OC_Util::addStyle('guest');
 			$this->assign('bodyid', 'body-login');
@@ -136,9 +136,9 @@ class TemplateLayout extends \OC_Template {
 			$userDisplayName = \OC_User::getDisplayName();
 			$this->assign('user_displayname', $userDisplayName);
 			$this->assign('user_uid', \OC_User::getUser());
-		} else if ($renderAs === 'public') {
+		} elseif ($renderAs === 'public') {
 			parent::__construct('core', 'layout.public');
-			$this->assign( 'appid', $appId );
+			$this->assign('appid', $appId);
 			$this->assign('bodyid', 'body-public');
 
 			/** @var IRegistry $subscription */
@@ -150,7 +150,6 @@ class TemplateLayout extends \OC_Template {
 			$this->assign('showSimpleSignUpLink', $showSimpleSignup);
 		} else {
 			parent::__construct('core', 'layout.base');
-
 		}
 		// Send the language and the locale to our layouts
 		$lang = \OC::$server->getL10NFactory()->findLanguage();
@@ -160,7 +159,7 @@ class TemplateLayout extends \OC_Template {
 		$this->assign('language', $lang);
 		$this->assign('locale', $locale);
 
-		if(\OC::$server->getSystemConfig()->getValue('installed', false)) {
+		if (\OC::$server->getSystemConfig()->getValue('installed', false)) {
 			if (empty(self::$versionHash)) {
 				$v = \OC_App::getAppVersions();
 				$v['core'] = implode('.', \OCP\Util::getVersion());
@@ -172,7 +171,7 @@ class TemplateLayout extends \OC_Template {
 
 		// Add the js files
 		$jsFiles = self::findJavascriptFiles(\OC_Util::$scripts);
-		$this->assign('jsfiles', array());
+		$this->assign('jsfiles', []);
 		if ($this->config->getSystemValue('installed', false) && $renderAs != 'error') {
 			if (\OC::$server->getContentSecurityPolicyNonceManager()->browserSupportsCspV3()) {
 				$jsConfigHelper = new JSConfigHelper(
@@ -185,17 +184,18 @@ class TemplateLayout extends \OC_Template {
 					\OC::$server->getGroupManager(),
 					\OC::$server->getIniWrapper(),
 					\OC::$server->getURLGenerator(),
-					\OC::$server->getCapabilitiesManager()
+					\OC::$server->getCapabilitiesManager(),
+					\OC::$server->query(IInitialStateService::class)
 				);
 				$this->assign('inline_ocjs', $jsConfigHelper->getConfig());
 			} else {
 				$this->append('jsfiles', \OC::$server->getURLGenerator()->linkToRoute('core.OCJS.getConfig', ['v' => self::$versionHash]));
 			}
 		}
-		foreach($jsFiles as $info) {
+		foreach ($jsFiles as $info) {
 			$web = $info[1];
 			$file = $info[2];
-			$this->append( 'jsfiles', $web.'/'.$file . $this->getVersionHashSuffix() );
+			$this->append('jsfiles', $web.'/'.$file . $this->getVersionHashSuffix());
 		}
 
 		try {
@@ -206,7 +206,7 @@ class TemplateLayout extends \OC_Template {
 
 		// Do not initialise scss appdata until we have a fully installed instance
 		// Do not load scss for update, errors, installation or login page
-		if(\OC::$server->getSystemConfig()->getValue('installed', false)
+		if (\OC::$server->getSystemConfig()->getValue('installed', false)
 			&& !\OCP\Util::needUpgrade()
 			&& $pathInfo !== ''
 			&& !preg_match('/^\/login/', $pathInfo)
@@ -220,24 +220,23 @@ class TemplateLayout extends \OC_Template {
 			$cssFiles = self::findStylesheetFiles(\OC_Util::$styles, false);
 		}
 
-		$this->assign('cssfiles', array());
+		$this->assign('cssfiles', []);
 		$this->assign('printcssfiles', []);
 		$this->assign('versionHash', self::$versionHash);
-		foreach($cssFiles as $info) {
+		foreach ($cssFiles as $info) {
 			$web = $info[1];
 			$file = $info[2];
 
 			if (substr($file, -strlen('print.css')) === 'print.css') {
-				$this->append( 'printcssfiles', $web.'/'.$file . $this->getVersionHashSuffix() );
+				$this->append('printcssfiles', $web.'/'.$file . $this->getVersionHashSuffix());
 			} else {
 				$suffix = $this->getVersionHashSuffix($web, $file);
 
 				if (strpos($file, '?v=') == false) {
-					$this->append( 'cssfiles', $web.'/'.$file . $suffix);
+					$this->append('cssfiles', $web.'/'.$file . $suffix);
 				} else {
-					$this->append( 'cssfiles', $web.'/'.$file . '-' . substr($suffix, 3));
+					$this->append('cssfiles', $web.'/'.$file . '-' . substr($suffix, 3));
 				}
-
 			}
 		}
 
@@ -248,7 +247,7 @@ class TemplateLayout extends \OC_Template {
 
 	/**
 	 * @param string $path
- 	 * @param string $file
+	 * @param string $file
 	 * @return string
 	 */
 	protected function getVersionHashSuffix($path = false, $file = false) {
@@ -269,7 +268,7 @@ class TemplateLayout extends \OC_Template {
 		// Try the webroot path for a match
 		if ($path !== false && $path !== '') {
 			$appName = $this->getAppNamefromPath($path);
-			if(array_key_exists($appName, $v)) {
+			if (array_key_exists($appName, $v)) {
 				$appVersion = $v[$appName];
 				return '?v=' . substr(md5($appVersion), 0, 8) . $themingSuffix;
 			}
@@ -277,7 +276,7 @@ class TemplateLayout extends \OC_Template {
 		// fallback to the file path instead
 		if ($file !== false && $file !== '') {
 			$appName = $this->getAppNamefromPath($file);
-			if(array_key_exists($appName, $v)) {
+			if (array_key_exists($appName, $v)) {
 				$appVersion = $v[$appName];
 				return '?v=' . substr(md5($appVersion), 0, 8) . $themingSuffix;
 			}
@@ -290,11 +289,11 @@ class TemplateLayout extends \OC_Template {
 	 * @param array $styles
 	 * @return array
 	 */
-	static public function findStylesheetFiles($styles, $compileScss = true) {
+	public static function findStylesheetFiles($styles, $compileScss = true) {
 		// Read the selected theme from the config file
 		$theme = \OC_Util::getTheme();
 
-		if($compileScss) {
+		if ($compileScss) {
 			$SCSSCacher = \OC::$server->query(SCSSCacher::class);
 		} else {
 			$SCSSCacher = null;
@@ -303,8 +302,8 @@ class TemplateLayout extends \OC_Template {
 		$locator = new \OC\Template\CSSResourceLocator(
 			\OC::$server->getLogger(),
 			$theme,
-			array( \OC::$SERVERROOT => \OC::$WEBROOT ),
-			array( \OC::$SERVERROOT => \OC::$WEBROOT ),
+			[ \OC::$SERVERROOT => \OC::$WEBROOT ],
+			[ \OC::$SERVERROOT => \OC::$WEBROOT ],
 			$SCSSCacher
 		);
 		$locator->find($styles);
@@ -325,22 +324,21 @@ class TemplateLayout extends \OC_Template {
 			return end($pathParts);
 		}
 		return false;
-
 	}
 
 	/**
 	 * @param array $scripts
 	 * @return array
 	 */
-	static public function findJavascriptFiles($scripts) {
+	public static function findJavascriptFiles($scripts) {
 		// Read the selected theme from the config file
 		$theme = \OC_Util::getTheme();
 
 		$locator = new \OC\Template\JSResourceLocator(
 			\OC::$server->getLogger(),
 			$theme,
-			array( \OC::$SERVERROOT => \OC::$WEBROOT ),
-			array( \OC::$SERVERROOT => \OC::$WEBROOT ),
+			[ \OC::$SERVERROOT => \OC::$WEBROOT ],
+			[ \OC::$SERVERROOT => \OC::$WEBROOT ],
 			\OC::$server->query(JSCombiner::class)
 			);
 		$locator->find($scripts);
@@ -355,7 +353,7 @@ class TemplateLayout extends \OC_Template {
 	 */
 	public static function convertToRelativePath($filePath) {
 		$relativePath = explode(\OC::$SERVERROOT, $filePath);
-		if(count($relativePath) !== 2) {
+		if (count($relativePath) !== 2) {
 			throw new \Exception('$filePath is not under the \OC::$SERVERROOT');
 		}
 

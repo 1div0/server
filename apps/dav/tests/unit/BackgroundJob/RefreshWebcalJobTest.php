@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Citharel <nextcloud@tcit.fr>
@@ -96,7 +97,7 @@ class RefreshWebcalJobTest extends TestCase {
 		$this->config->expects($this->once())
 			->method('getAppValue')
 			->with('dav', 'calendarSubscriptionRefreshRate', 'P1W')
-			->will($this->returnValue('P1W'));
+			->willReturn('P1W');
 
 		$this->timeFactory->expects($this->once())
 			->method('getTime')

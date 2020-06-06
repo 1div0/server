@@ -156,6 +156,7 @@
     "Transfer {path} to {userid}" : "Μεταφορά {path} στον {userid}",
     "Invalid path selected" : "Επιλέχθηκε μη έγκυρη διαδρομή",
     "Ownership transfer request sent" : "Αποστολή αίτησης μεταβίβασης κυριότητας",
+    "Cannot transfer ownership of a file or folder you don't own" : "Δεν μπορεί να μεταβιβαστεί η κυριότητα αρχείου ή φακέλου που δεν σας ανήκει",
     "Tags" : "Ετικέτες",
     "Error while loading the file data" : "Σφάλμα κατά την φόρτωση αρχείου δεδομένων",
     "Unable to change the favourite state of the file" : "Αδυναμία αλλαγής αγαπημένης κατάστασης αρχείου",
@@ -165,7 +166,7 @@
     "Settings" : "Ρυθμίσεις",
     "Show hidden files" : "Εμφάνιση κρυφών αρχείων",
     "WebDAV" : "WebDAV",
-    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Χρησιμοποιήστε αυτή την διεύθυνση, προκειμένου να <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">έχετε πρόσβαση στα αρχεία σας μέσω WebDAV</a>",
+    "Use this address to access your Files via WebDAV" : "Χρήση αυτής της διεύθυνση για πρόσβαση στα Αρχεία σας μέσω WebDAV",
     "Toggle grid view" : "Εναλλαγή σε προβολή πλέγματος",
     "No files in here" : "Δεν υπάρχουν αρχεία εδώ",
     "Upload some content or sync with your devices!" : "Μεταφόρτωση περιεχομένου ή συγχρονισμός με τις συσκευές σας!",
@@ -184,7 +185,7 @@
     "Pending shares" : "Κοινή χρήση σε εκκρεμότητα",
     "Text file" : "Αρχείο κειμένου",
     "New text file.txt" : "Νέο αρχείο κειμένου.txt",
-    "%s of %s used" : "%s από %s σε χρήση",
-    "%1$s%% of %2$s used" : "%1$s%% από %2$s σε χρήση"
+    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Χρησιμοποιήστε αυτή την διεύθυνση, προκειμένου να <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">έχετε πρόσβαση στα αρχεία σας μέσω WebDAV</a>",
+    "Cannot transfter ownership of a file or folder you don't own" : "Δεν μπορεί να μεταβαστεί η κυριότητα αρχείου ή φακέλου που δεν σας ανήκει"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

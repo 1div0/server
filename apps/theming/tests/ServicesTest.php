@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -43,7 +44,7 @@ use Test\TestCase;
  * @group DB
  * @package OCA\Theming\Tests
  */
-class ServicesTest extends TestCase  {
+class ServicesTest extends TestCase {
 	/** @var \OCA\Activity\AppInfo\Application */
 	protected $app;
 

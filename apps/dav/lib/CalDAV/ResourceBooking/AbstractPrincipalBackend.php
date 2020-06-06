@@ -2,6 +2,7 @@
 /**
  * @copyright 2019, Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -30,7 +31,6 @@ use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\ILogger;
 use OCP\IUserSession;
-use Sabre\DAV\Exception;
 use Sabre\DAV\PropPatch;
 use Sabre\DAVACL\PrincipalBackend\BackendInterface;
 
@@ -126,7 +126,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 			$metaDataRows = $metaDataStmt->fetchAll(\PDO::FETCH_ASSOC);
 
 			$metaDataById = [];
-			foreach($metaDataRows as $metaDataRow) {
+			foreach ($metaDataRows as $metaDataRow) {
 				if (!isset($metaDataById[$metaDataRow[$this->dbForeignKeyName]])) {
 					$metaDataById[$metaDataRow[$this->dbForeignKeyName]] = [];
 				}
@@ -135,7 +135,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 					$metaDataRow['value'];
 			}
 
-			while($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 				$id = $row['id'];
 
 				if (isset($metaDataById[$id])) {
@@ -143,7 +143,6 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 				} else {
 					$principals[] = $this->rowToPrincipal($row);
 				}
-
 			}
 
 			$stmt->closeCursor();
@@ -176,7 +175,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 		$stmt = $query->execute();
 		$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-		if(!$row) {
+		if (!$row) {
 			return null;
 		}
 
@@ -188,7 +187,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 		$metaDataRows = $metaDataStmt->fetchAll(\PDO::FETCH_ASSOC);
 		$metadata = [];
 
-		foreach($metaDataRows as $metaDataRow) {
+		foreach ($metaDataRows as $metaDataRow) {
 			$metadata[$metaDataRow['key']] = $metaDataRow['value'];
 		}
 
@@ -207,7 +206,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 		$stmt = $query->execute();
 		$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-		if(!$row) {
+		if (!$row) {
 			return null;
 		}
 
@@ -219,7 +218,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 		$metaDataRows = $metaDataStmt->fetchAll(\PDO::FETCH_ASSOC);
 		$metadata = [];
 
-		foreach($metaDataRows as $metaDataRow) {
+		foreach ($metaDataRows as $metaDataRow) {
 			$metadata[$metaDataRow['key']] = $metaDataRow['value'];
 		}
 
@@ -231,7 +230,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 	 * @param PropPatch $propPatch
 	 * @return int
 	 */
-	function updatePrincipal($path, PropPatch $propPatch) {
+	public function updatePrincipal($path, PropPatch $propPatch) {
 		return 0;
 	}
 
@@ -241,7 +240,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 	 * @param string $test
 	 * @return array
 	 */
-	function searchPrincipals($prefixPath, array $searchProperties, $test = 'allof') {
+	public function searchPrincipals($prefixPath, array $searchProperties, $test = 'allof') {
 		$results = [];
 		if (\count($searchProperties) === 0) {
 			return [];
@@ -266,7 +265,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 
 					$stmt = $query->execute();
 					$principals = [];
-					while($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+					while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 						if (!$this->isAllowedToAccessResource($row, $usersGroups)) {
 							continue;
 						}
@@ -285,7 +284,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 
 					$stmt = $query->execute();
 					$principals = [];
-					while($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+					while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 						if (!$this->isAllowedToAccessResource($row, $usersGroups)) {
 							continue;
 						}
@@ -306,11 +305,11 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 
 				default:
 					$rowsByMetadata = $this->searchPrincipalsByMetadataKey($prop, $value);
-					$filteredRows = array_filter($rowsByMetadata, function($row) use ($usersGroups) {
+					$filteredRows = array_filter($rowsByMetadata, function ($row) use ($usersGroups) {
 						return $this->isAllowedToAccessResource($row, $usersGroups);
 					});
 
-					$results[] = array_map(function($row) {
+					$results[] = array_map(function ($row) {
 						return $row['uri'];
 					}, $filteredRows);
 
@@ -353,7 +352,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 		$stmt = $query->execute();
 
 		$rows = [];
-		while($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+		while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 			$id = $row[$this->dbForeignKeyName];
 
 			$principalRow = $this->getPrincipalById($id);
@@ -372,7 +371,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 	 * @param string $principalPrefix
 	 * @return null|string
 	 */
-	function findByUri($uri, $principalPrefix) {
+	public function findByUri($uri, $principalPrefix) {
 		$user = $this->userSession->getUser();
 		if (!$user) {
 			return null;
@@ -389,7 +388,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 			$stmt = $query->execute();
 			$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-			if(!$row) {
+			if (!$row) {
 				return null;
 			}
 			if (!$this->isAllowedToAccessResource($row, $usersGroups)) {
@@ -416,7 +415,7 @@ abstract class AbstractPrincipalBackend implements BackendInterface {
 			$stmt = $query->execute();
 			$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-			if(!$row) {
+			if (!$row) {
 				return null;
 			}
 			if (!$this->isAllowedToAccessResource($row, $usersGroups)) {

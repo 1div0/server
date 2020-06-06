@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2018 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -32,7 +33,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class ChangesMapper extends QBMapper {
-	const TABLE_NAME = 'whats_new';
+	public const TABLE_NAME = 'whats_new';
 
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, self::TABLE_NAME);

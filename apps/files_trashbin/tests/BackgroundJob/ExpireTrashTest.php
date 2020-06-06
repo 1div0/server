@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Victor Dubiniuk <dubiniuk@owncloud.com>
@@ -23,7 +24,7 @@
  */
 
 namespace OCA\Files_Trashbin\Tests\BackgroundJob;
- 
+
 use OCA\Files_Trashbin\BackgroundJob\ExpireTrash;
 use OCP\BackgroundJob\IJobList;
 use OCP\IUserManager;

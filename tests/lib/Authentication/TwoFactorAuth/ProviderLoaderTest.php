@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -25,7 +26,6 @@ declare(strict_types=1);
 
 namespace lib\Authentication\TwoFactorAuth;
 
-use Exception;
 use OC\Authentication\TwoFactorAuth\ProviderLoader;
 use OCP\App\IAppManager;
 use OCP\Authentication\TwoFactorAuth\IProvider;
@@ -63,14 +63,14 @@ class ProviderLoaderTest extends TestCase {
 			->willReturn(['mail', 'twofactor_totp']);
 		$this->appManager
 			->method('getAppInfo')
-			->will($this->returnValueMap([
+			->willReturnMap([
 				['mail', false, null, []],
 				['twofactor_totp', false, null, [
 					'two-factor-providers' => [
 						'\\OCA\\MyFaulty2faApp\\DoesNotExist',
 					],
 				]],
-			]));
+			]);
 
 		$this->loader->getProviders($this->user);
 	}
@@ -98,5 +98,4 @@ class ProviderLoaderTest extends TestCase {
 		$this->assertArrayHasKey('test', $providers);
 		$this->assertSame($provider, $providers['test']);
 	}
-
 }

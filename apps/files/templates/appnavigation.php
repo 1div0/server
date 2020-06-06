@@ -1,3 +1,6 @@
+<?php
+script(\OCA\Files\AppInfo\Application::APP_ID, 'dist/files-app-settings');
+?>
 <div id="app-navigation">
 	<ul class="with-icon">
 
@@ -9,7 +12,7 @@
 		}
 		?>
 
-		<?php if($_['quota'] === \OCP\Files\FileInfo::SPACE_UNLIMITED): ?>
+		<?php if ($_['quota'] === \OCP\Files\FileInfo::SPACE_UNLIMITED): ?>
 			<li id="quota" class="pinned <?php p($pinned === 0 ? 'first-pinned ' : '') ?>">
 				<a href="#" class="icon-quota svg">
 					<p><?php p($l->t('%s used', [$_['usage']])); ?></p>
@@ -35,6 +38,7 @@
 			</button>
 		</div>
 		<div id="app-settings-content">
+			<div id="files-app-settings"></div>
 			<div id="files-setting-showhidden">
 				<input class="checkbox" id="showhiddenfilesToggle"
 					   checked="checked" type="checkbox">
@@ -43,7 +47,7 @@
 			<label for="webdavurl"><?php p($l->t('WebDAV')); ?></label>
 			<input id="webdavurl" type="text" readonly="readonly"
 				   value="<?php p($_['webdav_url']); ?>"/>
-			<em><?php print_unescaped($l->t('Use this address to <a href="%s" target="_blank" rel="noreferrer noopener">access your Files via WebDAV</a>', array(link_to_docs('user-webdav')))); ?></em>
+			<em><a href="<?php echo link_to_docs('user-webdav') ?>" target="_blank" rel="noreferrer noopener"><?php p($l->t('Use this address to access your Files via WebDAV')) ?> ↗</a></em>
 		</div>
 	</div>
 
@@ -62,15 +66,16 @@
  * @return int Returns the pinned value
  */
 function NavigationListElements($item, $l, $pinned) {
-	strpos($item['classes'] ?? '', 'pinned') !== false ? $pinned++ : '';
-	?>
+	strpos($item['classes'] ?? '', 'pinned') !== false ? $pinned++ : ''; ?>
 	<li
 		data-id="<?php p($item['id']) ?>"
 		<?php if (isset($item['dir'])) { ?> data-dir="<?php p($item['dir']); ?>" <?php } ?>
 		<?php if (isset($item['view'])) { ?> data-view="<?php p($item['view']); ?>" <?php } ?>
 		<?php if (isset($item['expandedState'])) { ?> data-expandedstate="<?php p($item['expandedState']); ?>" <?php } ?>
 		class="nav-<?php p($item['id']) ?>
-		<?php if (isset($item['classes'])) { p($item['classes']); } ?>
+		<?php if (isset($item['classes'])) {
+		p($item['classes']);
+	} ?>
 		<?php p($pinned === 1 ? 'first-pinned' : '') ?>
 		<?php if (isset($item['defaultExpandedState']) && $item['defaultExpandedState']) { ?> open<?php } ?>"
 		<?php if (isset($item['folderPosition'])) { ?> folderposition="<?php p($item['folderPosition']); ?>" <?php } ?>>
@@ -81,17 +86,17 @@ function NavigationListElements($item, $l, $pinned) {
 
 		<?php
 		NavigationElementMenu($item);
-		if (isset($item['sublist'])) {
-			?>
+	if (isset($item['sublist'])) {
+		?>
 			<button class="collapse app-navigation-noclose" <?php if (sizeof($item['sublist']) == 0) { ?> style="display: none" <?php } ?>></button>
 			<ul id="sublist-<?php p($item['id']); ?>">
 				<?php
 				foreach ($item['sublist'] as $item) {
 					$pinned = NavigationListElements($item, $l, $pinned);
-				}
-				?>
+				} ?>
 			</ul>
-		<?php } ?>
+		<?php
+	} ?>
 	</li>
 
 
@@ -123,5 +128,6 @@ function NavigationElementMenu($item) {
 
 			</ul>
 		</div>
-	<?php }
+	<?php
+	}
 }

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -51,11 +52,11 @@ class MP3 extends ProviderV2 {
 		$tags = $getID3->analyze($tmpPath);
 		$this->cleanTmpFiles();
 		$picture = isset($tags['id3v2']['APIC'][0]['data']) ? $tags['id3v2']['APIC'][0]['data'] : null;
-		if(is_null($picture) && isset($tags['id3v2']['PIC'][0]['data'])) {
+		if (is_null($picture) && isset($tags['id3v2']['PIC'][0]['data'])) {
 			$picture = $tags['id3v2']['PIC'][0]['data'];
 		}
 
-		if(!is_null($picture)) {
+		if (!is_null($picture)) {
 			$image = new \OC_Image();
 			$image->loadFromData($picture);
 

@@ -3,14 +3,15 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Artem Sidorenko <artem@posteo.de>
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
  * @author Christopher Schäpers <kondou@ts.unde.re>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Damjan Georgievski <gdamjan@gmail.com>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Jakob Sack <mail@jakobsack.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Ko- <k.stoffelen@cs.ru.nl>
+ * @author Michael Kuhn <michael@ikkoku.de>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Oliver Kohl D.Sc. <oliver@kohl.bz>
  * @author Robin Appelman <robin@icewind.nl>
@@ -38,7 +39,6 @@
 require_once __DIR__ . '/lib/versioncheck.php';
 
 try {
-
 	require_once __DIR__ . '/lib/base.php';
 
 	if (\OCP\Util::needUpgrade()) {
@@ -77,7 +77,7 @@ try {
 		if (OC::$CLI) {
 			echo 'Background Jobs are disabled!' . PHP_EOL;
 		} else {
-			OC_JSON::error(array('data' => array('message' => 'Background jobs disabled!')));
+			OC_JSON::error(['data' => ['message' => 'Background jobs disabled!']]);
 		}
 		exit(1);
 	}
@@ -135,12 +135,11 @@ try {
 				break;
 			}
 		}
-
 	} else {
 		// We call cron.php from some website
 		if ($appMode === 'cron') {
 			// Cron is cron :-P
-			OC_JSON::error(array('data' => array('message' => 'Backgroundjobs are using system cron!')));
+			OC_JSON::error(['data' => ['message' => 'Backgroundjobs are using system cron!']]);
 		} else {
 			// Work and success :-)
 			$jobList = \OC::$server->getJobList();
@@ -156,7 +155,6 @@ try {
 	// Log the successful cron execution
 	$config->setAppValue('core', 'lastcron', time());
 	exit();
-
 } catch (Exception $ex) {
 	\OC::$server->getLogger()->logException($ex, ['app' => 'cron']);
 } catch (Error $ex) {

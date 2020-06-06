@@ -2,6 +2,7 @@
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author MasterOfDeath <rinat.gumirov@mail.ru>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -39,9 +40,9 @@ class CapabilitiesTest extends TestCase {
 
 	public function testGetCapabilities() {
 		$capabilities = [
-			'files_sharing' => 
+			'files_sharing' =>
 				[
-					'sharebymail' => 
+					'sharebymail' =>
 						[
 							'enabled' => true,
 							'upload_files_drop' => ['enabled' => true],

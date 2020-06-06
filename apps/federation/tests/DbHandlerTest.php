@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -24,7 +25,6 @@
  */
 
 namespace OCA\Federation\Tests;
-
 
 use OCA\Federation\DbHandler;
 use OCA\Federation\TrustedServers;
@@ -92,9 +92,9 @@ class DbHandlerTest extends TestCase {
 
 	public function dataTestAddServer() {
 		return [
-				['http://owncloud.org', 'http://owncloud.org', sha1('owncloud.org')],
-				['https://owncloud.org', 'https://owncloud.org', sha1('owncloud.org')],
-				['http://owncloud.org/', 'http://owncloud.org', sha1('owncloud.org')],
+			['http://owncloud.org', 'http://owncloud.org', sha1('owncloud.org')],
+			['https://owncloud.org', 'https://owncloud.org', sha1('owncloud.org')],
+			['http://owncloud.org/', 'http://owncloud.org', sha1('owncloud.org')],
 		];
 	}
 

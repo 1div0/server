@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -38,7 +39,6 @@ use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IUserManager;
 use OCP\Notification\IManager;
-use function Sodium\memcmp;
 use Test\TestCase;
 
 class SyncTest extends TestCase {
@@ -129,7 +129,7 @@ class SyncTest extends TestCase {
 		$this->config->expects($this->once())
 			->method('setAppValue')
 			->with('user_ldap', 'background_sync_interval', $this->anything())
-			->willReturnCallback(function($a, $k, $interval) {
+			->willReturnCallback(function ($a, $k, $interval) {
 				$this->assertTrue($interval >= SYNC::MIN_INTERVAL);
 				$this->assertTrue($interval <= SYNC::MAX_INTERVAL);
 				return true;
@@ -176,7 +176,7 @@ class SyncTest extends TestCase {
 		$connection->expects($this->any())
 			->method('__get')
 			->willReturnCallback(function ($key) use ($pagingSize) {
-				if($key === 'ldapPagingSize') {
+				if ($key === 'ldapPagingSize') {
 					return $pagingSize;
 				}
 				return null;
@@ -222,7 +222,7 @@ class SyncTest extends TestCase {
 			->with(true)
 			->willReturn($prefixes);
 
-		if(is_array($expectedCycle)) {
+		if (is_array($expectedCycle)) {
 			$this->config->expects($this->exactly(2))
 				->method('setAppValue')
 				->withConsecutive(
@@ -237,7 +237,7 @@ class SyncTest extends TestCase {
 		$this->sync->setArgument($this->arguments);
 		$nextCycle = $this->sync->determineNextCycle($cycleData);
 
-		if($expectedCycle === null) {
+		if ($expectedCycle === null) {
 			$this->assertNull($nextCycle);
 		} else {
 			$this->assertSame($expectedCycle['prefix'], $nextCycle['prefix']);
@@ -295,24 +295,24 @@ class SyncTest extends TestCase {
 	public function testRun($runData) {
 		$this->config->expects($this->any())
 			->method('getAppValue')
-			->willReturnCallback(function($app, $key, $default) use ($runData) {
-				if($app === 'core' && $key === 'backgroundjobs_mode') {
+			->willReturnCallback(function ($app, $key, $default) use ($runData) {
+				if ($app === 'core' && $key === 'backgroundjobs_mode') {
 					return 'cron';
 				}
-				if($app = 'user_ldap') {
+				if ($app = 'user_ldap') {
 					// for getCycle()
-					if($key === 'background_sync_prefix') {
+					if ($key === 'background_sync_prefix') {
 						return $runData['scheduledCycle']['prefix'];
 					}
-					if($key === 'background_sync_offset') {
+					if ($key === 'background_sync_offset') {
 						return $runData['scheduledCycle']['offset'];
 					}
 					// for qualifiesToRun()
-					if($key === $runData['scheduledCycle']['prefix'] . '_lastChange') {
+					if ($key === $runData['scheduledCycle']['prefix'] . '_lastChange') {
 						return time() - 60*40;
 					}
 					// for getMinPagingSize
-					if($key === $runData['scheduledCycle']['prefix'] . 'ldap_paging_size') {
+					if ($key === $runData['scheduledCycle']['prefix'] . 'ldap_paging_size') {
 						return $runData['pagingSize'];
 					}
 				}
@@ -343,7 +343,7 @@ class SyncTest extends TestCase {
 		$connection->expects($this->any())
 			->method('__get')
 			->willReturnCallback(function ($key) use ($runData) {
-				if($key === 'ldapPagingSize') {
+				if ($key === 'ldapPagingSize') {
 					return $runData['pagingSize'];
 				}
 				return null;
@@ -368,5 +368,4 @@ class SyncTest extends TestCase {
 
 		$this->sync->run($this->arguments);
 	}
-
 }

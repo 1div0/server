@@ -12,7 +12,6 @@ use OCP\DirectEditing\IEditor;
 use OCP\DirectEditing\IToken;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
-use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUserSession;
@@ -22,9 +21,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class CreateEmpty extends ACreateEmpty {
-
-	 public function getId(): string {
-	 	return 'createEmpty';
+	public function getId(): string {
+		return 'createEmpty';
 	}
 
 	public function getName(): string {
@@ -35,16 +33,15 @@ class CreateEmpty extends ACreateEmpty {
 		return '.txt';
 	}
 
-	 public function getMimetype(): string {
+	public function getMimetype(): string {
 		return 'text/plain';
 	}
 }
 
 class Editor implements IEditor {
-
-	 public function getId(): string {
-	 	return 'testeditor';
-	 }
+	public function getId(): string {
+		return 'testeditor';
+	}
 
 	public function getName(): string {
 		return 'Test editor';
@@ -82,7 +79,6 @@ class Editor implements IEditor {
  * @group DB
  */
 class ManagerTest extends TestCase {
-
 	private $manager;
 	/**
 	 * @var Editor
@@ -195,5 +191,4 @@ class ManagerTest extends TestCase {
 
 		$this->manager->create('/File.txt', 'testeditor', 'createEmpty');
 	}
-
 }

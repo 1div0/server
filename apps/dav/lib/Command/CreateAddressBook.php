@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -43,7 +44,7 @@ class CreateAddressBook extends Command {
 	 * @param IUserManager $userManager
 	 * @param CardDavBackend $cardDavBackend
 	 */
-	function __construct(IUserManager $userManager,
+	public function __construct(IUserManager $userManager,
 						 CardDavBackend $cardDavBackend
 	) {
 		parent::__construct();

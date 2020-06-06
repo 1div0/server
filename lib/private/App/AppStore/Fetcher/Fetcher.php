@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
@@ -38,10 +39,9 @@ use OCP\Files\NotFoundException;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\ILogger;
-use OCP\Util;
 
 abstract class Fetcher {
-	const INVALIDATE_AFTER_SECONDS = 300;
+	public const INVALIDATE_AFTER_SECONDS = 3600;
 
 	/** @var IAppData */
 	protected $appData;
@@ -153,7 +153,7 @@ abstract class Fetcher {
 				// No caching when the version has been updated
 				if (isset($jsonBlob['ncversion']) && $jsonBlob['ncversion'] === $this->getVersion()) {
 
-					// If the timestamp is older than 300 seconds request the files new
+					// If the timestamp is older than 3600 seconds request the files new
 					if ((int)$jsonBlob['timestamp'] > ($this->timeFactory->getTime() - self::INVALIDATE_AFTER_SECONDS)) {
 						return $jsonBlob['data'];
 					}

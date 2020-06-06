@@ -35,8 +35,7 @@ use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IUser;
 
 class ProviderLoader {
-
-	const BACKUP_CODES_APP_ID = 'twofactor_backupcodes';
+	public const BACKUP_CODES_APP_ID = 'twofactor_backupcodes';
 
 	/** @var IAppManager */
 	private $appManager;
@@ -86,5 +85,4 @@ class ProviderLoader {
 			OC_App::loadApp($appId);
 		}
 	}
-
 }

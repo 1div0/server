@@ -59,6 +59,7 @@ OC.L10N.register(
     "Could not create file \"{file}\"" : "Nije moguće stvoriti datoteku „{file}”",
     "Could not create file \"{file}\" because it already exists" : "Nije moguće stvoriti datoteku „{file}” jer već postoji",
     "Could not create folder \"{dir}\" because it already exists" : "Nije moguće stvoriti mapu „{dir}” jer već postoji",
+    "Could not fetch file details \"{file}\"" : "Neuspješno dohvaćanje pojedinosti o datoteci „{file}“",
     "Error deleting file \"{fileName}\"." : "Pogreška pri brisanju datoteke „{fileName}”.",
     "No search results in other folders for {tag}{filter}{endtag}" : "Nema rezultata pretraživanja u drugim mapama za {tag}{filter}{endtag}",
     "Name" : "Naziv",
@@ -157,6 +158,7 @@ OC.L10N.register(
     "Transfer {path} to {userid}" : "Prijenos {path} na {userid}",
     "Invalid path selected" : "Odabran nevažeći put",
     "Ownership transfer request sent" : "Zahtjev za prijenos vlasništva je poslan",
+    "Cannot transfer ownership of a file or folder you don't own" : "Ne možete prenijeti vlasništvo nad datotekom ili mapom koja nije u vašem vlasništvu",
     "Tags" : "Oznake",
     "Error while loading the file data" : "Pogreška pri učitavanju podataka iz datoteke",
     "Unable to change the favourite state of the file" : "Nije moguće promijeniti status favorita datoteke",
@@ -166,7 +168,7 @@ OC.L10N.register(
     "Settings" : "Postavke",
     "Show hidden files" : "Prikaz skrivenih datoteka",
     "WebDAV" : "WebDAV",
-    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Upotrijebite ovu adresu za <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\"> pristupanje svojim datotekama putem WebDAVa</a>",
+    "Use this address to access your Files via WebDAV" : "Upotrijebite ovu adresu za pristupanje svojim datotekama putem WebDAVa",
     "Toggle grid view" : "Uključi/isključi prikaz rešetke",
     "No files in here" : "Nema datoteka",
     "Upload some content or sync with your devices!" : "Otpremite neki sadržaj ili sinkronizirajte sa svojim uređajima!",
@@ -185,7 +187,7 @@ OC.L10N.register(
     "Pending shares" : "Dijeljenja na čekanju",
     "Text file" : "Tekstna datoteka",
     "New text file.txt" : "Nova tekstna datoteka.txt",
-    "%s of %s used" : "Iskorišteno %s od %s",
-    "%1$s%% of %2$s used" : "Iskorišteno %1$s%% od %2$s"
+    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Upotrijebite ovu adresu za <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\"> pristupanje svojim datotekama putem WebDAVa</a>",
+    "Cannot transfter ownership of a file or folder you don't own" : "Ne možete prenijeti vlasništvo nad datotekom ili mapom koja nije u vašem vlasništvu"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

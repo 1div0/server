@@ -2,6 +2,7 @@
 /**
  * @copyright 2016 Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -29,7 +30,7 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
 
-class SimpleFile implements ISimpleFile  {
+class SimpleFile implements ISimpleFile {
 
 	/** @var File $file */
 	private $file;
@@ -179,5 +180,4 @@ class SimpleFile implements ISimpleFile  {
 	public function write() {
 		return $this->file->fopen('w');
 	}
-
 }

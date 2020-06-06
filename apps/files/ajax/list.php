@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -43,7 +44,7 @@ try {
 		exit();
 	}
 
-	$data = array();
+	$data = [];
 	$baseUrl = \OC::$server->getURLGenerator()->linkTo('files', 'index.php') . '?dir=';
 
 	$permissions = $dirInfo->getPermissions();
@@ -80,7 +81,7 @@ try {
 	$data['files'] = \OCA\Files\Helper::formatFileInfos($files);
 	$data['permissions'] = $permissions;
 
-	\OC_JSON::success(array('data' => $data));
+	\OC_JSON::success(['data' => $data]);
 } catch (\OCP\Files\StorageNotAvailableException $e) {
 	\OC::$server->getLogger()->logException($e, ['app' => 'files']);
 	\OC_JSON::error([
@@ -91,18 +92,18 @@ try {
 	]);
 } catch (\OCP\Files\StorageInvalidException $e) {
 	\OC::$server->getLogger()->logException($e, ['app' => 'files']);
-	\OC_JSON::error(array(
-		'data' => array(
+	\OC_JSON::error([
+		'data' => [
 			'exception' => StorageInvalidException::class,
 			'message' => $l->t('Storage invalid')
-		)
-	));
+		]
+	]);
 } catch (\Exception $e) {
 	\OC::$server->getLogger()->logException($e, ['app' => 'files']);
-	\OC_JSON::error(array(
-		'data' => array(
+	\OC_JSON::error([
+		'data' => [
 			'exception' => \Exception::class,
 			'message' => $l->t('Unknown error')
-		)
-	));
+		]
+	]);
 }

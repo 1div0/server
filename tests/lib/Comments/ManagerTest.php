@@ -339,7 +339,7 @@ class ManagerTest extends TestCase {
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->any())
 			->method('getUID')
-			->will($this->returnValue('comment_test'));
+			->willReturn('comment_test');
 
 		$manager = $this->getManager();
 
@@ -378,7 +378,7 @@ class ManagerTest extends TestCase {
 			$expected = array_reverse($expected);
 		}
 
-		$this->assertSame($expected, array_map(function(IComment $c) {
+		$this->assertSame($expected, array_map(function (IComment $c) {
 			return (int) $c->getId();
 		}, $comments));
 	}
@@ -679,7 +679,7 @@ class ManagerTest extends TestCase {
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->any())
 			->method('getUID')
-			->will($this->returnValue('alice'));
+			->willReturn('alice');
 
 		$dateTimeSet = new \DateTime();
 
@@ -696,7 +696,7 @@ class ManagerTest extends TestCase {
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->any())
 			->method('getUID')
-			->will($this->returnValue('alice'));
+			->willReturn('alice');
 
 		$dateTimeSet = new \DateTime('yesterday');
 
@@ -716,7 +716,7 @@ class ManagerTest extends TestCase {
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->any())
 			->method('getUID')
-			->will($this->returnValue('alice'));
+			->willReturn('alice');
 
 		$dateTimeSet = new \DateTime();
 
@@ -734,7 +734,7 @@ class ManagerTest extends TestCase {
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->any())
 			->method('getUID')
-			->will($this->returnValue('alice'));
+			->willReturn('alice');
 
 		$dateTimeSet = new \DateTime();
 
@@ -863,5 +863,4 @@ class ManagerTest extends TestCase {
 		$manager->registerDisplayNameResolver('planet', $planetClosure);
 		$this->assertTrue(is_string($manager->resolveDisplayName(1337, 'neptune')));
 	}
-
 }

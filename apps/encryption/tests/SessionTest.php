@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -25,7 +26,6 @@
  */
 
 namespace OCA\Encryption\Tests;
-
 
 use OCA\Encryption\Session;
 use OCP\ISession;
@@ -54,7 +54,6 @@ class SessionTest extends TestCase {
 	public function testSetAndGetPrivateKey() {
 		$this->instance->setPrivateKey('dummyPrivateKey');
 		$this->assertEquals('dummyPrivateKey', $this->instance->getPrivateKey());
-
 	}
 
 	/**
@@ -204,15 +203,15 @@ class SessionTest extends TestCase {
 
 		$this->sessionMock->expects($this->any())
 			->method('set')
-			->will($this->returnCallback([$this, "setValueTester"]));
+			->willReturnCallback([$this, "setValueTester"]);
 
 		$this->sessionMock->expects($this->any())
 			->method('get')
-			->will($this->returnCallback([$this, "getValueTester"]));
+			->willReturnCallback([$this, "getValueTester"]);
 
 		$this->sessionMock->expects($this->any())
 			->method('remove')
-			->will($this->returnCallback([$this, "removeValueTester"]));
+			->willReturnCallback([$this, "removeValueTester"]);
 
 
 		$this->instance = new Session($this->sessionMock);

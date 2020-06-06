@@ -58,10 +58,10 @@ class RemoveUserTest extends TestCase {
 
 		$this->input = $this->createMock(InputInterface::class);
 		$this->input->method('getArgument')
-			->willReturnCallback(function($arg) {
+			->willReturnCallback(function ($arg) {
 				if ($arg === 'group') {
 					return 'myGroup';
-				} else if ($arg === 'user') {
+				} elseif ($arg === 'user') {
 					return 'myUser';
 				}
 				throw new \Exception();
@@ -115,6 +115,4 @@ class RemoveUserTest extends TestCase {
 
 		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
-
-
 }

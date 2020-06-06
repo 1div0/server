@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -32,7 +33,7 @@ use Sabre\DAV\Server;
 use Sabre\DAV\ServerPlugin;
 
 class SearchPlugin extends ServerPlugin {
-	const NS_Nextcloud = 'http://nextcloud.com/ns';
+	public const NS_Nextcloud = 'http://nextcloud.com/ns';
 
 	/**
 	 * Reference to SabreDAV server object.
@@ -142,7 +143,6 @@ class SearchPlugin extends ServerPlugin {
 		// If we're dealing with the calendar home, the calendar home itself is
 		// responsible for the calendar-query
 		if ($node instanceof CalendarHome && $depth === 2) {
-
 			$nodePaths = $node->calendarSearch($report->filters, $report->limit, $report->offset);
 
 			foreach ($nodePaths as $path) {

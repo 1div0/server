@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Robin Appelman <robin@icewind.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -55,7 +56,7 @@ class SMBNotifyHandler implements INotifyHandler {
 	private function relativePath($fullPath) {
 		if ($fullPath === $this->root) {
 			return '';
-		} else if (substr($fullPath, 0, strlen($this->root)) === $this->root) {
+		} elseif (substr($fullPath, 0, strlen($this->root)) === $this->root) {
 			return substr($fullPath, strlen($this->root));
 		} else {
 			return null;

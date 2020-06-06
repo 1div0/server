@@ -28,9 +28,7 @@ declare(strict_types=1);
 
 namespace OCA\AdminAudit\Actions;
 
-
 class Trashbin extends Action {
-
 	public function delete(array $params) {
 		$this->log('File "%s" deleted from trash bin.',
 			['path' => $params['path']], ['path']
@@ -42,5 +40,4 @@ class Trashbin extends Action {
 			['path' => $params['filePath']], ['path']
 		);
 	}
-
 }

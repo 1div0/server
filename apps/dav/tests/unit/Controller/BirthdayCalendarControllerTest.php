@@ -3,6 +3,7 @@
  * @copyright 2017, Georg Ehrke <oc.list@georgehrke.com>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -81,18 +82,18 @@ class BirthdayCalendarControllerTest extends TestCase {
 
 		$this->userManager->expects($this->once())
 			->method('callForSeenUsers')
-			->will($this->returnCallback(function($closure) {
+			->willReturnCallback(function ($closure) {
 				$user1 = $this->createMock(IUser::class);
-				$user1->method('getUID')->will($this->returnValue('uid1'));
+				$user1->method('getUID')->willReturn('uid1');
 				$user2 = $this->createMock(IUser::class);
-				$user2->method('getUID')->will($this->returnValue('uid2'));
+				$user2->method('getUID')->willReturn('uid2');
 				$user3 = $this->createMock(IUser::class);
-				$user3->method('getUID')->will($this->returnValue('uid3'));
+				$user3->method('getUID')->willReturn('uid3');
 
 				$closure($user1);
 				$closure($user2);
 				$closure($user3);
-			}));
+			});
 
 		$this->jobList->expects($this->at(0))
 			->method('add')
@@ -121,5 +122,4 @@ class BirthdayCalendarControllerTest extends TestCase {
 		$response = $this->controller->disable();
 		$this->assertInstanceOf('OCP\AppFramework\Http\JSONResponse', $response);
 	}
-
 }

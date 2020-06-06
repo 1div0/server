@@ -2,7 +2,10 @@
 /**
  * @copyright 2018, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
+ * @author Tim Obert <tobert@w-commerce.de>
+ * @author TimObert <tobert@w-commerce.de>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -163,9 +166,7 @@ abstract class AuthPublicShareController extends PublicShareController {
 	private function getRoute(string $function): string {
 		$app = strtolower($this->appName);
 		$class = (new \ReflectionClass($this))->getShortName();
-		if ($this->appName === 'files_sharing') {
-			$class = strtolower($class);
-		} else if (substr($class, -10) === 'Controller') {
+		if (substr($class, -10) === 'Controller') {
 			$class = substr($class, 0, -10);
 		}
 		return $app .'.'. $class .'.'. $function;

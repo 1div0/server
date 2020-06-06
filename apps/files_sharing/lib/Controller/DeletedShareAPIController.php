@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
@@ -93,7 +94,6 @@ class DeletedShareAPIController extends OCSController {
 	 * @suppress PhanUndeclaredClassMethod
 	 */
 	private function formatShare(IShare $share): array {
-
 		$result = [
 			'id' => $share->getFullId(),
 			'share_type' => $share->getShareType(),
@@ -121,7 +121,7 @@ class DeletedShareAPIController extends OCSController {
 		}
 
 		$result['path'] = $userFolder->getRelativePath($node->getPath());
-		if ($node instanceOf \OCP\Files\Folder) {
+		if ($node instanceof \OCP\Files\Folder) {
 			$result['item_type'] = 'folder';
 		} else {
 			$result['item_type'] = 'file';
@@ -143,7 +143,7 @@ class DeletedShareAPIController extends OCSController {
 			$group = $this->groupManager->get($share->getSharedWith());
 			$result['share_with'] = $share->getSharedWith();
 			$result['share_with_displayname'] = $group !== null ? $group->getDisplayName() : $share->getSharedWith();
-		} else if ($share->getShareType() === \OCP\Share::SHARE_TYPE_ROOM) {
+		} elseif ($share->getShareType() === \OCP\Share::SHARE_TYPE_ROOM) {
 			$result['share_with'] = $share->getSharedWith();
 			$result['share_with_displayname'] = '';
 
@@ -154,7 +154,6 @@ class DeletedShareAPIController extends OCSController {
 		}
 
 		return $result;
-
 	}
 
 	/**

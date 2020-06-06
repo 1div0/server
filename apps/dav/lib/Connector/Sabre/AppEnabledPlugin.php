@@ -2,10 +2,10 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <pvince81@owncloud.com>
  *
  * @license AGPL-3.0
  *
@@ -72,9 +72,8 @@ class AppEnabledPlugin extends ServerPlugin {
 	 * @return void
 	 */
 	public function initialize(\Sabre\DAV\Server $server) {
-
 		$this->server = $server;
-		$this->server->on('beforeMethod', array($this, 'checkAppEnabled'), 30);
+		$this->server->on('beforeMethod:*', [$this, 'checkAppEnabled'], 30);
 	}
 
 	/**

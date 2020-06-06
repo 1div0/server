@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -77,7 +78,7 @@ class IntegrationTestUserAvatar extends AbstractIntegrationTest {
 		\OC_Util::setupFS($username);
 		\OC::$server->getUserFolder($username);
 		\OC::$server->getConfig()->deleteUserValue($username, 'user_ldap', User::USER_PREFKEY_LASTREFRESH);
-		if(\OC::$server->getAvatarManager()->getAvatar($username)->exists()) {
+		if (\OC::$server->getAvatarManager()->getAvatar($username)->exists()) {
 			\OC::$server->getAvatarManager()->getAvatar($username)->remove();
 		}
 

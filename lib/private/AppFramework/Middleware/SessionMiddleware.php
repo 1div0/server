@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -29,7 +30,6 @@ use OC\AppFramework\Utility\ControllerMethodReflector;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
-use OCP\IRequest;
 use OCP\ISession;
 
 class SessionMiddleware extends Middleware {
@@ -63,12 +63,11 @@ class SessionMiddleware extends Middleware {
 	 * @param Response $response
 	 * @return Response
 	 */
-	public function afterController($controller, $methodName, Response $response){
+	public function afterController($controller, $methodName, Response $response) {
 		$useSession = $this->reflector->hasAnnotation('UseSession');
 		if ($useSession) {
 			$this->session->close();
 		}
 		return $response;
 	}
-
 }

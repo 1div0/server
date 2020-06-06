@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -26,8 +27,7 @@ namespace OCA\DAV\Connector\Sabre\Exception;
 use Sabre\DAV\Exception;
 
 class InvalidPath extends Exception {
-
-	const NS_OWNCLOUD = 'http://owncloud.org/ns';
+	public const NS_OWNCLOUD = 'http://owncloud.org/ns';
 
 	/**
 	 * @var bool
@@ -50,9 +50,7 @@ class InvalidPath extends Exception {
 	 * @return int
 	 */
 	public function getHTTPCode() {
-
 		return 400;
-
 	}
 
 	/**
@@ -76,5 +74,4 @@ class InvalidPath extends Exception {
 		$error = $errorNode->ownerDocument->createElementNS('o:','o:reason', $this->getMessage());
 		$errorNode->appendChild($error);
 	}
-
 }

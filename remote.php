@@ -4,6 +4,8 @@
  *
  * @author Brice Maron <brice@bmaron.net>
  * @author Christopher Schäpers <kondou@ts.unde.re>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -58,7 +60,7 @@ function handleException($e) {
 			// we shall not log on RemoteException
 			$server->addPlugin(new ExceptionLoggerPlugin('webdav', \OC::$server->getLogger()));
 		}
-		$server->on('beforeMethod', function () use ($e) {
+		$server->on('beforeMethod:*', function () use ($e) {
 			if ($e instanceof RemoteException) {
 				switch ($e->getCode()) {
 					case 503:
@@ -74,7 +76,7 @@ function handleException($e) {
 		$server->exec();
 	} else {
 		$statusCode = 500;
-		if ($e instanceof \OC\ServiceUnavailableException ) {
+		if ($e instanceof \OC\ServiceUnavailableException) {
 			$statusCode = 503;
 		}
 		if ($e instanceof RemoteException) {
@@ -135,7 +137,7 @@ try {
 
 	$file = resolveService($service);
 
-	if(is_null($file)) {
+	if (is_null($file)) {
 		throw new RemoteException('Path not found', 404);
 	}
 
@@ -146,8 +148,8 @@ try {
 
 	// Load all required applications
 	\OC::$REQUESTEDAPP = $app;
-	OC_App::loadApps(array('authentication'));
-	OC_App::loadApps(array('filesystem', 'logging'));
+	OC_App::loadApps(['authentication']);
+	OC_App::loadApps(['filesystem', 'logging']);
 
 	switch ($app) {
 		case 'core':
@@ -163,7 +165,6 @@ try {
 	}
 	$baseuri = OC::$WEBROOT . '/remote.php/'.$service.'/';
 	require_once $file;
-
 } catch (Exception $ex) {
 	handleException($ex);
 } catch (Error $e) {

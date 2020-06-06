@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -99,17 +100,17 @@ class CommentsPluginTest extends \Test\TestCase {
 			->getMock();
 		$user->expects($this->once())
 			->method('getUID')
-			->will($this->returnValue('alice'));
+			->willReturn('alice');
 
 		$node = $this->getMockBuilder(EntityCollection::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$node->expects($this->once())
 			->method('getName')
-			->will($this->returnValue('files'));
+			->willReturn('files');
 		$node->expects($this->once())
 			->method('getId')
-			->will($this->returnValue('42'));
+			->willReturn('42');
 
 		$node->expects($this->once())
 			->method('setReadMarker')
@@ -118,11 +119,11 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->commentsManager->expects($this->once())
 			->method('create')
 			->with('users', 'alice', 'files', '42')
-			->will($this->returnValue($comment));
+			->willReturn($comment);
 
 		$this->userSession->expects($this->once())
 			->method('getUser')
-			->will($this->returnValue($user));
+			->willReturn($user);
 
 		// technically, this is a shortcut. Inbetween EntityTypeCollection would
 		// be returned, but doing it exactly right would not be really
@@ -131,7 +132,7 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->tree->expects($this->any())
 			->method('getNodeForPath')
 			->with('/' . $path)
-			->will($this->returnValue($node));
+			->willReturn($node);
 
 		$request = $this->getMockBuilder(RequestInterface::class)
 			->disableOriginalConstructor()
@@ -143,20 +144,20 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$request->expects($this->once())
 			->method('getPath')
-			->will($this->returnValue('/' . $path));
+			->willReturn('/' . $path);
 
 		$request->expects($this->once())
 			->method('getBodyAsString')
-			->will($this->returnValue($requestData));
+			->willReturn($requestData);
 
 		$request->expects($this->once())
 			->method('getHeader')
 			->with('Content-Type')
-			->will($this->returnValue('application/json'));
+			->willReturn('application/json');
 
 		$request->expects($this->once())
 			->method('getUrl')
-			->will($this->returnValue('http://example.com/dav/' . $path));
+			->willReturn('http://example.com/dav/' . $path);
 
 		$response->expects($this->once())
 			->method('setHeader')
@@ -164,7 +165,7 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->plugin->initialize($this->server);
 
 		$this->plugin->httpPost($request, $response);
@@ -181,11 +182,11 @@ class CommentsPluginTest extends \Test\TestCase {
 		];
 
 		$comment = new Comment([
-				'objectType' => 'files',
-				'objectId' => '666',
-				'actorType' => 'users',
-				'actorId' => 'alice'
-			] + $commentData);
+			'objectType' => 'files',
+			'objectId' => '666',
+			'actorType' => 'users',
+			'actorId' => 'alice'
+		] + $commentData);
 		$comment->setId('23');
 
 		$path = 'comments/files/666';
@@ -229,7 +230,7 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$request->expects($this->once())
 			->method('getPath')
-			->will($this->returnValue('/' . $path));
+			->willReturn('/' . $path);
 
 		$request->expects($this->never())
 			->method('getBodyAsString');
@@ -246,7 +247,7 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->plugin->initialize($this->server);
 
 		$this->plugin->httpPost($request, $response);
@@ -263,11 +264,11 @@ class CommentsPluginTest extends \Test\TestCase {
 		];
 
 		$comment = new Comment([
-				'objectType' => 'files',
-				'objectId' => '42',
-				'actorType' => 'users',
-				'actorId' => 'alice'
-			] + $commentData);
+			'objectType' => 'files',
+			'objectId' => '42',
+			'actorType' => 'users',
+			'actorId' => 'alice'
+		] + $commentData);
 		$comment->setId('23');
 
 		$path = 'comments/files/42';
@@ -285,10 +286,10 @@ class CommentsPluginTest extends \Test\TestCase {
 			->getMock();
 		$node->expects($this->once())
 			->method('getName')
-			->will($this->returnValue('files'));
+			->willReturn('files');
 		$node->expects($this->once())
 			->method('getId')
-			->will($this->returnValue('42'));
+			->willReturn('42');
 
 		$this->commentsManager->expects($this->never())
 			->method('create');
@@ -303,7 +304,7 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->tree->expects($this->any())
 			->method('getNodeForPath')
 			->with('/' . $path)
-			->will($this->returnValue($node));
+			->willReturn($node);
 
 		$request = $this->getMockBuilder(RequestInterface::class)
 			->disableOriginalConstructor()
@@ -315,16 +316,16 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$request->expects($this->once())
 			->method('getPath')
-			->will($this->returnValue('/' . $path));
+			->willReturn('/' . $path);
 
 		$request->expects($this->once())
 			->method('getBodyAsString')
-			->will($this->returnValue($requestData));
+			->willReturn($requestData);
 
 		$request->expects($this->once())
 			->method('getHeader')
 			->with('Content-Type')
-			->will($this->returnValue('application/json'));
+			->willReturn('application/json');
 
 		$request->expects($this->never())
 			->method('getUrl');
@@ -334,7 +335,7 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->plugin->initialize($this->server);
 
 		$this->plugin->httpPost($request, $response);
@@ -351,11 +352,11 @@ class CommentsPluginTest extends \Test\TestCase {
 		];
 
 		$comment = new Comment([
-				'objectType' => 'files',
-				'objectId' => '42',
-				'actorType' => 'users',
-				'actorId' => 'alice'
-			] + $commentData);
+			'objectType' => 'files',
+			'objectId' => '42',
+			'actorType' => 'users',
+			'actorId' => 'alice'
+		] + $commentData);
 		$comment->setId('23');
 
 		$path = 'comments/files/42';
@@ -373,10 +374,10 @@ class CommentsPluginTest extends \Test\TestCase {
 			->getMock();
 		$node->expects($this->once())
 			->method('getName')
-			->will($this->returnValue('files'));
+			->willReturn('files');
 		$node->expects($this->once())
 			->method('getId')
-			->will($this->returnValue('42'));
+			->willReturn('42');
 
 		$this->commentsManager->expects($this->never())
 			->method('create');
@@ -391,7 +392,7 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->tree->expects($this->any())
 			->method('getNodeForPath')
 			->with('/' . $path)
-			->will($this->returnValue($node));
+			->willReturn($node);
 
 		$request = $this->getMockBuilder(RequestInterface::class)
 			->disableOriginalConstructor()
@@ -403,16 +404,16 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$request->expects($this->once())
 			->method('getPath')
-			->will($this->returnValue('/' . $path));
+			->willReturn('/' . $path);
 
 		$request->expects($this->once())
 			->method('getBodyAsString')
-			->will($this->returnValue($requestData));
+			->willReturn($requestData);
 
 		$request->expects($this->once())
 			->method('getHeader')
 			->with('Content-Type')
-			->will($this->returnValue('application/trumpscript'));
+			->willReturn('application/trumpscript');
 
 		$request->expects($this->never())
 			->method('getUrl');
@@ -422,7 +423,7 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->plugin->initialize($this->server);
 
 		$this->plugin->httpPost($request, $response);
@@ -439,13 +440,13 @@ class CommentsPluginTest extends \Test\TestCase {
 		];
 
 		$comment = new Comment([
-				'objectType' => 'files',
-				'objectId' => '42',
-				'actorType' => 'users',
-				'actorId' => 'alice',
-				'message' => 'dummy',
-				'verb' => 'dummy'
-			]);
+			'objectType' => 'files',
+			'objectId' => '42',
+			'actorType' => 'users',
+			'actorId' => 'alice',
+			'message' => 'dummy',
+			'verb' => 'dummy'
+		]);
 		$comment->setId('23');
 
 		$path = 'comments/files/42';
@@ -457,26 +458,26 @@ class CommentsPluginTest extends \Test\TestCase {
 			->getMock();
 		$user->expects($this->once())
 			->method('getUID')
-			->will($this->returnValue('alice'));
+			->willReturn('alice');
 
 		$node = $this->getMockBuilder(EntityCollection::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$node->expects($this->once())
 			->method('getName')
-			->will($this->returnValue('files'));
+			->willReturn('files');
 		$node->expects($this->once())
 			->method('getId')
-			->will($this->returnValue('42'));
+			->willReturn('42');
 
 		$this->commentsManager->expects($this->once())
 			->method('create')
 			->with('users', 'alice', 'files', '42')
-			->will($this->returnValue($comment));
+			->willReturn($comment);
 
 		$this->userSession->expects($this->once())
 			->method('getUser')
-			->will($this->returnValue($user));
+			->willReturn($user);
 
 		// technically, this is a shortcut. Inbetween EntityTypeCollection would
 		// be returned, but doing it exactly right would not be really
@@ -485,7 +486,7 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->tree->expects($this->any())
 			->method('getNodeForPath')
 			->with('/' . $path)
-			->will($this->returnValue($node));
+			->willReturn($node);
 
 		$request = $this->getMockBuilder(RequestInterface::class)
 			->disableOriginalConstructor()
@@ -497,16 +498,16 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$request->expects($this->once())
 			->method('getPath')
-			->will($this->returnValue('/' . $path));
+			->willReturn('/' . $path);
 
 		$request->expects($this->once())
 			->method('getBodyAsString')
-			->will($this->returnValue($requestData));
+			->willReturn($requestData);
 
 		$request->expects($this->once())
 			->method('getHeader')
 			->with('Content-Type')
-			->will($this->returnValue('application/json'));
+			->willReturn('application/json');
 
 		$request->expects($this->never())
 			->method('getUrl');
@@ -516,7 +517,7 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->plugin->initialize($this->server);
 
 		$this->plugin->httpPost($request, $response);
@@ -534,12 +535,12 @@ class CommentsPluginTest extends \Test\TestCase {
 		];
 
 		$comment = new Comment([
-				'objectType' => 'files',
-				'objectId' => '42',
-				'actorType' => 'users',
-				'actorId' => 'alice',
-				'verb' => 'comment',
-			]);
+			'objectType' => 'files',
+			'objectId' => '42',
+			'actorType' => 'users',
+			'actorId' => 'alice',
+			'verb' => 'comment',
+		]);
 		$comment->setId('23');
 
 		$path = 'comments/files/42';
@@ -551,17 +552,17 @@ class CommentsPluginTest extends \Test\TestCase {
 			->getMock();
 		$user->expects($this->once())
 			->method('getUID')
-			->will($this->returnValue('alice'));
+			->willReturn('alice');
 
 		$node = $this->getMockBuilder(EntityCollection::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$node->expects($this->once())
 			->method('getName')
-			->will($this->returnValue('files'));
+			->willReturn('files');
 		$node->expects($this->once())
 			->method('getId')
-			->will($this->returnValue('42'));
+			->willReturn('42');
 
 		$node->expects($this->never())
 			->method('setReadMarker');
@@ -569,11 +570,11 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->commentsManager->expects($this->once())
 			->method('create')
 			->with('users', 'alice', 'files', '42')
-			->will($this->returnValue($comment));
+			->willReturn($comment);
 
 		$this->userSession->expects($this->once())
 			->method('getUser')
-			->will($this->returnValue($user));
+			->willReturn($user);
 
 		// technically, this is a shortcut. Inbetween EntityTypeCollection would
 		// be returned, but doing it exactly right would not be really
@@ -582,7 +583,7 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->tree->expects($this->any())
 			->method('getNodeForPath')
 			->with('/' . $path)
-			->will($this->returnValue($node));
+			->willReturn($node);
 
 		$request = $this->getMockBuilder(RequestInterface::class)
 			->disableOriginalConstructor()
@@ -594,23 +595,23 @@ class CommentsPluginTest extends \Test\TestCase {
 
 		$request->expects($this->once())
 			->method('getPath')
-			->will($this->returnValue('/' . $path));
+			->willReturn('/' . $path);
 
 		$request->expects($this->once())
 			->method('getBodyAsString')
-			->will($this->returnValue($requestData));
+			->willReturn($requestData);
 
 		$request->expects($this->once())
 			->method('getHeader')
 			->with('Content-Type')
-			->will($this->returnValue('application/json'));
+			->willReturn('application/json');
 
 		$response->expects($this->never())
 			->method('setHeader');
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->plugin->initialize($this->server);
 
 		$this->plugin->httpPost($request, $response);
@@ -625,15 +626,15 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->tree->expects($this->any())
 			->method('getNodeForPath')
 			->with('/' . $path)
-			->will($this->returnValue(
+			->willReturn(
 				$this->getMockBuilder(INode::class)
 					->disableOriginalConstructor()
 					->getMock()
-			));
+			);
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->plugin->initialize($this->server);
 
 		$this->plugin->onReport(CommentsPluginImplementation::REPORT_NAME, [], '/' . $path);
@@ -648,15 +649,15 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->tree->expects($this->any())
 			->method('getNodeForPath')
 			->with('/' . $path)
-			->will($this->returnValue(
+			->willReturn(
 				$this->getMockBuilder(INode::class)
 					->disableOriginalConstructor()
 					->getMock()
-			));
+			);
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->plugin->initialize($this->server);
 
 		$this->plugin->onReport('{whoever}whatever', [], '/' . $path);
@@ -686,7 +687,7 @@ class CommentsPluginTest extends \Test\TestCase {
 		$node->expects($this->once())
 			->method('findChildren')
 			->with(5, 10, null)
-			->will($this->returnValue([]));
+			->willReturn([]);
 
 		$response = $this->getMockBuilder(ResponseInterface::class)
 			->disableOriginalConstructor()
@@ -706,11 +707,11 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->tree->expects($this->any())
 			->method('getNodeForPath')
 			->with('/' . $path)
-			->will($this->returnValue($node));
+			->willReturn($node);
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->server->httpResponse = $response;
 		$this->plugin->initialize($this->server);
 
@@ -741,7 +742,7 @@ class CommentsPluginTest extends \Test\TestCase {
 		$node->expects($this->once())
 			->method('findChildren')
 			->with(5, 10, new \DateTime($parameters[2]['value']))
-			->will($this->returnValue([]));
+			->willReturn([]);
 
 		$response = $this->getMockBuilder(ResponseInterface::class)
 			->disableOriginalConstructor()
@@ -761,17 +762,14 @@ class CommentsPluginTest extends \Test\TestCase {
 		$this->tree->expects($this->any())
 			->method('getNodeForPath')
 			->with('/' . $path)
-			->will($this->returnValue($node));
+			->willReturn($node);
 
 		$this->server->expects($this->any())
 			->method('getRequestUri')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		$this->server->httpResponse = $response;
 		$this->plugin->initialize($this->server);
 
 		$this->plugin->onReport(CommentsPluginImplementation::REPORT_NAME, $parameters, '/' . $path);
 	}
-
-
-
 }

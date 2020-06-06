@@ -24,7 +24,7 @@ import moment from 'moment'
 
 import History from './util-history'
 import OC from './index'
-import humanFileSize from '../Util/human-file-size'
+import { formatFileSize as humanFileSize } from '@nextcloud/files'
 
 function chunkify(t) {
 	// Adapted from http://my.opera.com/GreyWyvern/blog/show.dml/1671288
@@ -58,7 +58,9 @@ export default {
 
 	History,
 
-	// TODO: remove original functions from global namespace
+	/**
+	 * @deprecated use https://nextcloud.github.io/nextcloud-files/modules/_humanfilesize_.html#formatfilesize
+	 */
 	humanFileSize,
 
 	/**
@@ -115,6 +117,7 @@ export default {
 	 * @returns {string} timestamp formatted as requested
 	 */
 	formatDate: function(timestamp, format) {
+		console.warn('OC.Util.formatDate is deprecated and will be removed in Nextcloud 21. See @nextcloud/moment')
 		format = format || 'LLL'
 		return moment(timestamp).format(format)
 	},
@@ -124,6 +127,7 @@ export default {
 	 * @returns {string} human readable difference from now
 	 */
 	relativeModifiedDate: function(timestamp) {
+		console.warn('OC.Util.relativeModifiedDate is deprecated and will be removed in Nextcloud 21. See @nextcloud/moment')
 		const diff = moment().diff(moment(timestamp))
 		if (diff >= 0 && diff < 45000) {
 			return t('core', 'seconds ago')

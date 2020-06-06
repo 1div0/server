@@ -2,6 +2,7 @@
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author David Toledo <dtoledo@solidgear.es>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
@@ -88,7 +89,7 @@ trait WebDav {
 	public function makeDavRequest($user, $method, $path, $headers, $body = null, $type = "files") {
 		if ($type === "files") {
 			$fullUrl = substr($this->baseUrl, 0, -4) . $this->getDavFilesPath($user) . "$path";
-		} else if ($type === "uploads") {
+		} elseif ($type === "uploads") {
 			$fullUrl = substr($this->baseUrl, 0, -4) . $this->davPath . "$path";
 		}
 		$client = new GClient();

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -64,7 +65,7 @@ class Create extends Base {
 	/** @var IUserSession */
 	private $userSession;
 
-	function __construct(GlobalStoragesService $globalService,
+	public function __construct(GlobalStoragesService $globalService,
 						 UserStoragesService $userService,
 						 IUserManager $userManager,
 						 IUserSession $userSession,

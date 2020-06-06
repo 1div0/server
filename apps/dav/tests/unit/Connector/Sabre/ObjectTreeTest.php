@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -27,7 +28,6 @@
 
 namespace OCA\DAV\Tests\unit\Connector\Sabre;
 
-
 use OC\Files\FileInfo;
 use OC\Files\Filesystem;
 use OC\Files\Mount\Manager;
@@ -44,7 +44,6 @@ use OCA\DAV\Connector\Sabre\ObjectTree;
  * @package OCA\DAV\Tests\Unit\Connector\Sabre
  */
 class ObjectTreeTest extends \Test\TestCase {
-
 	public function copyDataProvider() {
 		return [
 			// copy into same dir
@@ -64,7 +63,7 @@ class ObjectTreeTest extends \Test\TestCase {
 		$view->expects($this->once())
 			->method('verifyPath')
 			->with($targetParent)
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$view->expects($this->once())
 			->method('file_exists')
 			->with($targetPath)
@@ -72,7 +71,7 @@ class ObjectTreeTest extends \Test\TestCase {
 		$view->expects($this->once())
 			->method('copy')
 			->with($sourcePath, $targetPath)
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$info = $this->createMock(FileInfo::class);
 		$info->expects($this->once())
@@ -93,7 +92,7 @@ class ObjectTreeTest extends \Test\TestCase {
 		$objectTree->expects($this->once())
 			->method('getNodeForPath')
 			->with($this->identicalTo($sourcePath))
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		/** @var $objectTree \OCA\DAV\Connector\Sabre\ObjectTree */
 		$mountManager = Filesystem::getMountManager();
@@ -152,7 +151,6 @@ class ObjectTreeTest extends \Test\TestCase {
 		$type,
 		$enableChunkingHeader
 	) {
-
 		if ($enableChunkingHeader) {
 			$_SERVER['HTTP_OC_CHUNKED'] = true;
 		}
@@ -171,17 +169,17 @@ class ObjectTreeTest extends \Test\TestCase {
 			->getMock();
 		$fileInfo->expects($this->once())
 			->method('getType')
-			->will($this->returnValue($type));
+			->willReturn($type);
 		$fileInfo->expects($this->once())
 			->method('getName')
-			->will($this->returnValue($outputFileName));
+			->willReturn($outputFileName);
 		$fileInfo->method('getStorage')
 			->willReturn($this->createMock(\OC\Files\Storage\Common::class));
 
 		$view->expects($this->once())
 			->method('getFileInfo')
 			->with($fileInfoQueryPath)
-			->will($this->returnValue($fileInfo));
+			->willReturn($fileInfo);
 
 		$tree = new \OCA\DAV\Connector\Sabre\ObjectTree();
 		$tree->init($rootNode, $view, $mountManager);
@@ -200,73 +198,73 @@ class ObjectTreeTest extends \Test\TestCase {
 		unset($_SERVER['HTTP_OC_CHUNKED']);
 	}
 
-	function nodeForPathProvider() {
-		return array(
+	public function nodeForPathProvider() {
+		return [
 			// regular file
-			array(
+			[
 				'regularfile.txt',
 				'regularfile.txt',
 				'regularfile.txt',
 				'file',
 				false
-			),
+			],
 			// regular directory
-			array(
+			[
 				'regulardir',
 				'regulardir',
 				'regulardir',
 				'dir',
 				false
-			),
+			],
 			// regular file with chunking
-			array(
+			[
 				'regularfile.txt',
 				'regularfile.txt',
 				'regularfile.txt',
 				'file',
 				true
-			),
+			],
 			// regular directory with chunking
-			array(
+			[
 				'regulardir',
 				'regulardir',
 				'regulardir',
 				'dir',
 				true
-			),
+			],
 			// file with chunky file name
-			array(
+			[
 				'regularfile.txt-chunking-123566789-10-1',
 				'regularfile.txt',
 				'regularfile.txt',
 				'file',
 				true
-			),
+			],
 			// regular file in subdir
-			array(
+			[
 				'subdir/regularfile.txt',
 				'subdir/regularfile.txt',
 				'regularfile.txt',
 				'file',
 				false
-			),
+			],
 			// regular directory in subdir
-			array(
+			[
 				'subdir/regulardir',
 				'subdir/regulardir',
 				'regulardir',
 				'dir',
 				false
-			),
+			],
 			// file with chunky file name in subdir
-			array(
+			[
 				'subdir/regularfile.txt-chunking-123566789-10-1',
 				'subdir/regularfile.txt',
 				'regularfile.txt',
 				'file',
 				true
-			),
-		);
+			],
+		];
 	}
 
 	
@@ -283,9 +281,9 @@ class ObjectTreeTest extends \Test\TestCase {
 			->getMock();
 		$view->expects($this->once())
 			->method('resolvePath')
-			->will($this->returnCallback(function($path) use ($storage){
-			return [$storage, ltrim($path, '/')];
-		}));
+			->willReturnCallback(function ($path) use ($storage) {
+				return [$storage, ltrim($path, '/')];
+			});
 
 		$rootNode = $this->getMockBuilder(Directory::class)
 			->disableOriginalConstructor()
@@ -310,9 +308,9 @@ class ObjectTreeTest extends \Test\TestCase {
 			->getMock();
 		$view->expects($this->any())
 			->method('resolvePath')
-			->will($this->returnCallback(function ($path) use ($storage) {
+			->willReturnCallback(function ($path) use ($storage) {
 				return [$storage, ltrim($path, '/')];
-			}));
+			});
 
 		$rootNode = $this->getMockBuilder(Directory::class)
 			->disableOriginalConstructor()

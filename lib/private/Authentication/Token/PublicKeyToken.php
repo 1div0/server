@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -47,8 +48,7 @@ use OCP\AppFramework\Db\Entity;
  * @method bool getPasswordInvalid()
  */
 class PublicKeyToken extends Entity implements INamedToken, IWipeableToken {
-
-	const VERSION = 2;
+	public const VERSION = 2;
 
 	/** @var string user UID */
 	protected $uid;

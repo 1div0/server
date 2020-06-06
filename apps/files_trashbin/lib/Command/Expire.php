@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -41,7 +42,7 @@ class Expire implements ICommand {
 	/**
 	 * @param string $user
 	 */
-	function __construct($user) {
+	public function __construct($user) {
 		$this->user = $user;
 	}
 

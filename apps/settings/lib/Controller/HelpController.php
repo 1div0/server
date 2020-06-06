@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2019 Julius Härtl <jus@bitgrid.net>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Härtl <jus@bitgrid.net>
  *
  * @license GNU AGPL version 3 or any later version
@@ -71,7 +72,7 @@ class HelpController extends Controller {
 	public function help(string $mode = 'user'): TemplateResponse {
 		$this->navigationManager->setActiveEntry('help');
 
-		if(!isset($mode) || $mode !== 'admin') {
+		if (!isset($mode) || $mode !== 'admin') {
 			$mode = 'user';
 		}
 
@@ -93,7 +94,5 @@ class HelpController extends Controller {
 		$policy->addAllowedFrameDomain('\'self\'');
 		$response->setContentSecurityPolicy($policy);
 		return $response;
-
 	}
-
 }

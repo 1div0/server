@@ -419,7 +419,7 @@ class FactoryTest extends TestCase {
 			->willReturn($availableLanguages);
 
 		$factory->expects($this->any())
-			->method('respectDefaultLanguage')->willReturnCallback(function($app, $lang) {
+			->method('respectDefaultLanguage')->willReturnCallback(function ($app, $lang) {
 				return $lang;
 			});
 
@@ -510,15 +510,15 @@ class FactoryTest extends TestCase {
 
 		$this->config->expects($this->any())
 			->method('getSystemValue')
-			->will($this->returnCallback(function($var, $default) use ($defaultLang) {
+			->willReturnCallback(function ($var, $default) use ($defaultLang) {
 				if ($var === 'installed') {
 					return true;
-				} else if ($var === 'default_language') {
+				} elseif ($var === 'default_language') {
 					return $defaultLang;
 				} else {
 					return $default;
 				}
-			}));
+			});
 
 		if ($loggedIn) {
 			$user = $this->getMockBuilder(IUser::class)
@@ -549,22 +549,21 @@ class FactoryTest extends TestCase {
 		$factory = $this->getFactory(['languageExists', 'findAvailableLanguages', 'respectDefaultLanguage']);
 		$factory->expects($this->any())
 			->method('languageExists')
-			->will($this->returnCallback(function ($app, $lang) use ($availableLang) {
+			->willReturnCallback(function ($app, $lang) use ($availableLang) {
 				return in_array($lang, $availableLang);
-			}));
+			});
 		$factory->expects($this->any())
 			->method('findAvailableLanguages')
-			->will($this->returnCallback(function ($app) use ($availableLang) {
+			->willReturnCallback(function ($app) use ($availableLang) {
 				return $availableLang;
-			}));
+			});
 		$factory->expects($this->any())
-			->method('respectDefaultLanguage')->willReturnCallback(function($app, $lang) {
-			return $lang;
+			->method('respectDefaultLanguage')->willReturnCallback(function ($app, $lang) {
+				return $lang;
 			});
 
 		$lang = $factory->findLanguage(null);
 		$this->assertSame($expected, $lang);
-
 	}
 
 	public function dataTestRespectDefaultLanguage() {
@@ -611,11 +610,11 @@ class FactoryTest extends TestCase {
 	public function testGetLanguageIterator(bool $hasSession, IUser $iUserMock = null) {
 		$factory = $this->getFactory();
 
-		if($iUserMock === null) {
+		if ($iUserMock === null) {
 			$matcher  = $this->userSession->expects($this->once())
 				->method('getUser');
 
-			if($hasSession) {
+			if ($hasSession) {
 				$matcher->willReturn($this->createMock(IUser::class));
 			} else {
 				$this->expectException(\RuntimeException::class);
@@ -625,5 +624,4 @@ class FactoryTest extends TestCase {
 		$iterator = $factory->getLanguageIterator($iUserMock);
 		$this->assertInstanceOf(ILanguageIterator::class, $iterator);
 	}
-
 }

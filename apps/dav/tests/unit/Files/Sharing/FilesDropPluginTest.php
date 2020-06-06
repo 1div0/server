@@ -2,6 +2,8 @@
 /**
  * @copyright Copyright (c) 2016, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -66,7 +68,7 @@ class FilesDropPluginTest extends TestCase {
 		$this->server->expects($this->once())
 			->method('on')
 			->with(
-				$this->equalTo('beforeMethod'),
+				$this->equalTo('beforeMethod:*'),
 				$this->equalTo([$this->plugin, 'beforeMethod']),
 				$this->equalTo(999)
 			);
@@ -122,13 +124,13 @@ class FilesDropPluginTest extends TestCase {
 			->willReturn('https://example.com');
 
 		$this->view->method('file_exists')
-			->will($this->returnCallback(function($path) {
+			->willReturnCallback(function ($path) {
 				if ($path === 'file.txt' || $path === '/file.txt') {
 					return true;
 				} else {
 					return false;
 				}
-			}));
+			});
 
 		$this->request->expects($this->once())
 			->method('setUrl')
@@ -163,13 +165,13 @@ class FilesDropPluginTest extends TestCase {
 			->willReturn('https://example.com');
 
 		$this->view->method('file_exists')
-			->will($this->returnCallback(function($path) {
+			->willReturnCallback(function ($path) {
 				if ($path === 'file.txt' || $path === '/file.txt') {
 					return true;
 				} else {
 					return false;
 				}
-			}));
+			});
 
 		$this->request->expects($this->once())
 			->method('setUrl')

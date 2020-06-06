@@ -19,8 +19,7 @@ class HasherTest extends \Test\TestCase {
 	/**
 	 * @return array
 	 */
-	public function versionHashProvider()
-	{
+	public function versionHashProvider() {
 		return [
 			['asf32äà$$a.|3', null],
 			['asf32äà$$a.|3|5', null],
@@ -30,8 +29,7 @@ class HasherTest extends \Test\TestCase {
 		];
 	}
 
-	public function hashProviders70_71(): array
-	{
+	public function hashProviders70_71(): array {
 		return [
 			// Valid SHA1 strings
 			['password', '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8', true],
@@ -115,6 +113,11 @@ class HasherTest extends \Test\TestCase {
 
 		$this->config = $this->createMock(IConfig::class);
 
+		$this->config->method('getSystemValueInt')
+			->willReturnCallback(function ($name, $default) {
+				return $default;
+			});
+
 		$this->hasher = new Hasher($this->config);
 	}
 
@@ -140,7 +143,7 @@ class HasherTest extends \Test\TestCase {
 			->expects($this->any())
 			->method('getSystemValue')
 			->willReturnCallback(function ($key, $default) {
-				if($key === 'passwordsalt') {
+				if ($key === 'passwordsalt') {
 					return '6Wow67q1wZQZpUUeI6G2LsWUu4XKx';
 				}
 				return $default;
@@ -259,6 +262,5 @@ class HasherTest extends \Test\TestCase {
 
 		$info = password_get_info($relativePath['hash']);
 		$this->assertEquals(PASSWORD_BCRYPT, $info['algo']);
-
 	}
 }

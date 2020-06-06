@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  *
@@ -28,7 +29,7 @@ trait EmitterTrait {
 	/**
 	 * @var callable[][] $listeners
 	 */
-	protected $listeners = array();
+	protected $listeners = [];
 
 	/**
 	 * @param string $scope
@@ -38,7 +39,7 @@ trait EmitterTrait {
 	public function listen($scope, $method, callable $callback) {
 		$eventName = $scope . '::' . $method;
 		if (!isset($this->listeners[$eventName])) {
-			$this->listeners[$eventName] = array();
+			$this->listeners[$eventName] = [];
 		}
 		if (array_search($callback, $this->listeners[$eventName], true) === false) {
 			$this->listeners[$eventName][] = $callback;
@@ -51,7 +52,7 @@ trait EmitterTrait {
 	 * @param callable $callback optional
 	 */
 	public function removeListener($scope = null, $method = null, callable $callback = null) {
-		$names = array();
+		$names = [];
 		$allNames = array_keys($this->listeners);
 		if ($scope and $method) {
 			$name = $scope . '::' . $method;
@@ -83,7 +84,7 @@ trait EmitterTrait {
 					unset($this->listeners[$name][$index]);
 				}
 			} else {
-				$this->listeners[$name] = array();
+				$this->listeners[$name] = [];
 			}
 		}
 	}
@@ -93,7 +94,7 @@ trait EmitterTrait {
 	 * @param string $method
 	 * @param array $arguments optional
 	 */
-	protected function emit($scope, $method, array $arguments = array()) {
+	protected function emit($scope, $method, array $arguments = []) {
 		$eventName = $scope . '::' . $method;
 		if (isset($this->listeners[$eventName])) {
 			foreach ($this->listeners[$eventName] as $callback) {

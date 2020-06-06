@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -62,8 +63,6 @@ use OCA\Files_External\Lib\Config\IAuthMechanismProvider;
 use OCA\Files_External\Lib\Config\IBackendProvider;
 use OCA\Files_External\Service\BackendService;
 use OCP\AppFramework\App;
-use OCP\AppFramework\IAppContainer;
-use OCP\Files\Config\IUserMountCache;
 use OCP\IGroup;
 use OCP\IUser;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -83,15 +82,11 @@ class Application extends App implements IBackendProvider, IAuthMechanismProvide
 
 		$container = $this->getContainer();
 
-		$container->registerService(IUserMountCache::class, function (IAppContainer $c) {
-			return $c->getServer()->query('UserMountCache');
-		});
-
 		/** @var BackendService $backendService */
 		$backendService = $container->query(BackendService::class);
 		$backendService->registerBackendProvider($this);
 		$backendService->registerAuthMechanismProvider($this);
-		$backendService->registerConfigHandler('user', function() use ($container) {
+		$backendService->registerConfigHandler('user', function () use ($container) {
 			return $container->query(UserPlaceholderHandler::class);
 		});
 
@@ -187,5 +182,4 @@ class Application extends App implements IBackendProvider, IAuthMechanismProvide
 			$container->query(KerberosAuth::class),
 		];
 	}
-
 }

@@ -24,7 +24,6 @@
 
 namespace OC\Collaboration\Collaborators;
 
-
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
@@ -91,5 +90,4 @@ class RemoteGroupPlugin implements ISearchPlugin {
 			throw new \InvalidArgumentException('Invalid Federated Cloud ID', 0, $e);
 		}
 	}
-
 }

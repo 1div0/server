@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2015, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -37,8 +38,7 @@ use OCP\Security\ICredentialsManager;
  * User provided Username and Password
  */
 class UserProvided extends AuthMechanism implements IUserProvided {
-
-	const CREDENTIALS_IDENTIFIER_PREFIX = 'password::userprovided/';
+	public const CREDENTIALS_IDENTIFIER_PREFIX = 'password::userprovided/';
 
 	/** @var ICredentialsManager */
 	protected $credentialsManager;
@@ -85,5 +85,4 @@ class UserProvided extends AuthMechanism implements IUserProvided {
 		$storage->setBackendOption('user', $credentials['user']);
 		$storage->setBackendOption('password', $credentials['password']);
 	}
-
 }

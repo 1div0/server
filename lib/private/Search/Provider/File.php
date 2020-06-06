@@ -4,6 +4,7 @@
  *
  * @author Andrew Brown <andrew@casabrown.com>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jakob Sack <mail@jakobsack.de>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -26,6 +27,7 @@
  */
 
 namespace OC\Search\Provider;
+
 use OC\Files\Filesystem;
 
 /**
@@ -40,7 +42,7 @@ class File extends \OCP\Search\Provider {
 	 */
 	public function search($query) {
 		$files = Filesystem::search($query);
-		$results = array();
+		$results = [];
 		// edit results
 		foreach ($files as $fileData) {
 			// skip versions
@@ -52,19 +54,19 @@ class File extends \OCP\Search\Provider {
 				continue;
 			}
 			// create audio result
-			if($fileData['mimepart'] === 'audio'){
+			if ($fileData['mimepart'] === 'audio') {
 				$result = new \OC\Search\Result\Audio($fileData);
 			}
 			// create image result
-			elseif($fileData['mimepart'] === 'image'){
+			elseif ($fileData['mimepart'] === 'image') {
 				$result = new \OC\Search\Result\Image($fileData);
 			}
 			// create folder result
-			elseif($fileData['mimetype'] === 'httpd/unix-directory'){
+			elseif ($fileData['mimetype'] === 'httpd/unix-directory') {
 				$result = new \OC\Search\Result\Folder($fileData);
 			}
 			// or create file result
-			else{
+			else {
 				$result = new \OC\Search\Result\File($fileData);
 			}
 			// add to results
@@ -73,5 +75,4 @@ class File extends \OCP\Search\Provider {
 		// return
 		return $results;
 	}
-	
 }

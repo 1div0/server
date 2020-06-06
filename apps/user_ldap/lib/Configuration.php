@@ -6,6 +6,7 @@
  * @author Alex Weirig <alex.weirig@technolink.lu>
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author blizzz <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Lennart Rosam <hello@takuto.de>
@@ -40,9 +41,9 @@ namespace OCA\User_LDAP;
  * @property string ldapUserAvatarRule
  */
 class Configuration {
-	const AVATAR_PREFIX_DEFAULT = 'default';
-	const AVATAR_PREFIX_NONE = 'none';
-	const AVATAR_PREFIX_DATA_ATTRIBUTE = 'data:';
+	public const AVATAR_PREFIX_DEFAULT = 'default';
+	public const AVATAR_PREFIX_NONE = 'none';
+	public const AVATAR_PREFIX_DATA_ATTRIBUTE = 'data:';
 
 	protected $configPrefix = null;
 	protected $configRead = false;
@@ -53,7 +54,7 @@ class Configuration {
 	protected $unsavedChanges = ['ldapConfigurationActive' => 'ldapConfigurationActive'];
 
 	//settings
-	protected $config = array(
+	protected $config = [
 		'ldapHost' => null,
 		'ldapPort' => null,
 		'ldapBackupHost' => null,
@@ -109,7 +110,7 @@ class Configuration {
 		'ldapDynamicGroupMemberURL' => null,
 		'ldapDefaultPPolicyDN' => null,
 		'ldapExtStorageHomeAttribute' => null,
-	);
+	];
 
 	/**
 	 * @param string $configPrefix
@@ -117,7 +118,7 @@ class Configuration {
 	 */
 	public function __construct($configPrefix, $autoRead = true) {
 		$this->configPrefix = $configPrefix;
-		if($autoRead) {
+		if ($autoRead) {
 			$this->readConfiguration();
 		}
 	}
@@ -127,7 +128,7 @@ class Configuration {
 	 * @return mixed|null
 	 */
 	public function __get($name) {
-		if(isset($this->config[$name])) {
+		if (isset($this->config[$name])) {
 			return $this->config[$name];
 		}
 		return null;
@@ -138,7 +139,7 @@ class Configuration {
 	 * @param mixed $value
 	 */
 	public function __set($name, $value) {
-		$this->setConfiguration(array($name => $value));
+		$this->setConfiguration([$name => $value]);
 	}
 
 	/**
@@ -158,22 +159,22 @@ class Configuration {
 	 * @return false|null
 	 */
 	public function setConfiguration($config, &$applied = null) {
-		if(!is_array($config)) {
+		if (!is_array($config)) {
 			return false;
 		}
 
 		$cta = $this->getConfigTranslationArray();
-		foreach($config as $inputKey => $val) {
-			if(strpos($inputKey, '_') !== false && array_key_exists($inputKey, $cta)) {
+		foreach ($config as $inputKey => $val) {
+			if (strpos($inputKey, '_') !== false && array_key_exists($inputKey, $cta)) {
 				$key = $cta[$inputKey];
-			} elseif(array_key_exists($inputKey, $this->config)) {
+			} elseif (array_key_exists($inputKey, $this->config)) {
 				$key = $inputKey;
 			} else {
 				continue;
 			}
 
 			$setMethod = 'setValue';
-			switch($key) {
+			switch ($key) {
 				case 'ldapAgentPassword':
 					$setMethod = 'setRawValue';
 					break;
@@ -197,7 +198,7 @@ class Configuration {
 					break;
 			}
 			$this->$setMethod($key, $val);
-			if(is_array($applied)) {
+			if (is_array($applied)) {
 				$applied[] = $inputKey;
 				// storing key as index avoids duplication, and as value for simplicity
 			}
@@ -207,15 +208,15 @@ class Configuration {
 	}
 
 	public function readConfiguration() {
-		if(!$this->configRead && !is_null($this->configPrefix)) {
+		if (!$this->configRead && !is_null($this->configPrefix)) {
 			$cta = array_flip($this->getConfigTranslationArray());
-			foreach($this->config as $key => $val) {
-				if(!isset($cta[$key])) {
+			foreach ($this->config as $key => $val) {
+				if (!isset($cta[$key])) {
 					//some are determined
 					continue;
 				}
 				$dbKey = $cta[$key];
-				switch($key) {
+				switch ($key) {
 					case 'ldapBase':
 					case 'ldapBaseUsers':
 					case 'ldapBaseGroups':
@@ -258,7 +259,7 @@ class Configuration {
 	 */
 	public function saveConfiguration() {
 		$cta = array_flip($this->getConfigTranslationArray());
-		foreach($this->unsavedChanges as $key) {
+		foreach ($this->unsavedChanges as $key) {
 			$value = $this->config[$key];
 			switch ($key) {
 				case 'ldapAgentPassword':
@@ -274,7 +275,7 @@ class Configuration {
 				case 'ldapGroupFilterObjectclass':
 				case 'ldapGroupFilterGroups':
 				case 'ldapLoginFilterAttributes':
-					if(is_array($value)) {
+					if (is_array($value)) {
 						$value = implode("\n", $value);
 					}
 					break;
@@ -284,7 +285,7 @@ class Configuration {
 				case 'ldapUuidGroupAttribute':
 					continue 2;
 			}
-			if(is_null($value)) {
+			if (is_null($value)) {
 				$value = '';
 			}
 			$this->saveValue($cta[$key], $value);
@@ -299,7 +300,7 @@ class Configuration {
 	 */
 	protected function getMultiLine($varName) {
 		$value = $this->getValue($varName);
-		if(empty($value)) {
+		if (empty($value)) {
 			$value = '';
 		} else {
 			$value = preg_split('/\r\n|\r|\n/', $value);
@@ -310,26 +311,26 @@ class Configuration {
 
 	/**
 	 * Sets multi-line values as arrays
-	 * 
+	 *
 	 * @param string $varName name of config-key
 	 * @param array|string $value to set
 	 */
 	protected function setMultiLine($varName, $value) {
-		if(empty($value)) {
+		if (empty($value)) {
 			$value = '';
-		} else if (!is_array($value)) {
+		} elseif (!is_array($value)) {
 			$value = preg_split('/\r\n|\r|\n|;/', $value);
-			if($value === false) {
+			if ($value === false) {
 				$value = '';
 			}
 		}
 
-		if(!is_array($value)) {
+		if (!is_array($value)) {
 			$finalValue = trim($value);
 		} else {
 			$finalValue = [];
-			foreach($value as $key => $val) {
-				if(is_string($val)) {
+			foreach ($value as $key => $val) {
+				if (is_string($val)) {
 					$val = trim($val);
 					if ($val !== '') {
 						//accidental line breaks are not wanted and can cause
@@ -376,7 +377,7 @@ class Configuration {
 	 */
 	protected function getValue($varName) {
 		static $defaults;
-		if(is_null($defaults)) {
+		if (is_null($defaults)) {
 			$defaults = $this->getDefaults();
 		}
 		return \OC::$server->getConfig()->getAppValue('user_ldap',
@@ -386,12 +387,12 @@ class Configuration {
 
 	/**
 	 * Sets a scalar value.
-	 * 
+	 *
 	 * @param string $varName name of config key
 	 * @param mixed $value to set
 	 */
 	protected function setValue($varName, $value) {
-		if(is_string($value)) {
+		if (is_string($value)) {
 			$value = trim($value);
 		}
 		$this->config[$varName] = $value;
@@ -426,7 +427,7 @@ class Configuration {
 	 * to config-value entries in the database table
 	 */
 	public function getDefaults() {
-		return array(
+		return [
 			'ldap_host'                         => '',
 			'ldap_port'                         => '',
 			'ldap_backup_host'                  => '',
@@ -481,7 +482,7 @@ class Configuration {
 			'ldap_default_ppolicy_dn'           => '',
 			'ldap_user_avatar_rule'             => 'default',
 			'ldap_ext_storage_home_attribute'   => '',
-		);
+		];
 	}
 
 	/**
@@ -489,7 +490,7 @@ class Configuration {
 	 */
 	public function getConfigTranslationArray() {
 		//TODO: merge them into one representation
-		static $array = array(
+		static $array = [
 			'ldap_host'                         => 'ldapHost',
 			'ldap_port'                         => 'ldapPort',
 			'ldap_backup_host'                  => 'ldapBackupHost',
@@ -543,7 +544,7 @@ class Configuration {
 			'ldap_default_ppolicy_dn'           => 'ldapDefaultPPolicyDN',
 			'ldap_ext_storage_home_attribute'   => 'ldapExtStorageHomeAttribute',
 			'ldapIgnoreNamingRules'             => 'ldapIgnoreNamingRules',	// sysconfig
-		);
+		];
 		return $array;
 	}
 
@@ -553,7 +554,7 @@ class Configuration {
 	 * @throws \RuntimeException
 	 */
 	public function resolveRule($rule) {
-		if($rule === 'avatar') {
+		if ($rule === 'avatar') {
 			return $this->getAvatarAttributes();
 		}
 		throw new \RuntimeException('Invalid rule');
@@ -563,20 +564,19 @@ class Configuration {
 		$value = $this->ldapUserAvatarRule ?: self::AVATAR_PREFIX_DEFAULT;
 		$defaultAttributes = ['jpegphoto', 'thumbnailphoto'];
 
-		if($value === self::AVATAR_PREFIX_NONE) {
+		if ($value === self::AVATAR_PREFIX_NONE) {
 			return [];
 		}
-		if(strpos($value, self::AVATAR_PREFIX_DATA_ATTRIBUTE) === 0) {
+		if (strpos($value, self::AVATAR_PREFIX_DATA_ATTRIBUTE) === 0) {
 			$attribute = trim(substr($value, strlen(self::AVATAR_PREFIX_DATA_ATTRIBUTE)));
-			if($attribute === '') {
+			if ($attribute === '') {
 				return $defaultAttributes;
 			}
 			return [strtolower($attribute)];
 		}
-		if($value !== self::AVATAR_PREFIX_DEFAULT) {
+		if ($value !== self::AVATAR_PREFIX_DEFAULT) {
 			\OC::$server->getLogger()->warning('Invalid config value to ldapUserAvatarRule; falling back to default.');
 		}
 		return $defaultAttributes;
 	}
-
 }

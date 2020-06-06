@@ -8,8 +8,6 @@
 
 namespace Test;
 
-
-use OC\App\AppStore\Bundles\Bundle;
 use OC\App\AppStore\Fetcher\AppFetcher;
 use OC\Archive\ZIP;
 use OC\Installer;
@@ -26,7 +24,6 @@ use OCP\ITempManager;
  * @group DB
  */
 class InstallerTest extends TestCase {
-
 	private static $appid = 'testapp';
 	private $appstore;
 	/** @var AppFetcher|\PHPUnit_Framework_MockObject_MockObject */

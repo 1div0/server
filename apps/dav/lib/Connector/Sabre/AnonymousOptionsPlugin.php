@@ -3,6 +3,8 @@
  * @copyright Copyright (c) 2018 Robin Appelman <robin@icewind.nl>
  *
  * @author Bastien Durel <bastien@durel.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Robin Appelman <robin@icewind.nl>
  *
@@ -46,14 +48,14 @@ class AnonymousOptionsPlugin extends ServerPlugin {
 	public function initialize(\Sabre\DAV\Server $server) {
 		$this->server = $server;
 		// before auth
-		$this->server->on('beforeMethod', [$this, 'handleAnonymousOptions'], 9);
+		$this->server->on('beforeMethod:*', [$this, 'handleAnonymousOptions'], 9);
 	}
 
 	/**
 	 * @return bool
 	 */
 	public function isRequestInRoot($path) {
-		return $path === '' || (is_string($path) && strpos($path, '/') === FALSE);
+		return $path === '' || (is_string($path) && strpos($path, '/') === false);
 	}
 
 	/**
@@ -65,15 +67,15 @@ class AnonymousOptionsPlugin extends ServerPlugin {
 		$emptyAuth = $request->getHeader('Authorization') === null
 			|| $request->getHeader('Authorization') === ''
 			|| trim($request->getHeader('Authorization')) === 'Bearer';
-		$isAnonymousOption = $request->getMethod() === 'OPTIONS' && $emptyAuth;
+		$isAnonymousOfficeOption = $request->getMethod() === 'OPTIONS' && $isOffice && $emptyAuth;
 		$isOfficeHead = $request->getMethod() === 'HEAD' && $isOffice && $emptyAuth;
-		if ($isAnonymousOption || $isOfficeHead) {
+		if ($isAnonymousOfficeOption || $isOfficeHead) {
 			/** @var CorePlugin $corePlugin */
 			$corePlugin = $this->server->getPlugin('core');
 			// setup a fake tree for anonymous access
 			$this->server->tree = new Tree(new Directory(''));
 			$corePlugin->httpOptions($request, $response);
-			$this->server->emit('afterMethod', [$request, $response]);
+			$this->server->emit('afterMethod:*', [$request, $response]);
 			$this->server->emit('afterMethod:OPTIONS', [$request, $response]);
 
 			$this->server->sapi->sendResponse($response);

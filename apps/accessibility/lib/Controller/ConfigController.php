@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2018 John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @copyright Copyright (c) 2019 Janis Köhr <janiskoehr@icloud.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Janis Köhr <janis.koehr@novatec-gmbh.de>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -30,7 +31,6 @@ declare(strict_types=1);
 namespace OCA\Accessibility\Controller;
 
 use OCA\Accessibility\AccessibilityProvider;
-use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCSController;
@@ -107,16 +107,15 @@ class ConfigController extends OCSController {
 	 */
 	public function setConfig(string $key, $value): DataResponse {
 		if ($key === 'theme' || $key === 'font' || $key === 'highcontrast') {
-
 			if ($value === false || $value === '') {
 				throw new OCSBadRequestException('Invalid value: ' . $value);
 			}
 
 			$themes = $this->accessibilityProvider->getThemes();
-			$highcontrast = array($this->accessibilityProvider->getHighContrast());
+			$highcontrast = [$this->accessibilityProvider->getHighContrast()];
 			$fonts  = $this->accessibilityProvider->getFonts();
 
-			$availableOptions = array_map(function($option) {
+			$availableOptions = array_map(function ($option) {
 				return $option['id'];
 			}, array_merge($themes, $highcontrast, $fonts));
 
@@ -142,7 +141,6 @@ class ConfigController extends OCSController {
 	 */
 	public function deleteConfig(string $key): DataResponse {
 		if ($key === 'theme' || $key === 'font' || $key === 'highcontrast') {
-
 			$this->config->deleteUserValue($this->userId, $this->appName, $key);
 			$userValues = $this->config->getUserKeys($this->userId, $this->appName);
 
@@ -156,5 +154,4 @@ class ConfigController extends OCSController {
 
 		throw new OCSBadRequestException('Invalid key: ' . $key);
 	}
-
 }

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 EITA Cooperative (eita.org.br)
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Vinicius Cubas Brand <vinicius@eita.org.br>
  *
  * @license GNU AGPL version 3 or any later version
@@ -26,17 +27,16 @@ namespace OCA\User_LDAP;
 use OCP\GroupInterface;
 
 class GroupPluginManager {
-
 	private $respondToActions = 0;
 
-	private $which = array(
+	private $which = [
 		GroupInterface::CREATE_GROUP => null,
 		GroupInterface::DELETE_GROUP => null,
 		GroupInterface::ADD_TO_GROUP => null,
 		GroupInterface::REMOVE_FROM_GROUP => null,
 		GroupInterface::COUNT_USERS => null,
 		GroupInterface::GROUP_DETAILS => null
-	);
+	];
 
 	/**
 	 * @return int All implemented actions
@@ -53,7 +53,7 @@ class GroupPluginManager {
 		$respondToActions = $plugin->respondToActions();
 		$this->respondToActions |= $respondToActions;
 
-		foreach($this->which as $action => $v) {
+		foreach ($this->which as $action => $v) {
 			if ((bool)($respondToActions & $action)) {
 				$this->which[$action] = $plugin;
 				\OC::$server->getLogger()->debug("Registered action ".$action." to plugin ".get_class($plugin), ['app' => 'user_ldap']);

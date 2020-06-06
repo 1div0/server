@@ -2,8 +2,8 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Johannes Ernst <jernst@indiecomputing.com>
- * @author Johannes Koenig <mail@jokoenig.de>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -26,6 +26,7 @@
  */
 
 namespace OC\Security;
+
 use OC\AppFramework\Http\Request;
 use OCP\IConfig;
 
@@ -97,11 +98,13 @@ class TrustedDomainHelper {
 			if (gettype($trusted) !== 'string') {
 				break;
 			}
-			$regex = '/^' . implode('[-\.a-zA-Z0-9]*', array_map(function($v) { return preg_quote($v, '/'); }, explode('*', $trusted))) . '$/i';
+			$regex = '/^' . implode('[-\.a-zA-Z0-9]*', array_map(function ($v) {
+				return preg_quote($v, '/');
+			}, explode('*', $trusted))) . '$/i';
 			if (preg_match($regex, $domain) || preg_match($regex, $domainWithPort)) {
- 				return true;
- 			}
- 		}
- 		return false;
+				return true;
+			}
+		}
+		return false;
 	}
 }

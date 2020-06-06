@@ -3,8 +3,8 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Felix Moeller <mail@felixmoeller.de>
- * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Michael Gapczynski <GapczynskiM@gmail.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -37,7 +37,7 @@ namespace OCA\Files_External\Lib\Storage;
 use Icewind\Streams\CallbackWrapper;
 use Icewind\Streams\RetryWrapper;
 
-class FTP extends StreamWrapper{
+class FTP extends StreamWrapper {
 	private $password;
 	private $user;
 	private $host;
@@ -55,7 +55,7 @@ class FTP extends StreamWrapper{
 				$this->secure = false;
 			}
 			$this->root=isset($params['root'])?$params['root']:'/';
-			if ( ! $this->root || $this->root[0]!=='/') {
+			if (! $this->root || $this->root[0]!=='/') {
 				$this->root='/'.$this->root;
 			}
 			if (substr($this->root, -1) !== '/') {
@@ -64,10 +64,9 @@ class FTP extends StreamWrapper{
 		} else {
 			throw new \Exception('Creating FTP storage failed');
 		}
-		
 	}
 
-	public function getId(){
+	public function getId() {
 		return 'ftp::' . $this->user . '@' . $this->host . '/' . $this->root;
 	}
 
@@ -92,8 +91,7 @@ class FTP extends StreamWrapper{
 	public function unlink($path) {
 		if ($this->is_dir($path)) {
 			return $this->rmdir($path);
-		}
-		else {
+		} else {
 			$url = $this->constructUrl($path);
 			$result = unlink($url);
 			clearstatcache(true, $url);
@@ -101,7 +99,7 @@ class FTP extends StreamWrapper{
 		}
 	}
 	public function fopen($path,$mode) {
-		switch($mode) {
+		switch ($mode) {
 			case 'r':
 			case 'rb':
 			case 'w':
@@ -109,7 +107,7 @@ class FTP extends StreamWrapper{
 			case 'a':
 			case 'ab':
 				//these are supported by the wrapper
-				$context = stream_context_create(array('ftp' => array('overwrite' => true)));
+				$context = stream_context_create(['ftp' => ['overwrite' => true]]);
 				$handle = fopen($this->constructUrl($path), $mode, false, $context);
 				return RetryWrapper::wrap($handle);
 			case 'r+':
@@ -150,8 +148,7 @@ class FTP extends StreamWrapper{
 		if (function_exists('ftp_login')) {
 			return true;
 		} else {
-			return array('ftp');
+			return ['ftp'];
 		}
 	}
-
 }

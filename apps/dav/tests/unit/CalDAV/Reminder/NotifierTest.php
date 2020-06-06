@@ -6,9 +6,10 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2019, Thomas Citharel
  * @copyright Copyright (c) 2019, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -61,18 +62,18 @@ class NotifierTest extends TestCase {
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->l10n->expects($this->any())
 			->method('t')
-			->willReturnCallback(function($string, $args) {
+			->willReturnCallback(function ($string, $args) {
 				return vsprintf($string, $args);
 			});
 		$this->l10n->expects($this->any())
 			->method('l')
-			->willReturnCallback(function($string, $args) {
+			->willReturnCallback(function ($string, $args) {
 				/** \DateTime $args */
 				return $args->format(\DateTime::ATOM);
 			});
 		$this->l10n->expects($this->any())
 			->method('n')
-			->willReturnCallback(function($textSingular, $textPlural, $count, $args) {
+			->willReturnCallback(function ($textSingular, $textPlural, $count, $args) {
 				$text = $count === 1 ? $textSingular : $textPlural;
 				$text = str_replace('%n', (string)$count, $text);
 				return vsprintf($text, $args);
@@ -103,8 +104,7 @@ class NotifierTest extends TestCase {
 	}
 
 	
-	public function testPrepareWrongApp(): void
-	{
+	public function testPrepareWrongApp(): void {
 		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessage('Notification not from this app');
 
@@ -138,8 +138,7 @@ class NotifierTest extends TestCase {
 		$this->notifier->prepare($notification, 'en');
 	}
 
-	public function dataPrepare(): array
-	{
+	public function dataPrepare(): array {
 		return [
 			[
 				'calendar_reminder',
@@ -176,8 +175,7 @@ class NotifierTest extends TestCase {
 	 * @param string $message
 	 * @throws \Exception
 	 */
-	public function testPrepare(string $subjectType, array $subjectParams, string $subject, array $messageParams, string $message): void
-	{
+	public function testPrepare(string $subjectType, array $subjectParams, string $subject, array $messageParams, string $message): void {
 		/** @var INotification|\PHPUnit\Framework\MockObject\MockObject $notification */
 		$notification = $this->createMock(INotification::class);
 

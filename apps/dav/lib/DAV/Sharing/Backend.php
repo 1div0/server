@@ -2,11 +2,12 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
  * @license AGPL-3.0
@@ -45,9 +46,9 @@ class Backend {
 	/** @var string */
 	private $resourceType;
 
-	const ACCESS_OWNER = 1;
-	const ACCESS_READ_WRITE = 2;
-	const ACCESS_READ = 3;
+	public const ACCESS_OWNER = 1;
+	public const ACCESS_READ_WRITE = 2;
+	public const ACCESS_READ = 3;
 
 	/**
 	 * @param IDBConnection $db
@@ -70,13 +71,13 @@ class Backend {
 	 * @param string[] $remove
 	 */
 	public function updateShares(IShareable $shareable, array $add, array $remove) {
-		foreach($add as $element) {
+		foreach ($add as $element) {
 			$principal = $this->principalBackend->findByUri($element['href'], '');
 			if ($principal !== '') {
 				$this->shareWith($shareable, $element);
 			}
 		}
-		foreach($remove as $element) {
+		foreach ($remove as $element) {
 			$principal = $this->principalBackend->findByUri($element, '');
 			if ($principal !== '') {
 				$this->unshare($shareable, $element);
@@ -195,7 +196,7 @@ class Backend {
 			->execute();
 
 		$shares = [];
-		while($row = $result->fetch()) {
+		while ($row = $result->fetch()) {
 			$p = $this->principalBackend->getPrincipalByPath($row['principaluri']);
 			$shares[]= [
 				'href' => "principal:${row['principaluri']}",
@@ -218,7 +219,6 @@ class Backend {
 	 * @return array
 	 */
 	public function applyShareAcl($resourceId, $acl) {
-
 		$shares = $this->getShares($resourceId);
 		foreach ($shares as $share) {
 			$acl[] = [
@@ -232,7 +232,7 @@ class Backend {
 					'principal' => $share['{' . \OCA\DAV\DAV\Sharing\Plugin::NS_OWNCLOUD . '}principal'],
 					'protected' => true,
 				];
-			} else if ($this->resourceType === 'calendar') {
+			} elseif ($this->resourceType === 'calendar') {
 				// Allow changing the properties of read only calendars,
 				// so users can change the visibility.
 				$acl[] = [

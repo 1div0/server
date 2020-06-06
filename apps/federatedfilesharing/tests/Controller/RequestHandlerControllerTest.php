@@ -4,7 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
- * @author Lukas Reschke <lukas@statuscode.ch>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -28,28 +28,19 @@
 
 namespace OCA\FederatedFileSharing\Tests;
 
-use OC\AppFramework\Http;
-use OC\Federation\CloudIdManager;
-use OC\Files\Filesystem;
 use OCA\FederatedFileSharing\Controller\RequestHandlerController;
-use OCA\FederatedFileSharing\FederatedShareProvider;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Federation\ICloudFederationShare;
 use OCP\Federation\ICloudIdManager;
-use OCP\Http\Client\IClient;
-use OCP\Http\Client\IClientService;
-use OCP\Http\Client\IResponse;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\Share;
 use OCP\Share\IShare;
-use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
 
 /**
  * Class RequestHandlerTest
@@ -58,7 +49,6 @@ use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
  * @group DB
  */
 class RequestHandlerControllerTest extends \Test\TestCase {
-
 	private $owner = 'owner';
 	private $user1 = 'user1';
 	private $user2 = 'user2';
@@ -112,7 +102,6 @@ class RequestHandlerControllerTest extends \Test\TestCase {
 	private $cloudFederationShare;
 
 	protected function setUp(): void {
-
 		$this->share = $this->getMockBuilder(IShare::class)->getMock();
 		$this->federatedShareProvider = $this->getMockBuilder('OCA\FederatedFileSharing\FederatedShareProvider')
 			->disableOriginalConstructor()->getMock();
@@ -154,10 +143,9 @@ class RequestHandlerControllerTest extends \Test\TestCase {
 			$this->cloudFederationFactory,
 			$this->cloudFederationProviderManager
 		);
-
 	}
 
-	function testCreateShare() {
+	public function testCreateShare() {
 		// simulate a post request
 		$_POST['remote'] = 'localhost';
 		$_POST['token'] = 'token';
@@ -196,11 +184,9 @@ class RequestHandlerControllerTest extends \Test\TestCase {
 		$result = $this->requestHandler->createShare();
 
 		$this->assertInstanceOf(DataResponse::class, $result);
-
 	}
 
-	function testDeclineShare() {
-
+	public function testDeclineShare() {
 		$id = 42;
 		$_POST['token'] = 'token';
 
@@ -221,12 +207,10 @@ class RequestHandlerControllerTest extends \Test\TestCase {
 		$result = $this->requestHandler->declineShare($id);
 
 		$this->assertInstanceOf(DataResponse::class, $result);
-
 	}
 
 
-	function testAcceptShare() {
-
+	public function testAcceptShare() {
 		$id = 42;
 		$_POST['token'] = 'token';
 
@@ -247,8 +231,5 @@ class RequestHandlerControllerTest extends \Test\TestCase {
 		$result = $this->requestHandler->acceptShare($id);
 
 		$this->assertInstanceOf(DataResponse::class, $result);
-
 	}
-
-
 }

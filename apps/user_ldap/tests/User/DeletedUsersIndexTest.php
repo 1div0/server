@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2018 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -88,7 +89,7 @@ class DeletedUsersIndexTest extends \Test\TestCase {
 		$this->assertSame(2, count($deletedUsers));
 
 		// ensure the different uids were used
-		foreach($deletedUsers as $deletedUser) {
+		foreach ($deletedUsers as $deletedUser) {
 			$this->assertTrue(in_array($deletedUser->getOCName(), $uids));
 			$i = array_search($deletedUser->getOCName(), $uids);
 			$this->assertNotFalse($i);
@@ -117,6 +118,4 @@ class DeletedUsersIndexTest extends \Test\TestCase {
 			$this->assertNotSame($testUser->getOCName(), $deletedUser->getOCName());
 		}
 	}
-
-
 }

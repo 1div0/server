@@ -3,14 +3,13 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  * @author Victor Dubiniuk <dubiniuk@owncloud.com>
  *
  * @license AGPL-3.0
@@ -39,12 +38,12 @@ use OC\Authentication\Listeners\RemoteWipeNotificationsListener;
 use OC\Authentication\Listeners\UserDeletedStoreCleanupListener;
 use OC\Authentication\Notifications\Notifier as AuthenticationNotifier;
 use OC\Core\Notification\RemoveLinkSharesNotifier;
+use OC\DB\MissingColumnInformation;
 use OC\DB\MissingIndexInformation;
 use OC\DB\SchemaWrapper;
 use OCP\AppFramework\App;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
-use OCP\IServerContainer;
 use OCP\User\Events\UserDeletedEvent;
 use OCP\Util;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -55,7 +54,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @package OC\Core
  */
 class Application extends App {
-
 	public function __construct() {
 		parent::__construct('core');
 
@@ -165,6 +163,30 @@ class Application extends App {
 						$subject->addHintForMissingSubject($table->getName(), 'schedulobj_principuri_index');
 					}
 				}
+
+				if ($schema->hasTable('properties')) {
+					$table = $schema->getTable('properties');
+					if (!$table->hasIndex('properties_path_index')) {
+						$subject->addHintForMissingSubject($table->getName(), 'properties_path_index');
+					}
+				}
+			}
+		);
+
+		$eventDispatcher->addListener(IDBConnection::CHECK_MISSING_COLUMNS_EVENT,
+			function (GenericEvent $event) use ($container) {
+				/** @var MissingColumnInformation $subject */
+				$subject = $event->getSubject();
+
+				$schema = new SchemaWrapper($container->query(IDBConnection::class));
+
+				if ($schema->hasTable('comments')) {
+					$table = $schema->getTable('comments');
+
+					if (!$table->hasColumn('reference_id')) {
+						$subject->addHintForMissingColumn($table->getName(), 'reference_id');
+					}
+				}
 			}
 		);
 
@@ -176,5 +198,4 @@ class Application extends App {
 		$eventDispatcher->addServiceListener(RemoteWipeFinished::class, RemoteWipeEmailListener::class);
 		$eventDispatcher->addServiceListener(UserDeletedEvent::class, UserDeletedStoreCleanupListener::class);
 	}
-
 }

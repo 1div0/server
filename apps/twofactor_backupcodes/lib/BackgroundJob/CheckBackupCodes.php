@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -57,7 +58,7 @@ class CheckBackupCodes extends QueuedJob {
 	}
 
 	protected function run($argument) {
-		$this->userManager->callForSeenUsers(function(IUser $user) {
+		$this->userManager->callForSeenUsers(function (IUser $user) {
 			$providers = $this->registry->getProviderStates($user);
 			$isTwoFactorAuthenticated = $this->twofactorManager->isTwoFactorAuthenticated($user);
 
@@ -66,5 +67,4 @@ class CheckBackupCodes extends QueuedJob {
 			}
 		});
 	}
-
 }

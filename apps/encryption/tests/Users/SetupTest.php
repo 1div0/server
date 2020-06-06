@@ -26,7 +26,6 @@
 
 namespace OCA\Encryption\Tests\Users;
 
-
 use OCA\Encryption\Crypto\Crypt;
 use OCA\Encryption\KeyManager;
 use OCA\Encryption\Users\Setup;
@@ -85,7 +84,6 @@ class SetupTest extends TestCase {
 	 * @param bool $expected
 	 */
 	public function testSetupUser($hasKeys, $expected) {
-
 		$this->keyManagerMock->expects($this->once())->method('userHasKeys')
 			->with('uid')->willReturn($hasKeys);
 
@@ -108,5 +106,4 @@ class SetupTest extends TestCase {
 			[false, true]
 		];
 	}
-
 }

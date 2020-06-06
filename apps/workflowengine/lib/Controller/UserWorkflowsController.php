@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Arthur Schiwon <blizzz@arthur-schiwon.de>
@@ -104,14 +105,13 @@ class UserWorkflowsController extends AWorkflowController {
 	 * @throws OCSForbiddenException
 	 */
 	protected function getScopeContext(): ScopeContext {
-		if($this->scopeContext === null) {
+		if ($this->scopeContext === null) {
 			$user = $this->session->getUser();
-			if(!$user) {
+			if (!$user || !$this->manager->isUserScopeEnabled()) {
 				throw new OCSForbiddenException('User not logged in');
 			}
 			$this->scopeContext = new ScopeContext(IManager::SCOPE_USER, $user->getUID());
 		}
 		return $this->scopeContext;
 	}
-
 }

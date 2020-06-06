@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud GmbH.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -70,7 +71,6 @@ class ExpireVersions extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-
 		$maxAge = $this->expiration->getMaxAgeAsTimestamp();
 		if (!$maxAge) {
 			$output->writeln("No expiry configured.");
@@ -91,7 +91,7 @@ class ExpireVersions extends Command {
 		} else {
 			$p = new ProgressBar($output);
 			$p->start();
-			$this->userManager->callForSeenUsers(function(IUser $user) use ($p) {
+			$this->userManager->callForSeenUsers(function (IUser $user) use ($p) {
 				$p->advance();
 				$this->expireVersionsForUser($user);
 			});
@@ -100,7 +100,7 @@ class ExpireVersions extends Command {
 		}
 	}
 
-	function expireVersionsForUser(IUser $user) {
+	public function expireVersionsForUser(IUser $user) {
 		$uid = $user->getUID();
 		if (!$this->setupFS($uid)) {
 			return;

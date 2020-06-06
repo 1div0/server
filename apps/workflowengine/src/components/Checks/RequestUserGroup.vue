@@ -34,8 +34,9 @@
 </template>
 
 <script>
-import { Multiselect } from '@nextcloud/vue/dist/Components/Multiselect'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 const groups = []
 const status = {
@@ -83,7 +84,7 @@ export default {
 			}
 
 			this.status.isLoading = true
-			return axios.get(OC.linkToOCS('cloud', 2) + 'groups?limit=20&search=' + encodeURI(searchQuery)).then((response) => {
+			return axios.get(generateOcsUrl('cloud', 2) + 'groups?limit=20&search=' + encodeURI(searchQuery)).then((response) => {
 				response.data.ocs.data.groups.reduce((obj, item) => {
 					obj.push({
 						id: item,

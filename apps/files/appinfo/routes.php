@@ -10,6 +10,7 @@ declare(strict_types=1);
  * @author Felix Nüsse <Felix.nuesse@t-online.de>
  * @author fnuesse <felix.nuesse@t-online.de>
  * @author fnuesse <fnuesse@techfak.uni-bielefeld.de>
+ * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -41,6 +42,13 @@ $application->registerRoutes(
 	$this,
 	[
 		'routes' => [
+			[
+				'name' => 'View#showFile',
+				'url' => '/f/{fileid}',
+				'verb' => 'GET',
+				'root' => '',
+			],
+
 			[
 				'name' => 'API#getThumbnail',
 				'url' => '/api/v1/thumbnail/{x}/{y}/{file}',
@@ -146,7 +154,7 @@ $application->registerRoutes(
 
 /** @var $this \OC\Route\Router */
 
-$this->create('files_ajax_download', 'ajax/download.php')
+$this->create('files_ajax_download', 'apps/files/ajax/download.php')
 	->actionInclude('files/ajax/download.php');
-$this->create('files_ajax_list', 'ajax/list.php')
+$this->create('files_ajax_list', 'apps/files/ajax/list.php')
 	->actionInclude('files/ajax/list.php');

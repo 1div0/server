@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -27,10 +28,9 @@ declare(strict_types=1);
 namespace OC\Http;
 
 class CookieHelper {
-
-	const SAMESITE_NONE = 0;
-	const SAMESITE_LAX = 1;
-	const SAMESITE_STRICT = 2;
+	public const SAMESITE_NONE = 0;
+	public const SAMESITE_LAX = 1;
+	public const SAMESITE_STRICT = 2;
 
 	public static function setCookie(string $name,
 									 string $value = '',
@@ -68,7 +68,7 @@ class CookieHelper {
 
 		if ($samesite === self::SAMESITE_LAX) {
 			$header .= '; SameSite=Lax';
-		} else if ($samesite === self::SAMESITE_STRICT) {
+		} elseif ($samesite === self::SAMESITE_STRICT) {
 			$header .= '; SameSite=Strict';
 		}
 

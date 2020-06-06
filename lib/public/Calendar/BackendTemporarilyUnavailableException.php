@@ -2,6 +2,7 @@
 /**
  * @copyright 2018, Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -29,4 +30,5 @@ namespace OCP\Calendar;
  * @package OCP\Calendar
  * @since 14.0.0
  */
-class BackendTemporarilyUnavailableException extends \Exception {}
+class BackendTemporarilyUnavailableException extends \Exception {
+}

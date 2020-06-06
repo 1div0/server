@@ -24,7 +24,6 @@
 use Behat\Behat\Context\Context;
 
 class FilesAppContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 	use FileListAncestorSetter;
 
@@ -33,13 +32,13 @@ class FilesAppContext implements Context, ActorAwareInterface {
 	 */
 	public static function sections() {
 		return [ "All files" => "files",
-				 "Recent" => "recent",
-				 "Favorites" => "favorites",
-				 "Shared with you" => "sharingin",
-				 "Shared with others" => "sharingout",
-				 "Shared by link" => "sharinglinks",
-				 "Tags" => "systemtagsfilter",
-				 "Deleted files" => "trashbin" ];
+			"Recent" => "recent",
+			"Favorites" => "favorites",
+			"Shared with you" => "sharingin",
+			"Shared with others" => "sharingout",
+			"Shared by link" => "sharinglinks",
+			"Tags" => "systemtagsfilter",
+			"Deleted files" => "trashbin" ];
 	}
 
 	/**

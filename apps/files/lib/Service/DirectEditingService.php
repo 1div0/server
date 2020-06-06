@@ -24,7 +24,6 @@
 
 namespace OCA\Files\Service;
 
-
 use OCP\DirectEditing\ACreateEmpty;
 use OCP\DirectEditing\ACreateFromTemplate;
 use OCP\DirectEditing\IEditor;
@@ -83,5 +82,4 @@ class DirectEditingService {
 		}
 		return $capabilities;
 	}
-
 }

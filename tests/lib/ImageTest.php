@@ -344,12 +344,12 @@ class ImageTest extends \Test\TestCase {
 		$this->assertEquals($expected[1], $img->height());
 	}
 
-	function convertDataProvider() {
-		return array(
-			array( 'image/gif'),
-			array( 'image/jpeg'),
-			array( 'image/png'),
-		);
+	public function convertDataProvider() {
+		return [
+			[ 'image/gif'],
+			[ 'image/jpeg'],
+			[ 'image/png'],
+		];
 	}
 
 	/**

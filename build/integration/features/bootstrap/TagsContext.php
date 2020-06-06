@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Phil Davis <phil.davis@inf.org>
@@ -301,7 +302,7 @@ class TagsContext implements \Behat\Behat\Context\Context {
 
 		if ($can === 'can') {
 			$expected = 'true';
-		} else if ($can === 'cannot') {
+		} elseif ($can === 'cannot') {
 			$expected = 'false';
 		} else {
 			throw new \Exception('Invalid condition, must be "can" or "cannot"');
@@ -500,8 +501,8 @@ class TagsContext implements \Behat\Behat\Context\Context {
 	private function getFileIdForPath($path, $user) {
 		$url = $this->baseUrl . '/remote.php/webdav/' . $path;
 		$credentials = base64_encode($user . ':' . $this->getPasswordForUser($user));
-		$context = stream_context_create(array(
-			'http' => array(
+		$context = stream_context_create([
+			'http' => [
 				'method' => 'PROPFIND',
 				'header' => "Authorization: Basic $credentials\r\nContent-Type: application/x-www-form-urlencoded",
 				'content' => '<?xml version="1.0"?>
@@ -510,8 +511,8 @@ class TagsContext implements \Behat\Behat\Context\Context {
     <oc:fileid />
   </d:prop>
 </d:propfind>'
-			)
-		));
+			]
+		]);
 		$response = file_get_contents($url, false, $context);
 		preg_match_all('/\<oc:fileid\>(.*?)\<\/oc:fileid\>/', $response, $matches);
 		return (int)$matches[1][0];

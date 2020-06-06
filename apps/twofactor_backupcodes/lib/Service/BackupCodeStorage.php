@@ -25,20 +25,15 @@
 
 namespace OCA\TwoFactorBackupCodes\Service;
 
-use BadMethodCallException;
 use OCA\TwoFactorBackupCodes\Db\BackupCode;
 use OCA\TwoFactorBackupCodes\Db\BackupCodeMapper;
 use OCA\TwoFactorBackupCodes\Event\CodesGenerated;
-use OCP\Activity\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\ILogger;
 use OCP\IUser;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class BackupCodeStorage {
-
 	private static $CODE_LENGTH = 16;
 
 	/** @var BackupCodeMapper */
@@ -137,5 +132,4 @@ class BackupCodeStorage {
 		}
 		return false;
 	}
-
 }

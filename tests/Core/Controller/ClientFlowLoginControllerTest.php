@@ -83,9 +83,9 @@ class ClientFlowLoginControllerTest extends TestCase {
 		$this->l10n
 			->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function($text, $parameters = array()) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 		$this->defaults = $this->createMock(Defaults::class);
 		$this->session = $this->createMock(ISession::class);
 		$this->tokenProvider = $this->createMock(IProvider::class);
@@ -407,7 +407,7 @@ class ClientFlowLoginControllerTest extends TestCase {
 	 * ["https://example.com/redirect.php?hello=world", "https://example.com/redirect.php?hello=world&state=MyOauthState&code=MyAccessCode"]
 	 *
 	 */
-	public function testGeneratePasswordWithPasswordForOauthClient($redirectUri, $redirectUrl) {		
+	public function testGeneratePasswordWithPasswordForOauthClient($redirectUri, $redirectUrl) {
 		$this->session
 			->expects($this->at(0))
 			->method('get')

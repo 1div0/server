@@ -28,7 +28,6 @@
 
 namespace OCA\Encryption\Hooks;
 
-
 use OC\Files\Filesystem;
 use OCA\Encryption\Crypto\Crypt;
 use OCA\Encryption\Hooks\Contracts\IHook;
@@ -110,7 +109,6 @@ class UserHooks implements IHook {
 								Session $session,
 								Crypt $crypt,
 								Recovery $recovery) {
-
 		$this->keyManager = $keyManager;
 		$this->userManager = $userManager;
 		$this->logger = $logger;
@@ -259,7 +257,6 @@ class UserHooks implements IHook {
 
 		// current logged in user changes his own password
 		if ($user && $params['uid'] === $user->getUID()) {
-
 			$privateKey = $this->session->getPrivateKey();
 
 			// Encrypt private key with new user pwd as passphrase

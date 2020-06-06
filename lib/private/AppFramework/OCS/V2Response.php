@@ -2,6 +2,7 @@
 /**
  * @copyright 2016 Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -35,15 +36,14 @@ class V2Response extends BaseResponse {
 	 * @return int
 	 */
 	public function getStatus() {
-
 		$status  = parent::getStatus();
 		if ($status === API::RESPOND_UNAUTHORISED) {
 			return Http::STATUS_UNAUTHORIZED;
-		} else if ($status === API::RESPOND_NOT_FOUND) {
+		} elseif ($status === API::RESPOND_NOT_FOUND) {
 			return Http::STATUS_NOT_FOUND;
-		} else if ($status === API::RESPOND_SERVER_ERROR || $status === API::RESPOND_UNKNOWN_ERROR) {
+		} elseif ($status === API::RESPOND_SERVER_ERROR || $status === API::RESPOND_UNKNOWN_ERROR) {
 			return Http::STATUS_INTERNAL_SERVER_ERROR;
-		} else if ($status < 200 || $status > 600) {
+		} elseif ($status < 200 || $status > 600) {
 			return Http::STATUS_BAD_REQUEST;
 		}
 

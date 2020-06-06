@@ -24,6 +24,7 @@
     "Something happened. Unable to accept the share." : "اتفاقی افتاد. امکان اشتراک گذاری وجود ندارد",
     "Reject share" : "رد اشتراک",
     "Something happened. Unable to reject the share." : "اتفاقی افتاد. امکان رد اشتراک وجود ندارد.",
+    "error" : "خطا",
     "This will stop your current uploads." : "با این کار آپلودهای فعلی شما متوقف خواهد شد.",
     "Move or copy" : "انتقال یا کپی",
     "Download" : "دانلود",
@@ -151,7 +152,6 @@
     "Shared with the conversation {user} by {owner}" : "به اشتراک گذاشته شده با مکالمه {کاربر} توسط {صاحب}",
     "Shared with {user} by {owner}" : "مشترک با {user} توسط {صاحب}",
     "Added by {initiator}" : "اضافه شده توسط {ابتکار}",
-    "Via folder" : "از طریق پوشه",
     "Internal link" : "پیوند داخلی",
     "Link copied" : "پیوند کپی شد",
     "Cannot copy, please copy the link manually" : "کپی کردن امکان پذیر نیست ، لطفا پیوند را به صورت دستی کپی کنید",
@@ -196,6 +196,7 @@
     "this share just expired." : "این اشتراک تازه منقضی شد",
     "Link to a file" : "پیوند به یک پرونده",
     "Error creating the share" : "خطایی در ایجاد اشتراک",
+    "Error updating the share" : "خطایی در به روزرسانی اشتراک",
     "Shared" : "به اشتراک گزاشته شده ",
     "Share" : "هم‌رسانی",
     "Shared with" : "مشترک با",
@@ -220,9 +221,9 @@
     "Upload files to %s" : "بارگیری پرونده ها به%s",
     "Note" : "یادداشت",
     "Select or drop files" : "پرونده ها را انتخاب یا رها کنید",
-    "Uploading files…" : "بارگذاری پرونده ها ...",
     "Uploaded files:" : "پرونده های بارگذاری شده:",
     "By uploading files, you agree to the %1$sterms of service%2$s." : "%2$sبا بارگذاری پرونده ها ، شما با %1$sشرایط خدمات موافقت می کنید",
-    "could not delete share" : "نتوانست اشتراک را حذف کند"
+    "could not delete share" : "نتوانست اشتراک را حذف کند",
+    "Uploading files…" : "بارگذاری پرونده ها ..."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

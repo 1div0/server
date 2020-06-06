@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017, Georg Ehrke
  *
+ * @author Gary Kim <gary@garykim.dev>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -44,7 +45,7 @@ class PublicCalendar extends Calendar {
 		}
 		$obj['acl'] = $this->getChildACL();
 
-		return new PublicCalendarObject($this->caldavBackend, $this->calendarInfo, $obj);
+		return new PublicCalendarObject($this->caldavBackend, $this->l10n, $this->calendarInfo, $obj);
 	}
 
 	/**
@@ -58,7 +59,7 @@ class PublicCalendar extends Calendar {
 				continue;
 			}
 			$obj['acl'] = $this->getChildACL();
-			$children[] = new PublicCalendarObject($this->caldavBackend, $this->calendarInfo, $obj);
+			$children[] = new PublicCalendarObject($this->caldavBackend, $this->l10n, $this->calendarInfo, $obj);
 		}
 		return $children;
 	}
@@ -75,7 +76,7 @@ class PublicCalendar extends Calendar {
 				continue;
 			}
 			$obj['acl'] = $this->getChildACL();
-			$children[] = new PublicCalendarObject($this->caldavBackend, $this->calendarInfo, $obj);
+			$children[] = new PublicCalendarObject($this->caldavBackend, $this->l10n, $this->calendarInfo, $obj);
 		}
 		return $children;
 	}

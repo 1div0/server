@@ -22,7 +22,6 @@
 
 namespace OCA\DAV\Tests\Unit\Command;
 
-
 use OCA\DAV\Command\RemoveInvalidShares;
 use OCA\DAV\Connector\Sabre\Principal;
 use OCP\Migration\IOutput;
@@ -37,7 +36,6 @@ use Test\TestCase;
  * @group DB
  */
 class RemoveInvalidSharesTest extends TestCase {
-
 	protected function setUp(): void {
 		parent::setUp();
 		$db = \OC::$server->getDatabaseConnection();

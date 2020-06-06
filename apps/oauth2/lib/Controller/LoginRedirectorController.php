@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Lukas Reschke <lukas@statuscode.ch>
  *
+ * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -85,11 +86,10 @@ class LoginRedirectorController extends Controller {
 		try {
 			$client = $this->clientMapper->getByIdentifier($client_id);
 		} catch (ClientNotFoundException $e) {
-			$response = new TemplateResponse('core', '404', 'guest');
-			$response->setParams([
+			$params = [
 				'content' => $this->l->t('Your client is not authorized to connect. Please inform the administrator of your client.'),
-			]);
-			return $response;
+			];
+			return new TemplateResponse('core', '404', $params, 'guest');
 		}
 
 		if ($response_type !== 'code') {

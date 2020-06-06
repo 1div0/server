@@ -35,8 +35,7 @@ use OCP\WorkflowEngine\IOperationCompat;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Application extends \OCP\AppFramework\App {
-
-	const APP_ID = 'workflowengine';
+	public const APP_ID = 'workflowengine';
 
 	/** @var EventDispatcherInterface */
 	protected $dispatcher;
@@ -67,9 +66,7 @@ class Application extends \OCP\AppFramework\App {
 				script('core', [
 					'files/fileinfo',
 					'files/client',
-					'systemtags/systemtags',
-					'systemtags/systemtagmodel',
-					'systemtags/systemtagscollection',
+					'dist/systemtags',
 				]);
 
 				script(self::APP_ID, [
@@ -112,7 +109,7 @@ class Application extends \OCP\AppFramework\App {
 								if ($event instanceof Event) {
 									$entity->prepareRuleMatcher($ruleMatcher, $eventName, $event);
 									$operation->onEvent($eventName, $event, $ruleMatcher);
-								} else if ($entity instanceof IEntityCompat && $operation instanceof IOperationCompat) {
+								} elseif ($entity instanceof IEntityCompat && $operation instanceof IOperationCompat) {
 									// TODO: Remove this block (and the compat classes) in the first major release in 2023
 									$entity->prepareRuleMatcherCompat($ruleMatcher, $eventName, $event);
 									$operation->onEventCompat($eventName, $event, $ruleMatcher);
@@ -130,7 +127,6 @@ class Application extends \OCP\AppFramework\App {
 									);
 								}
 								$flowLogger->logEventDone($ctx);
-
 							} catch (QueryException $e) {
 								// Ignore query exceptions since they might occur when an entity/operation were setup before by an app that is disabled now
 							}
@@ -139,7 +135,5 @@ class Application extends \OCP\AppFramework\App {
 				}, $eventNames ?? []);
 			}
 		}
-
-
 	}
 }

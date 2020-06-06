@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -54,13 +55,13 @@ class SyncFederationAddressbooksTest extends \Test\TestCase {
 			getMock();
 		$dbHandler->method('getAllServer')->
 			willReturn([
-			[
-				'url' => 'https://cloud.drop.box',
-				'url_hash' => 'sha1',
-				'shared_secret' => 'iloveowncloud',
-				'sync_token' => '0'
-			]
-		]);
+				[
+					'url' => 'https://cloud.drop.box',
+					'url_hash' => 'sha1',
+					'shared_secret' => 'iloveowncloud',
+					'sync_token' => '0'
+				]
+			]);
 		$dbHandler->expects($this->once())->method('setServerStatus')->
 			with('https://cloud.drop.box', 1, '1');
 		$syncService = $this->getMockBuilder('OCA\DAV\CardDAV\SyncService')
@@ -71,7 +72,7 @@ class SyncFederationAddressbooksTest extends \Test\TestCase {
 
 		/** @var \OCA\DAV\CardDAV\SyncService $syncService */
 		$s = new SyncFederationAddressBooks($dbHandler, $syncService, $this->discoveryService);
-		$s->syncThemAll(function($url, $ex) {
+		$s->syncThemAll(function ($url, $ex) {
 			$this->callBacks[] = [$url, $ex];
 		});
 		$this->assertEquals(1, count($this->callBacks));
@@ -99,7 +100,7 @@ class SyncFederationAddressbooksTest extends \Test\TestCase {
 
 		/** @var \OCA\DAV\CardDAV\SyncService $syncService */
 		$s = new SyncFederationAddressBooks($dbHandler, $syncService, $this->discoveryService);
-		$s->syncThemAll(function($url, $ex) {
+		$s->syncThemAll(function ($url, $ex) {
 			$this->callBacks[] = [$url, $ex];
 		});
 		$this->assertEquals(2, count($this->callBacks));

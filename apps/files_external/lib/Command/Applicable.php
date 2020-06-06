@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -51,7 +52,7 @@ class Applicable extends Base {
 	 */
 	private $groupManager;
 
-	function __construct(
+	public function __construct(
 		GlobalStoragesService $globalService,
 		IUserManager $userManager,
 		IGroupManager $groupManager

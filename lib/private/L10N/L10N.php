@@ -5,10 +5,11 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license AGPL-3.0
  *
@@ -178,10 +179,10 @@ class L10N implements IL10N {
 		$value = new \DateTime();
 		if ($data instanceof \DateTime) {
 			$value = $data;
-		} else if (\is_string($data) && !is_numeric($data)) {
+		} elseif (\is_string($data) && !is_numeric($data)) {
 			$data = strtotime($data);
 			$value->setTimestamp($data);
-		} else if ($data !== null) {
+		} elseif ($data !== null) {
 			$data = (int)$data;
 			$value->setTimestamp($data);
 		}
@@ -221,7 +222,7 @@ class L10N implements IL10N {
 	public function getPluralFormFunction(): \Closure {
 		if (\is_null($this->pluralFormFunction)) {
 			$lang = $this->getLanguageCode();
-			$this->pluralFormFunction = function($n) use ($lang) {
+			$this->pluralFormFunction = function ($n) use ($lang) {
 				return PluralizationRules::get($n, $lang);
 			};
 		}

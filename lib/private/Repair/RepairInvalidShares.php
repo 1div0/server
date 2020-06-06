@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -32,8 +33,7 @@ use OCP\Migration\IRepairStep;
  * Repairs shares with invalid data
  */
 class RepairInvalidShares implements IRepairStep {
-
-	const CHUNK_SIZE = 200;
+	public const CHUNK_SIZE = 200;
 
 	/** @var \OCP\IConfig */
 	protected $config;

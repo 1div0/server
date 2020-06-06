@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -38,9 +39,8 @@ class LoadSidebarScripts implements IEventListener {
 			return;
 		}
 
-		// TODO: make sure to only include the sidebar script when 
+		// TODO: make sure to only include the sidebar script when
 		// we properly split it between files list and sidebar
 		Util::addScript(Application::APP_ID, 'comments');
 	}
-
 }

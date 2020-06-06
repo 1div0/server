@@ -3,11 +3,13 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright Copyright (c) 2017 Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author dartcafe <github@dartcafe.de>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
  * @license AGPL-3.0
@@ -47,9 +49,7 @@ use Sabre\DAVACL\IACL;
  * @package OCA\DAV\Tests\unit\CalDAV
  */
 class CalDavBackendTest extends AbstractCalDavBackend {
-
 	public function testCalendarOperations() {
-
 		$calendarId = $this->createTestCalendar();
 
 		// update it's display name
@@ -130,9 +130,9 @@ class CalDavBackendTest extends AbstractCalDavBackend {
 		$l10n
 			->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function ($text, $parameters = array()) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 
 		$config = $this->createMock(IConfig::class);
 
@@ -204,7 +204,6 @@ EOD;
 	}
 
 	public function testCalendarObjectsOperations() {
-
 		$calendarId = $this->createTestCalendar();
 
 		// create a card
@@ -311,7 +310,6 @@ EOD;
 	}
 
 	public function testMultiCalendarObjects() {
-
 		$calendarId = $this->createTestCalendar();
 
 		// create an event
@@ -390,7 +388,7 @@ EOD;
 		// get the cards
 		$calendarObjects = $this->backend->getMultipleCalendarObjects($calendarId, [$uri1, $uri2]);
 		$this->assertCount(2, $calendarObjects);
-		foreach($calendarObjects as $card) {
+		foreach ($calendarObjects as $card) {
 			$this->assertArrayHasKey('id', $card);
 			$this->assertArrayHasKey('uri', $card);
 			$this->assertArrayHasKey('lastmodified', $card);
@@ -399,7 +397,7 @@ EOD;
 			$this->assertArrayHasKey('classification', $card);
 		}
 
-		usort($calendarObjects, function($a, $b) {
+		usort($calendarObjects, function ($a, $b) {
 			return $a['id'] - $b['id'];
 		});
 
@@ -440,7 +438,7 @@ EOD;
 			'comp-filters' => $compFilter
 		]);
 
-		$expectedEventsInResult = array_map(function($index) use($events) {
+		$expectedEventsInResult = array_map(function ($index) use ($events) {
 			return $events[$index];
 		}, $expectedEventsInResult);
 		$this->assertEquals($expectedEventsInResult, $result, '', 0.0, 10, true);
@@ -546,8 +544,8 @@ EOD;
 		$this->assertEquals($id, $subscriptions[0]['id']);
 
 		$patch = new PropPatch([
-				'{DAV:}displayname' => 'Unit test',
-				'{http://apple.com/ns/ical/}calendar-color' => '#ac0606',
+			'{DAV:}displayname' => 'Unit test',
+			'{http://apple.com/ns/ical/}calendar-color' => '#ac0606',
 		]);
 		$this->backend->updateSubscription($id, $patch);
 		$patch->commit();
@@ -807,7 +805,7 @@ EOD;
 	/**
 	 * @dataProvider searchDataProvider
 	 */
-	public function testSearch($isShared, $count) {
+	public function testSearch(bool $isShared, array $searchOptions, int $count) {
 		$calendarId = $this->createTestCalendar();
 
 		$uris = [];
@@ -901,15 +899,16 @@ EOD;
 		];
 
 		$result = $this->backend->search($calendarInfo, 'Test',
-			['SUMMARY', 'LOCATION', 'ATTENDEE'], [], null, null);
+			['SUMMARY', 'LOCATION', 'ATTENDEE'], $searchOptions, null, null);
 
 		$this->assertCount($count, $result);
 	}
 
 	public function searchDataProvider() {
 		return [
-			[false, 4],
-			[true, 2],
+			[false, [], 4],
+			[true, ['timerange' => ['start' => new DateTime('2013-09-12 13:00:00'), 'end' => new DateTime('2013-09-12 14:00:00')]], 2],
+			[true, ['timerange' => ['start' => new DateTime('2013-09-12 15:00:00'), 'end' => new DateTime('2013-09-12 16:00:00')]], 0],
 		];
 	}
 
@@ -985,8 +984,7 @@ EOD;
 		$this->assertEquals(null, $this->backend->getCalendarObject($subscriptionId, $uri, CalDavBackend::CALENDAR_TYPE_SUBSCRIPTION));
 	}
 
-	public function testCalendarMovement()
-	{
+	public function testCalendarMovement() {
 		$this->backend->createCalendar(self::UNIT_TEST_USER, 'Example', []);
 
 		$this->assertCount(1, $this->backend->getCalendarsForUser(self::UNIT_TEST_USER));

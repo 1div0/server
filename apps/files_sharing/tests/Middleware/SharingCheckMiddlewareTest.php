@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -25,6 +26,7 @@
  */
 
 namespace OCA\Files_Sharing\Middleware;
+
 use OCA\Files_Sharing\Controller\ExternalSharesController;
 use OCA\Files_Sharing\Controller\ShareController;
 use OCA\Files_Sharing\Exceptions\S2SException;
@@ -83,7 +85,7 @@ class SharingCheckMiddlewareTest extends \Test\TestCase {
 			->expects($this->once())
 			->method('isEnabledForUser')
 			->with('files_sharing')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->assertTrue(self::invokePrivate($this->sharingCheckMiddleware, 'isSharingEnabled'));
 	}
@@ -93,20 +95,18 @@ class SharingCheckMiddlewareTest extends \Test\TestCase {
 			->expects($this->once())
 			->method('isEnabledForUser')
 			->with('files_sharing')
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$this->assertFalse(self::invokePrivate($this->sharingCheckMiddleware, 'isSharingEnabled'));
 	}
 
 	public function externalSharesChecksDataProvider() {
-
 		$data = [];
 
 		foreach ([false, true] as $annIn) {
 			foreach ([false, true] as $annOut) {
 				foreach ([false, true] as $confIn) {
 					foreach ([false, true] as $confOut) {
-
 						$res = true;
 						if (!$annIn && !$confIn) {
 							$res = false;
@@ -142,11 +142,11 @@ class SharingCheckMiddlewareTest extends \Test\TestCase {
 		$this->reflector
 			->expects($this->atLeastOnce())
 			->method('hasAnnotation')
-			->will($this->returnValueMap($annotations));
+			->willReturnMap($annotations);
 
 		$this->config
 			->method('getAppValue')
-			->will($this->returnValueMap($config));
+			->willReturnMap($config);
 
 		$this->assertEquals($expectedResult, self::invokePrivate($this->sharingCheckMiddleware, 'externalSharesChecks'));
 	}
@@ -159,16 +159,16 @@ class SharingCheckMiddlewareTest extends \Test\TestCase {
 			->expects($this->once())
 			->method('isEnabledForUser')
 			->with('files_sharing')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->reflector
 			->expects($this->atLeastOnce())
 			->method('hasAnnotation')
-			->will($this->returnValueMap($annotations));
+			->willReturnMap($annotations);
 
 		$this->config
 			->method('getAppValue')
-			->will($this->returnValueMap($config));
+			->willReturnMap($config);
 
 		$controller = $this->createMock(ExternalSharesController::class);
 
@@ -184,14 +184,13 @@ class SharingCheckMiddlewareTest extends \Test\TestCase {
 	}
 
 	public function testBeforeControllerWithShareControllerWithSharingEnabled() {
-
 		$share = $this->createMock(IShare::class);
 
 		$this->appManager
 			->expects($this->once())
 			->method('isEnabledForUser')
 			->with('files_sharing')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$controller = $this->createMock(ShareController::class);
 
@@ -207,7 +206,7 @@ class SharingCheckMiddlewareTest extends \Test\TestCase {
 			->expects($this->once())
 			->method('isEnabledForUser')
 			->with('files_sharing')
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$this->sharingCheckMiddleware->beforeController($this->controllerMock, 'myMethod');
 	}
@@ -227,6 +226,4 @@ class SharingCheckMiddlewareTest extends \Test\TestCase {
 	public function testAfterExceptionWithS2SException() {
 		$this->assertEquals(new JSONResponse('My Exception message', 405), $this->sharingCheckMiddleware->afterException($this->controllerMock, 'myMethod', new S2SException('My Exception message')));
 	}
-
-
 }

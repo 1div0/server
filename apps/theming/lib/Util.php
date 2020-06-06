@@ -2,12 +2,12 @@
 /**
  * @copyright Copyright (c) 2016 Julius Härtl <jus@bitgrid.net>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Haertl <jus@bitgrid.net>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Michael Weimann <mail@michael-weimann.eu>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -66,7 +66,7 @@ class Util {
 	 */
 	public function invertTextColor($color) {
 		$l = $this->calculateLuma($color);
-		if($l>0.6) {
+		if ($l>0.6) {
 			return true;
 		} else {
 			return false;
@@ -81,7 +81,7 @@ class Util {
 	 */
 	public function elementColor($color) {
 		$l = $this->calculateLuminance($color);
-		if($l>0.8) {
+		if ($l>0.8) {
 			return '#aaaaaa';
 		}
 		return $color;
@@ -142,7 +142,7 @@ class Util {
 	 * @return string|ISimpleFile path to app icon / file of logo
 	 */
 	public function getAppIcon($app) {
-		$app = str_replace(array('\0', '/', '\\', '..'), '', $app);
+		$app = str_replace(['\0', '/', '\\', '..'], '', $app);
 		try {
 			$appPath = $this->appManager->getAppPath($app);
 			$icon = $appPath . '/img/' . $app . '.svg';
@@ -153,7 +153,8 @@ class Util {
 			if (file_exists($icon)) {
 				return $icon;
 			}
-		} catch (AppPathNotFoundException $e) {}
+		} catch (AppPathNotFoundException $e) {
+		}
 
 		if ($this->config->getAppValue('theming', 'logoMime', '') !== '') {
 			$logoFile = null;
@@ -162,7 +163,8 @@ class Util {
 				if ($folder !== null) {
 					return $folder->getFile('logo');
 				}
-			} catch (NotFoundException $e) {}
+			} catch (NotFoundException $e) {
+			}
 		}
 		return \OC::$SERVERROOT . '/core/img/logo/logo.svg';
 	}
@@ -173,8 +175,8 @@ class Util {
 	 * @return string|false absolute path to image
 	 */
 	public function getAppImage($app, $image) {
-		$app = str_replace(array('\0', '/', '\\', '..'), '', $app);
-		$image = str_replace(array('\0', '\\', '..'), '', $image);
+		$app = str_replace(['\0', '/', '\\', '..'], '', $app);
+		$image = str_replace(['\0', '\\', '..'], '', $image);
 		if ($app === "core") {
 			$icon = \OC::$SERVERROOT . '/core/img/' . $image;
 			if (file_exists($icon)) {
@@ -248,5 +250,4 @@ class Util {
 		}
 		return $backgroundLogo && $backgroundLogo !== 'backgroundColor' && $backgroundExists;
 	}
-
 }

@@ -62,7 +62,7 @@ class State extends Base {
 
 		$providerStates = $this->registry->getProviderStates($user);
 		$filtered = $this->filterEnabledDisabledUnknownProviders($providerStates);
-		list ($enabled, $disabled) = $filtered;
+		list($enabled, $disabled) = $filtered;
 
 		if (!empty($enabled)) {
 			$output->writeln("Two-factor authentication is enabled for user $uid");
@@ -104,5 +104,4 @@ class State extends Base {
 			$output->writeln("- " . $provider);
 		}
 	}
-
 }

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018, Johannes Ernst
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Johannes Ernst <jernst@indiecomputing.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -27,7 +28,6 @@ namespace OC\Log;
 
 use OC\HintException;
 use OC\SystemConfig;
-use OCP\IConfig;
 use OCP\ILogger;
 use OCP\Log\IWriter;
 
@@ -59,11 +59,10 @@ class Systemdlog extends LogDetails implements IWriter {
 
 	public function __construct(SystemConfig $config) {
 		parent::__construct($config);
-		if(!function_exists('sd_journal_send')) {
+		if (!function_exists('sd_journal_send')) {
 			throw new HintException(
 				'PHP extension php-systemd is not available.',
 				'Please install and enable PHP extension systemd if you wish to log to the Systemd journal.');
-
 		}
 		$this->syslogId = $config->getValue('syslog_tag', 'Nextcloud');
 	}

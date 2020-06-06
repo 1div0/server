@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2018 Robin Appelman <robin@icewind.nl>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -32,7 +33,7 @@ use OC\HintException;
 use OC\Setup;
 
 class ExceptionSerializer {
-	const methodsWithSensitiveParameters = [
+	public const methodsWithSensitiveParameters = [
 		// Session/User
 		'completeLogin',
 		'login',
@@ -86,7 +87,7 @@ class ExceptionSerializer {
 		'update',
 	];
 
-	const methodsWithSensitiveParametersByClass = [
+	public const methodsWithSensitiveParametersByClass = [
 		SetupController::class => [
 			'run',
 			'display',
@@ -132,7 +133,7 @@ class ExceptionSerializer {
 		foreach ($args as &$arg) {
 			if (in_array($arg, $values, true)) {
 				$arg = '*** sensitive parameter replaced ***';
-			} else if (is_array($arg)) {
+			} elseif (is_array($arg)) {
 				$arg = $this->removeValuesFromArgs($arg, $values);
 			}
 		}
@@ -154,7 +155,7 @@ class ExceptionSerializer {
 			$data = get_object_vars($arg);
 			$data['__class__'] = get_class($arg);
 			return array_map([$this, 'encodeArg'], $data);
-		} else if (is_array($arg)) {
+		} elseif (is_array($arg)) {
 			return array_map([$this, 'encodeArg'], $arg);
 		} else {
 			return $arg;

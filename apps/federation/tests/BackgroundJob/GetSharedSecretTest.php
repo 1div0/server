@@ -26,7 +26,6 @@
 
 namespace OCA\Federation\Tests\BackgroundJob;
 
-
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Ring\Exception\RingException;
 use OCA\Federation\BackgroundJob\GetSharedSecret;
@@ -159,7 +158,6 @@ class GetSharedSecretTest extends TestCase {
 		}
 
 		$getSharedSecret->execute($this->jobList);
-
 	}
 
 	public function dataTestExecute() {

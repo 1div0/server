@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Juan Pablo Villafáñez <jvillafanez@solidgear.es>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -73,7 +74,7 @@ class SmbTest extends \Test\Files\Storage\Storage {
 
 	public function directoryProvider() {
 		// doesn't support leading/trailing spaces
-		return array(array('folder'));
+		return [['folder']];
 	}
 
 	public function testRenameWithSpaces() {

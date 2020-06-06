@@ -3,6 +3,7 @@
  *
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Sergio Bertolin <sbertolin@solidgear.es>
@@ -96,7 +97,7 @@ trait AppConfiguration {
 	 * reset the configs before each scenario
 	 * @param BeforeScenarioScope $event
 	 */
-	public function prepareParameters(BeforeScenarioScope $event){
+	public function prepareParameters(BeforeScenarioScope $event) {
 		$user = $this->currentUser;
 		$this->currentUser = 'admin';
 

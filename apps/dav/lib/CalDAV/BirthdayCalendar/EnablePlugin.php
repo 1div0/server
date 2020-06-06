@@ -2,6 +2,7 @@
 /**
  * @copyright 2017, Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -39,7 +40,7 @@ use Sabre\HTTP\ResponseInterface;
  * @package OCA\DAV\CalDAV\BirthdayCalendar
  */
 class EnablePlugin extends ServerPlugin {
-	const NS_Nextcloud = 'http://nextcloud.com/ns';
+	public const NS_Nextcloud = 'http://nextcloud.com/ns';
 
 	/**
 	 * @var IConfig
@@ -87,7 +88,7 @@ class EnablePlugin extends ServerPlugin {
 	 *
 	 * @return string
 	 */
-	public function getPluginName()	{
+	public function getPluginName() {
 		return 'nc-enable-birthday-calendar';
 	}
 

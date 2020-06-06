@@ -5,10 +5,9 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
- * @author Patrick Paysant <ppaysant@linagora.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -33,7 +32,6 @@ declare(strict_types=1);
 namespace OC\AppFramework\Routing;
 
 use OC\AppFramework\DependencyInjection\DIContainer;
-use OCP\AppFramework\App;
 use OCP\Route\IRouter;
 
 /**
@@ -56,6 +54,15 @@ class RouteConfig {
 	/** @var string[] */
 	private $controllerNameCache = [];
 
+	protected $rootUrlApps = [
+		'cloud_federation_api',
+		'core',
+		'files_sharing',
+		'files',
+		'settings',
+		'spreed',
+	];
+
 	/**
 	 * @param \OC\AppFramework\DependencyInjection\DIContainer $container
 	 * @param \OCP\Route\IRouter $router
@@ -75,10 +82,10 @@ class RouteConfig {
 	public function register() {
 
 		// parse simple
-		$this->processSimpleRoutes($this->routes);
+		$this->processIndexRoutes($this->routes);
 
 		// parse resources
-		$this->processResources($this->routes);
+		$this->processIndexResources($this->routes);
 
 		/*
 		 * OCS routes go into a different collection
@@ -98,42 +105,7 @@ class RouteConfig {
 	private function processOCS(array $routes): void {
 		$ocsRoutes = $routes['ocs'] ?? [];
 		foreach ($ocsRoutes as $ocsRoute) {
-			$name = $ocsRoute['name'];
-			$postfix = $ocsRoute['postfix'] ?? '';
-			$root = $ocsRoute['root'] ?? '/apps/' . $this->appName;
-
-			$url = $root . $ocsRoute['url'];
-			$verb = strtoupper($ocsRoute['verb'] ?? 'GET');
-
-			$split = explode('#', $name, 2);
-			if (count($split) !== 2) {
-				throw new \UnexpectedValueException('Invalid route name');
-			}
-			list($controller, $action) = $split;
-
-			$controllerName = $this->buildControllerName($controller);
-			$actionName = $this->buildActionName($action);
-
-			$routeName = 'ocs.' . $this->appName . '.' . $controller . '.' . $action . $postfix;
-
-			// register the route
-			$handler = new RouteActionHandler($this->container, $controllerName, $actionName);
-
-			$router = $this->router->create($routeName, $url)
-				->method($verb)
-				->action($handler);
-
-			// optionally register requirements for route. This is used to
-			// tell the route parser how url parameters should be matched
-			if(array_key_exists('requirements', $ocsRoute)) {
-				$router->requirements($ocsRoute['requirements']);
-			}
-
-			// optionally register defaults for route. This is used to
-			// tell the route parser how url parameters should be default valued
-			if(array_key_exists('defaults', $ocsRoute)) {
-				$router->defaults($ocsRoute['defaults']);
-			}
+			$this->processRoute($ocsRoute, 'ocs.');
 		}
 	}
 
@@ -142,56 +114,49 @@ class RouteConfig {
 	 * @param array $routes
 	 * @throws \UnexpectedValueException
 	 */
-	private function processSimpleRoutes(array $routes): void {
+	private function processIndexRoutes(array $routes): void {
 		$simpleRoutes = $routes['routes'] ?? [];
 		foreach ($simpleRoutes as $simpleRoute) {
-			$name = $simpleRoute['name'];
-			$postfix = $simpleRoute['postfix'] ?? '';
+			$this->processRoute($simpleRoute);
+		}
+	}
 
-			$url = $simpleRoute['url'];
-			$verb = strtoupper($simpleRoute['verb'] ?? 'GET');
+	protected function processRoute(array $route, string $routeNamePrefix = ''): void {
+		$name = $route['name'];
+		$postfix = $route['postfix'] ?? '';
+		$root = $this->buildRootPrefix($route, $routeNamePrefix);
 
-			$split = explode('#', $name, 2);
-			if (count($split) !== 2) {
-				throw new \UnexpectedValueException('Invalid route name');
-			}
-			list($controller, $action) = $split;
+		$url = $root . '/' . ltrim($route['url'], '/');
+		$verb = strtoupper($route['verb'] ?? 'GET');
 
-			$controllerName = $this->buildControllerName($controller);
-			$actionName = $this->buildActionName($action);
-			$appName = $simpleRoute['app'] ?? $this->appName;
+		$split = explode('#', $name, 2);
+		if (count($split) !== 2) {
+			throw new \UnexpectedValueException('Invalid route name');
+		}
+		list($controller, $action) = $split;
 
-			if (isset($simpleRoute['app'])) {
-				// Legacy routes that need to be globally available while they are handled by an app
-				// E.g. '/f/{id}', '/s/{token}', '/call/{token}', …
-				$controllerName = str_replace('controllerController', 'Controller', $controllerName);
-				if ($controllerName === 'PublicpreviewController') {
-					$controllerName = 'PublicPreviewController';
-				} else if ($controllerName === 'RequesthandlerController') {
-					$controllerName = 'RequestHandlerController';
-				}
-				$controllerName = App::buildAppNamespace($appName) . '\\Controller\\' . $controllerName;
-			}
+		$controllerName = $this->buildControllerName($controller);
+		$actionName = $this->buildActionName($action);
 
-			$routeName = $appName . '.' . $controller . '.' . $action . $postfix;
+		$routeName = $routeNamePrefix . $this->appName . '.' . $controller . '.' . $action . $postfix;
 
-			// register the route
-			$handler = new RouteActionHandler($this->container, $controllerName, $actionName);
-			$router = $this->router->create($routeName, $url)
-							->method($verb)
-							->action($handler);
+		// register the route
+		$handler = new RouteActionHandler($this->container, $controllerName, $actionName);
 
-			// optionally register requirements for route. This is used to
-			// tell the route parser how url parameters should be matched
-			if(array_key_exists('requirements', $simpleRoute)) {
-				$router->requirements($simpleRoute['requirements']);
-			}
+		$router = $this->router->create($routeName, $url)
+			->method($verb)
+			->action($handler);
 
-			// optionally register defaults for route. This is used to
-			// tell the route parser how url parameters should be default valued
-			if(array_key_exists('defaults', $simpleRoute)) {
-				$router->defaults($simpleRoute['defaults']);
-			}
+		// optionally register requirements for route. This is used to
+		// tell the route parser how url parameters should be matched
+		if (array_key_exists('requirements', $route)) {
+			$router->requirements($route['requirements']);
+		}
+
+		// optionally register defaults for route. This is used to
+		// tell the route parser how url parameters should be default valued
+		if (array_key_exists('defaults', $route)) {
+			$router->defaults($route['defaults']);
 		}
 	}
 
@@ -206,44 +171,7 @@ class RouteConfig {
 	 * @param array $routes
 	 */
 	private function processOCSResources(array $routes): void {
-		// declaration of all restful actions
-		$actions = [
-			['name' => 'index', 'verb' => 'GET', 'on-collection' => true],
-			['name' => 'show', 'verb' => 'GET'],
-			['name' => 'create', 'verb' => 'POST', 'on-collection' => true],
-			['name' => 'update', 'verb' => 'PUT'],
-			['name' => 'destroy', 'verb' => 'DELETE'],
-		];
-
-		$resources = $routes['ocs-resources'] ?? [];
-		foreach ($resources as $resource => $config) {
-			$root = $config['root'] ?? '/apps/' . $this->appName;
-
-			// the url parameter used as id to the resource
-			foreach($actions as $action) {
-				$url = $root . $config['url'];
-				$method = $action['name'];
-				$verb = strtoupper($action['verb'] ?? 'GET');
-				$collectionAction = $action['on-collection'] ?? false;
-				if (!$collectionAction) {
-					$url .= '/{id}';
-				}
-				if (isset($action['url-postfix'])) {
-					$url .= '/' . $action['url-postfix'];
-				}
-
-				$controller = $resource;
-
-				$controllerName = $this->buildControllerName($controller);
-				$actionName = $this->buildActionName($method);
-
-				$routeName = 'ocs.' . $this->appName . '.' . strtolower($resource) . '.' . strtolower($method);
-
-				$this->router->create($routeName, $url)->method($verb)->action(
-					new RouteActionHandler($this->container, $controllerName, $actionName)
-				);
-			}
-		}
+		$this->processResources($routes['ocs-resources'] ?? [], 'ocs.');
 	}
 
 	/**
@@ -256,7 +184,22 @@ class RouteConfig {
 	 *
 	 * @param array $routes
 	 */
-	private function processResources(array $routes): void {
+	private function processIndexResources(array $routes): void {
+		$this->processResources($routes['resources'] ?? []);
+	}
+
+	/**
+	 * For a given name and url restful routes are created:
+	 *  - index
+	 *  - show
+	 *  - create
+	 *  - update
+	 *  - destroy
+	 *
+	 * @param array $resources
+	 * @param string $routeNamePrefix
+	 */
+	protected function processResources(array $resources, string $routeNamePrefix = ''): void {
 		// declaration of all restful actions
 		$actions = [
 			['name' => 'index', 'verb' => 'GET', 'on-collection' => true],
@@ -266,13 +209,14 @@ class RouteConfig {
 			['name' => 'destroy', 'verb' => 'DELETE'],
 		];
 
-		$resources = $routes['resources'] ?? [];
 		foreach ($resources as $resource => $config) {
+			$root = $this->buildRootPrefix($config, $routeNamePrefix);
 
 			// the url parameter used as id to the resource
-			foreach($actions as $action) {
-				$url = $config['url'];
+			foreach ($actions as $action) {
+				$url = $root . '/' . ltrim($config['url'], '/');
 				$method = $action['name'];
+
 				$verb = strtoupper($action['verb'] ?? 'GET');
 				$collectionAction = $action['on-collection'] ?? false;
 				if (!$collectionAction) {
@@ -287,13 +231,30 @@ class RouteConfig {
 				$controllerName = $this->buildControllerName($controller);
 				$actionName = $this->buildActionName($method);
 
-				$routeName = $this->appName . '.' . strtolower($resource) . '.' . strtolower($method);
+				$routeName = $routeNamePrefix . $this->appName . '.' . strtolower($resource) . '.' . strtolower($method);
 
 				$this->router->create($routeName, $url)->method($verb)->action(
 					new RouteActionHandler($this->container, $controllerName, $actionName)
 				);
 			}
 		}
+	}
+
+	private function buildRootPrefix(array $route, string $routeNamePrefix): string {
+		$defaultRoot = $this->appName === 'core' ? '' : '/apps/' . $this->appName;
+		$root = $route['root'] ?? $defaultRoot;
+
+		if ($routeNamePrefix !== '') {
+			// In OCS all apps are whitelisted
+			return $root;
+		}
+
+		if (!\in_array($this->appName, $this->rootUrlApps, true)) {
+			// Only allow root URLS for some apps
+			return  $defaultRoot;
+		}
+
+		return $root;
 	}
 
 	/**

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -36,8 +37,7 @@ namespace OCA\Files_Sharing\Tests;
  * @group DB
  */
 class UpdaterTest extends TestCase {
-
-	const TEST_FOLDER_NAME = '/folder_share_updater_test';
+	public const TEST_FOLDER_NAME = '/folder_share_updater_test';
 
 	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
@@ -199,7 +199,6 @@ class UpdaterTest extends TestCase {
 	 * if a folder gets renamed all children mount points should be renamed too
 	 */
 	public function testRename() {
-
 		$fileinfo = \OC\Files\Filesystem::getFileInfo($this->folder);
 
 		$share = $this->share(
@@ -234,5 +233,4 @@ class UpdaterTest extends TestCase {
 		// cleanup
 		$this->shareManager->deleteShare($share);
 	}
-
 }

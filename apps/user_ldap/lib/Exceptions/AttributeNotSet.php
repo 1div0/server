@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2019 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,4 +24,5 @@
 
 namespace OCA\User_LDAP\Exceptions;
 
-class AttributeNotSet extends \RuntimeException {}
+class AttributeNotSet extends \RuntimeException {
+}

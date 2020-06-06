@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -93,14 +94,14 @@ class RootCollectionTest extends \Test\TestCase {
 	protected function prepareForInitCollections() {
 		$this->user->expects($this->any())
 			->method('getUID')
-			->will($this->returnValue('alice'));
+			->willReturn('alice');
 
 		$this->userSession->expects($this->once())
 			->method('getUser')
-			->will($this->returnValue($this->user));
+			->willReturn($this->user);
 
-		$this->dispatcher->addListener(CommentsEntityEvent::EVENT_ENTITY, function(CommentsEntityEvent $event) {
-			$event->addEntityCollection('files', function() {
+		$this->dispatcher->addListener(CommentsEntityEvent::EVENT_ENTITY, function (CommentsEntityEvent $event) {
+			$event->addEntityCollection('files', function () {
 				return true;
 			});
 		});
@@ -145,7 +146,7 @@ class RootCollectionTest extends \Test\TestCase {
 		$this->prepareForInitCollections();
 		$children = $this->collection->getChildren();
 		$this->assertFalse(empty($children));
-		foreach($children as $child) {
+		foreach ($children as $child) {
 			$this->assertTrue($child instanceof EntityTypeCollectionImplementation);
 		}
 	}

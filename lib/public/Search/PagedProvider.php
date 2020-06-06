@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -36,7 +37,7 @@ abstract class PagedProvider extends Provider {
 	 * show all results
 	 * @since 8.0.0
 	 */
-	const SIZE_ALL = 0;
+	public const SIZE_ALL = 0;
 
 	/**
 	 * Constructor

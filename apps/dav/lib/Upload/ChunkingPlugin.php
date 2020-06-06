@@ -2,6 +2,8 @@
 /**
  * @copyright Copyright (c) 2017, ownCloud GmbH
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -23,7 +25,10 @@
 
 namespace OCA\DAV\Upload;
 
+use OCA\DAV\Connector\Sabre\Directory;
 use Sabre\DAV\Exception\BadRequest;
+use Sabre\DAV\Exception\NotFound;
+use Sabre\DAV\INode;
 use Sabre\DAV\Server;
 use Sabre\DAV\ServerPlugin;
 
@@ -37,7 +42,7 @@ class ChunkingPlugin extends ServerPlugin {
 	/**
 	 * @inheritdoc
 	 */
-	function initialize(Server $server) {
+	public function initialize(Server $server) {
 		$server->on('beforeMove', [$this, 'beforeMove']);
 		$this->server = $server;
 	}
@@ -45,12 +50,25 @@ class ChunkingPlugin extends ServerPlugin {
 	/**
 	 * @param string $sourcePath source path
 	 * @param string $destination destination path
+	 * @return bool|void
+	 * @throws BadRequest
+	 * @throws NotFound
 	 */
-	function beforeMove($sourcePath, $destination) {
+	public function beforeMove($sourcePath, $destination) {
 		$this->sourceNode = $this->server->tree->getNodeForPath($sourcePath);
 		if (!$this->sourceNode instanceof FutureFile) {
 			// skip handling as the source is not a chunked FutureFile
 			return;
+		}
+
+		try {
+			/** @var INode $destinationNode */
+			$destinationNode = $this->server->tree->getNodeForPath($destination);
+			if ($destinationNode instanceof Directory) {
+				throw new BadRequest("The given destination $destination is a directory.");
+			}
+		} catch (NotFound $e) {
+			// If the destination does not exist yet it's not a directory either ;)
 		}
 
 		$this->verifySize();

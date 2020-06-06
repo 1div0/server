@@ -24,7 +24,6 @@
 namespace OCA\Settings\Tests\AppInfo;
 
 use OC\Settings\Manager;
-use OCA\Settings\Admin\Sharing;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -96,7 +95,7 @@ class ManagerTest extends TestCase {
 		$this->l10n
 			->expects($this->any())
 			->method('t')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 
 		$this->assertEquals([], $this->manager->getPersonalSections());
 	}
@@ -195,7 +194,7 @@ class ManagerTest extends TestCase {
 		$this->l10n
 			->expects($this->any())
 			->method('t')
-			->will($this->returnArgument(0));
+			->willReturnArgument(0);
 
 		$this->manager->registerSection('personal', \OCA\WorkflowEngine\Settings\Section::class);
 		$this->manager->registerSection('admin', \OCA\WorkflowEngine\Settings\Section::class);

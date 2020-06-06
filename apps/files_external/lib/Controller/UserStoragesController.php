@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Juan Pablo Villafáñez <jvillafanez@solidgear.es>
  * @author Robin Appelman <robin@icewind.nl>
@@ -26,7 +27,6 @@
  */
 
 namespace OCA\Files_External\Controller;
-
 
 use OCA\Files_External\Lib\Auth\AuthMechanism;
 use OCA\Files_External\Lib\Backend\Backend;
@@ -135,7 +135,7 @@ class UserStoragesController extends StoragesController {
 			$backendOptions,
 			$mountOptions
 		);
-		if ($newStorage instanceOf DataResponse) {
+		if ($newStorage instanceof DataResponse) {
 			return $newStorage;
 		}
 
@@ -148,7 +148,7 @@ class UserStoragesController extends StoragesController {
 		$this->updateStorageStatus($newStorage);
 
 		return new DataResponse(
-			$newStorage,
+			$this->formatStorageForUI($newStorage),
 			Http::STATUS_CREATED
 		);
 	}
@@ -184,7 +184,7 @@ class UserStoragesController extends StoragesController {
 			$backendOptions,
 			$mountOptions
 		);
-		if ($storage instanceOf DataResponse) {
+		if ($storage instanceof DataResponse) {
 			return $storage;
 		}
 		$storage->setId($id);
@@ -199,7 +199,7 @@ class UserStoragesController extends StoragesController {
 		} catch (NotFoundException $e) {
 			return new DataResponse(
 				[
-					'message' => (string)$this->l10n->t('Storage with ID "%d" not found', array($id))
+					'message' => (string)$this->l10n->t('Storage with ID "%d" not found', [$id])
 				],
 				Http::STATUS_NOT_FOUND
 			);
@@ -208,10 +208,9 @@ class UserStoragesController extends StoragesController {
 		$this->updateStorageStatus($storage, $testOnly);
 
 		return new DataResponse(
-			$storage,
+			$this->formatStorageForUI($storage),
 			Http::STATUS_OK
 		);
-
 	}
 
 	/**
@@ -224,5 +223,4 @@ class UserStoragesController extends StoragesController {
 	public function destroy($id) {
 		return parent::destroy($id);
 	}
-
 }

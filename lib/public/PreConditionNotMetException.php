@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -30,4 +31,5 @@ namespace OCP;
  * Exception if the precondition of the config update method isn't met
  * @since 8.0.0
  */
-class PreConditionNotMetException extends \Exception {}
+class PreConditionNotMetException extends \Exception {
+}

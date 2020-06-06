@@ -4,6 +4,7 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Hemanth Kumar Veeranki <hems.india1997@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Michael Göhler <somebody.here@gmx.de>
@@ -74,7 +75,7 @@ class MySQL extends AbstractDatabase {
 	 * @param \OC\DB\Connection $connection
 	 */
 	private function createDatabase($connection) {
-		try{
+		try {
 			$name = $this->dbName;
 			$user = $this->dbUser;
 			//we can't use OC_DB functions here because we need to connect as the administrative user.
@@ -108,7 +109,7 @@ class MySQL extends AbstractDatabase {
 	 * @throws \OC\DatabaseSetupException
 	 */
 	private function createDBUser($connection) {
-		try{
+		try {
 			$name = $this->dbUser;
 			$password = $this->dbPassword;
 			// we need to create 2 accounts, one for global use and one for local user. if we don't specify the local one,
@@ -125,8 +126,7 @@ class MySQL extends AbstractDatabase {
 				$query = "CREATE USER '$name'@'%' IDENTIFIED BY '$password'";
 				$connection->executeUpdate($query);
 			}
-		}
-		catch (\Exception $ex){
+		} catch (\Exception $ex) {
 			$this->logger->logException($ex, [
 				'message' => 'Database user creation failed.',
 				'level' => ILogger::ERROR,

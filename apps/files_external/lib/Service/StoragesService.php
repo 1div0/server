@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jesús Macias <jmacias@solidgear.es>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -36,6 +37,7 @@ use OCA\Files_External\Lib\Auth\AuthMechanism;
 use OCA\Files_External\Lib\Auth\InvalidAuth;
 use OCA\Files_External\Lib\Backend\Backend;
 use OCA\Files_External\Lib\Backend\InvalidBackend;
+use OCA\Files_External\Lib\DefinitionParameter;
 use OCA\Files_External\Lib\StorageConfig;
 use OCA\Files_External\NotFoundException;
 use OCP\Files\Config\IUserMountCache;
@@ -419,7 +421,7 @@ abstract class StoragesService {
 
 		if ($wasGlobal && !$isGlobal) {
 			$this->dbConfig->removeApplicable($id, DBConfigService::APPLICABLE_TYPE_GLOBAL, null);
-		} else if (!$wasGlobal && $isGlobal) {
+		} elseif (!$wasGlobal && $isGlobal) {
 			$this->dbConfig->addApplicable($id, DBConfigService::APPLICABLE_TYPE_GLOBAL, null);
 		}
 
@@ -427,7 +429,9 @@ abstract class StoragesService {
 		$changedOptions = array_diff_assoc($updatedStorage->getMountOptions(), $oldStorage->getMountOptions());
 
 		foreach ($changedConfig as $key => $value) {
-			$this->dbConfig->setConfig($id, $key, $value);
+			if ($value !== DefinitionParameter::UNMODIFIED_PLACEHOLDER) {
+				$this->dbConfig->setConfig($id, $key, $value);
+			}
 		}
 		foreach ($changedOptions as $key => $value) {
 			$this->dbConfig->setOption($id, $key, $value);

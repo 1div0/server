@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -54,7 +55,7 @@ class CopyEtagHeaderPluginTest extends TestCase {
 	}
 
 	public function testCopyEtag() {
-		$request = new \Sabre\Http\Request();
+		$request = new \Sabre\Http\Request('GET', 'dummy.file');
 		$response = new \Sabre\Http\Response();
 		$response->setHeader('Etag', 'abcd');
 
@@ -64,7 +65,7 @@ class CopyEtagHeaderPluginTest extends TestCase {
 	}
 
 	public function testNoopWhenEmpty() {
-		$request = new \Sabre\Http\Request();
+		$request = new \Sabre\Http\Request('GET', 'dummy.file');
 		$response = new \Sabre\Http\Response();
 
 		$this->plugin->afterMethod($request, $response);

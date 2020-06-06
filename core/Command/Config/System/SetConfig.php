@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
@@ -150,6 +151,7 @@ class SetConfig extends Base {
 						throw new \InvalidArgumentException('Unable to parse value as boolean');
 				}
 
+				// no break
 			case 'null':
 				return [
 					'value' => null,

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Carla Schroder <carla@owncloud.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Victor Dubiniuk <dubiniuk@owncloud.com>
  *
@@ -61,7 +62,7 @@ class CheckCore extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$result = $this->checker->verifyCoreSignature();
 		$this->writeArrayInOutputFormat($input, $output, $result);
-		if (count($result)>0){
+		if (count($result)>0) {
 			return 1;
 		}
 	}

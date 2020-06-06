@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Felix Moeller <mail@felixmoeller.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
@@ -27,8 +28,8 @@
  */
 
 namespace OCA\DAV\Connector\Sabre;
+
 use OCA\DAV\Upload\FutureFile;
-use OCP\Files\FileInfo;
 use OCP\Files\StorageNotAvailableException;
 use Sabre\DAV\Exception\InsufficientStorage;
 use Sabre\DAV\Exception\ServiceUnavailable;
@@ -72,7 +73,6 @@ class QuotaPlugin extends \Sabre\DAV\ServerPlugin {
 	 * @return void
 	 */
 	public function initialize(\Sabre\DAV\Server $server) {
-
 		$this->server = $server;
 
 		$server->on('beforeWriteContent', [$this, 'beforeWriteContent'], 10);
@@ -153,7 +153,7 @@ class QuotaPlugin extends \Sabre\DAV\ServerPlugin {
 
 		if ($length) {
 			list($parentPath, $newName) = \Sabre\Uri\split($path);
-			if(is_null($parentPath)) {
+			if (is_null($parentPath)) {
 				$parentPath = '';
 			}
 			$req = $this->server->httpRequest;

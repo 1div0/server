@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Liam Dennehy <liam@wiemax.net>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -52,7 +53,7 @@ class CleanUp extends Command {
 	 * @param IUserManager $userManager
 	 * @param IDBConnection $dbConnection
 	 */
-	function __construct(IRootFolder $rootFolder, IUserManager $userManager, IDBConnection $dbConnection) {
+	public function __construct(IRootFolder $rootFolder, IUserManager $userManager, IDBConnection $dbConnection) {
 		parent::__construct();
 		$this->userManager = $userManager;
 		$this->rootFolder = $rootFolder;
@@ -130,5 +131,4 @@ class CleanUp extends Command {
 			$query->execute();
 		}
 	}
-
 }

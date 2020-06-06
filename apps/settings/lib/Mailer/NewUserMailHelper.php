@@ -33,7 +33,6 @@ namespace OCA\Settings\Mailer;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Defaults;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\L10N\IFactory;
@@ -140,7 +139,7 @@ class NewUserMailHelper {
 			$emailTemplate->addHeading($l10n->t('Welcome aboard %s', [$displayName]));
 		}
 		$emailTemplate->addBodyText($l10n->t('Welcome to your %s account, you can add, protect, and share your data.', [$this->themingDefaults->getName()]));
-		if($user->getBackendClassName() !== 'LDAP') {
+		if ($user->getBackendClassName() !== 'LDAP') {
 			$emailTemplate->addBodyText($l10n->t('Your username is: %s', [$userId]));
 		}
 		if ($generatePasswordResetToken) {

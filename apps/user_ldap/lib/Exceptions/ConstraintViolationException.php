@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Roger Szabo <roger.szabo@web.de>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roger Szabo <roger.szabo@web.de>
  *
  * @license GNU AGPL version 3 or any later version
@@ -23,4 +24,5 @@
 
 namespace OCA\User_LDAP\Exceptions;
 
-class ConstraintViolationException extends \Exception {}
+class ConstraintViolationException extends \Exception {
+}

@@ -73,14 +73,13 @@
     "More options …" : "Fler alternativ ...",
     "More options at %s" : "Fler alternativ på %s",
     "Contacts" : "Kontakter",
+    "System in maintenance mode." : "Syatemn i underhållsläge.",
+    "Upgrade needed" : "Uppdatering nödvändig",
     "Your %s needs to be configured to use HTTPS in order to use CalDAV and CardDAV with iOS/macOS." : "Din %s måste konfigureras att använda HTTPS för CalDAV och CardDAV med iOS/macOS.",
     "Configures a CalDAV account" : "Konfigurerar ett CalDAV-konto",
     "Configures a CardDAV account" : "Konfigurerar ett CardDAV-konto",
     "WebDAV" : "WebDAV",
     "WebDAV endpoint" : "WebDAV endpoint",
-    "Technical details" : "Tekniska detaljer",
-    "Remote Address: %s" : "Extern adress: %s",
-    "Request ID: %s" : "Begär ID: %s",
     "There was an error updating your attendance status." : "Ett fel uppstod vid uppdatering av din närvarostatus.",
     "Please contact the organizer directly." : "Vänligen kontakta arrangören direkt.",
     "Are you accepting the invitation?" : "Acceptera inbjudan?",
@@ -97,6 +96,9 @@
     "Send notifications for events" : "Skicka aviseringar för händelser",
     "Notifications are sent via background jobs, so these must occur often enough." : "Aviseringar skickas genom bakgrundsjobb, så dessa måste ske tillräckligt ofta.",
     "Enable notifications for events via push" : "Aktivera aviseringar för händelser via push",
+    "Technical details" : "Tekniska detaljer",
+    "Remote Address: %s" : "Extern adress: %s",
+    "Request ID: %s" : "Begär ID: %s",
     "Notifications will be send through background jobs, so these need to happen often enough." : "Aviseringar skickas genom bakgrundsjobb, så dessa måste ske tillräckligt ofta."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

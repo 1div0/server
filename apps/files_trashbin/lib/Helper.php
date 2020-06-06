@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -46,7 +47,7 @@ class Helper {
 	 * @return \OCP\Files\FileInfo[]
 	 */
 	public static function getTrashFiles($dir, $user, $sortAttribute = '', $sortDescending = false) {
-		$result = array();
+		$result = [];
 		$timestamp = null;
 
 		$view = new \OC\Files\View('/' . $user . '/files_trashbin/files');
@@ -69,8 +70,7 @@ class Helper {
 				$pathparts = pathinfo($entryName);
 				$timestamp = substr($pathparts['extension'], 1);
 				$name = $pathparts['filename'];
-
-			} else if ($timestamp === null) {
+			} elseif ($timestamp === null) {
 				// for subfolders we need to calculate the timestamp only once
 				$parts = explode('/', ltrim($dir, '/'));
 				$timestamp = substr(pathinfo($parts[0], PATHINFO_EXTENSION), 1);
@@ -84,7 +84,7 @@ class Helper {
 				}
 			}
 			$type = $entry->getMimeType() === ICacheEntry::DIRECTORY_MIMETYPE ? 'dir' : 'file';
-			$i = array(
+			$i = [
 				'name' => $name,
 				'mtime' => $timestamp,
 				'mimetype' => $type === 'dir' ? 'httpd/unix-directory' : \OC::$server->getMimeTypeDetector()->detectPath($name),
@@ -94,7 +94,7 @@ class Helper {
 				'etag' => '',
 				'permissions' => Constants::PERMISSION_ALL - Constants::PERMISSION_SHARE,
 				'fileid' => $entry->getId(),
-			);
+			];
 			if ($originalPath) {
 				if ($originalPath !== '.') {
 					$i['extraData'] = $originalPath . '/' . $originalName;
@@ -117,7 +117,7 @@ class Helper {
 	 * @param \OCP\Files\FileInfo[] $fileInfos file infos
 	 */
 	public static function formatFileInfos($fileInfos) {
-		$files = array();
+		$files = [];
 		foreach ($fileInfos as $i) {
 			$entry = \OCA\Files\Helper::formatFileInfo($i);
 			$entry['id'] = $i->getId();

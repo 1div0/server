@@ -4,6 +4,7 @@
  *
  * @author Andreas Fischer <bantu@owncloud.com>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author hkjolhede <hkjolhede@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
@@ -35,14 +36,15 @@
  */
 
 namespace OCA\Files_External\Lib\Storage;
+
 use Icewind\Streams\IteratorDirectory;
 use Icewind\Streams\RetryWrapper;
 use phpseclib\Net\SFTP\Stream;
 
 /**
-* Uses phpseclib's Net\SFTP class and the Net\SFTP\Stream stream wrapper to
-* provide access to SFTP servers.
-*/
+ * Uses phpseclib's Net\SFTP class and the Net\SFTP\Stream stream wrapper to
+ * provide access to SFTP servers.
+ */
 class SFTP extends \OC\Files\Storage\Common {
 	private $host;
 	private $user;
@@ -68,9 +70,9 @@ class SFTP extends \OC\Files\Storage\Common {
 		}
 
 		$parsed = parse_url($host);
-		if(is_array($parsed) && isset($parsed['port'])) {
+		if (is_array($parsed) && isset($parsed['port'])) {
 			return [$parsed['host'], $parsed['port']];
-		} else if (is_array($parsed)) {
+		} elseif (is_array($parsed)) {
 			return [$parsed['host'], 22];
 		} else {
 			return [$input, 22];
@@ -167,7 +169,7 @@ class SFTP extends \OC\Files\Storage\Common {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getId(){
+	public function getId() {
 		$id = 'sftp::' . $this->user . '@' . $this->host;
 		if ($this->port !== 22) {
 			$id .= ':' . $this->port;
@@ -251,8 +253,8 @@ class SFTP extends \OC\Files\Storage\Common {
 		try {
 			$keyPath = $this->hostKeysPath();
 			if (file_exists($keyPath)) {
-				$hosts = array();
-				$keys = array();
+				$hosts = [];
+				$keys = [];
 				$lines = file($keyPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 				if ($lines) {
 					foreach ($lines as $line) {
@@ -267,7 +269,7 @@ class SFTP extends \OC\Files\Storage\Common {
 			}
 		} catch (\Exception $e) {
 		}
-		return array();
+		return [];
 	}
 
 	/**
@@ -307,14 +309,14 @@ class SFTP extends \OC\Files\Storage\Common {
 			}
 
 			$id = md5('sftp:' . $path);
-			$dirStream = array();
-			foreach($list as $file) {
+			$dirStream = [];
+			foreach ($list as $file) {
 				if ($file !== '.' && $file !== '..') {
 					$dirStream[] = $file;
 				}
 			}
 			return IteratorDirectory::wrap($dirStream);
-		} catch(\Exception $e) {
+		} catch (\Exception $e) {
 			return false;
 		}
 	}
@@ -333,7 +335,6 @@ class SFTP extends \OC\Files\Storage\Common {
 				return 'dir';
 			}
 		} catch (\Exception $e) {
-
 		}
 		return false;
 	}
@@ -366,14 +367,21 @@ class SFTP extends \OC\Files\Storage\Common {
 	public function fopen($path, $mode) {
 		try {
 			$absPath = $this->absPath($path);
-			switch($mode) {
+			switch ($mode) {
 				case 'r':
 				case 'rb':
-					if ( !$this->file_exists($path)) {
+					if (!$this->file_exists($path)) {
 						return false;
 					}
+					SFTPReadStream::register();
+					$context = stream_context_create(['sftp' => ['session' => $this->getConnection()]]);
+					$handle = fopen('sftpread://' . trim($absPath, '/'), 'r', false, $context);
+					return RetryWrapper::wrap($handle);
 				case 'w':
 				case 'wb':
+					SFTPWriteStream::register();
+					$context = stream_context_create(['sftp' => ['session' => $this->getConnection()]]);
+					return fopen('sftpwrite://' . trim($absPath, '/'), 'w', false, $context);
 				case 'a':
 				case 'ab':
 				case 'r+':
@@ -384,7 +392,7 @@ class SFTP extends \OC\Files\Storage\Common {
 				case 'x+':
 				case 'c':
 				case 'c+':
-					$context = stream_context_create(array('sftp' => array('session' => $this->getConnection())));
+					$context = stream_context_create(['sftp' => ['session' => $this->getConnection()]]);
 					$handle = fopen($this->constructUrl($path), $mode, false, $context);
 					return RetryWrapper::wrap($handle);
 			}
@@ -457,7 +465,7 @@ class SFTP extends \OC\Files\Storage\Common {
 			$mtime = $stat ? $stat['mtime'] : -1;
 			$size = $stat ? $stat['size'] : 0;
 
-			return array('mtime' => $mtime, 'size' => $size, 'ctime' => -1);
+			return ['mtime' => $mtime, 'size' => $size, 'ctime' => -1];
 		} catch (\Exception $e) {
 			return false;
 		}

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -35,10 +36,9 @@ namespace OCA\Files_Sharing\Tests;
  * @package OCA\Files_Sharing\Tests
  */
 class UnshareChildrenTest extends TestCase {
-
 	protected $subsubfolder;
 
-	const TEST_FOLDER_NAME = '/folder_share_api_test';
+	public const TEST_FOLDER_NAME = '/folder_share_api_test';
 
 	private static $tempStorage;
 
@@ -75,7 +75,6 @@ class UnshareChildrenTest extends TestCase {
 	 * @medium
 	 */
 	public function testUnshareChildren() {
-
 		$fileInfo2 = \OC\Files\Filesystem::getFileInfo($this->folder);
 
 		$this->share(

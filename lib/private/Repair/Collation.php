@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -126,7 +127,7 @@ class Collation implements IRepairStep {
 			"	WHERE TABLE_SCHEMA = ?" .
 			"	AND (COLLATION_NAME <> '" . $characterSet . "_bin' OR CHARACTER_SET_NAME <> '" . $characterSet . "')" .
 			"	AND TABLE_NAME LIKE '*PREFIX*%'",
-			array($dbName)
+			[$dbName]
 		);
 		$rows = $statement->fetchAll();
 		$result = [];

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Juan Pablo Villafáñez <jvillafanez@solidgear.es>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -38,4 +39,4 @@ if (isset($configuration['ldap_agent_password']) && $configuration['ldap_agent_p
 	// hide password
 	$configuration['ldap_agent_password'] = '**PASSWORD SET**';
 }
-\OC_JSON::success(array('configuration' => $configuration));
+\OC_JSON::success(['configuration' => $configuration]);

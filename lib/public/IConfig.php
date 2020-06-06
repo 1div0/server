@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -46,7 +47,7 @@ interface IConfig {
 	/**
 	 * @since 8.2.0
 	 */
-	const SENSITIVE_VALUE = '***REMOVED SENSITIVE VALUE***';
+	public const SENSITIVE_VALUE = '***REMOVED SENSITIVE VALUE***';
 
 	/**
 	 * Sets and deletes system wide values

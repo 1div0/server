@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
@@ -34,74 +35,73 @@ namespace OCA\Files_External\Tests;
  * @package OCA\Files_External\Tests
  */
 class OwnCloudFunctionsTest extends \Test\TestCase {
-
-	function configUrlProvider() {
-		return array(
-			array(
-				array(
+	public function configUrlProvider() {
+		return [
+			[
+				[
 					'host' => 'testhost',
 					'root' => 'testroot',
 					'secure' => false
-				),
+				],
 				'http://testhost/remote.php/webdav/testroot/',
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'host' => 'testhost',
 					'root' => 'testroot',
 					'secure' => true
-				),
+				],
 				'https://testhost/remote.php/webdav/testroot/',
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'host' => 'http://testhost',
 					'root' => 'testroot',
 					'secure' => false
-				),
+				],
 				'http://testhost/remote.php/webdav/testroot/',
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'host' => 'https://testhost',
 					'root' => 'testroot',
 					'secure' => false
-				),
+				],
 				'https://testhost/remote.php/webdav/testroot/',
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'host' => 'https://testhost/testroot',
 					'root' => '',
 					'secure' => false
-				),
+				],
 				'https://testhost/testroot/remote.php/webdav/',
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'host' => 'https://testhost/testroot',
 					'root' => 'subdir',
 					'secure' => false
-				),
+				],
 				'https://testhost/testroot/remote.php/webdav/subdir/',
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'host' => 'http://testhost/testroot',
 					'root' => 'subdir',
 					'secure' => true
-				),
+				],
 				'http://testhost/testroot/remote.php/webdav/subdir/',
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'host' => 'http://testhost/testroot/',
 					'root' => '/subdir',
 					'secure' => false
-				),
+				],
 				'http://testhost/testroot/remote.php/webdav/subdir/',
-			),
-		);
+			],
+		];
 	}
 
 	/**

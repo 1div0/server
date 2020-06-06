@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017 Roger Szabo <roger.szabo@web.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roger Szabo <roger.szabo@web.de>
  *
@@ -35,14 +36,14 @@ use OCP\AppFramework\IAppContainer;
 use OCP\IL10N;
 
 class Application extends App {
-	public function __construct () {
+	public function __construct() {
 		parent::__construct('user_ldap');
 		$container = $this->getContainer();
 
 		/**
 		 * Controller
 		 */
-		$container->registerService('RenewPasswordController', function(IAppContainer $c) {
+		$container->registerService('RenewPasswordController', function (IAppContainer $c) {
 			/** @var \OC\Server $server */
 			$server = $c->query('ServerContainer');
 
@@ -67,7 +68,7 @@ class Application extends App {
 
 		$container->getServer()->getEventDispatcher()->addListener(
 			'OCA\\Files_External::loadAdditionalBackends',
-			function() use ($container) {
+			function () use ($container) {
 				$storagesBackendService = $container->query(BackendService::class);
 				$storagesBackendService->registerConfigHandler('home', function () use ($container) {
 					return $container->query(ExtStorageConfigHandler::class);

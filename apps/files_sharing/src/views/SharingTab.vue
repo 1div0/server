@@ -183,9 +183,11 @@ export default {
 	},
 
 	watch: {
-		fileInfo() {
-			this.resetState()
-			this.getShares()
+		fileInfo(newFile, oldFile) {
+			if (newFile.id !== oldFile.id) {
+				this.resetState()
+				this.getShares()
+			}
 		},
 	},
 
@@ -284,6 +286,8 @@ export default {
 
 				this.linkShares = shares.filter(share => share.type === this.SHARE_TYPES.SHARE_TYPE_LINK || share.type === this.SHARE_TYPES.SHARE_TYPE_EMAIL)
 				this.shares = shares.filter(share => share.type !== this.SHARE_TYPES.SHARE_TYPE_LINK && share.type !== this.SHARE_TYPES.SHARE_TYPE_EMAIL)
+				console.debug('Processed', this.linkShares.length, 'link share(s)')
+				console.debug('Processed', this.shares.length, 'share(s)')
 			}
 		},
 

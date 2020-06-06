@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace OCP\User\Events;
 
 use OCP\EventDispatcher\Event;
-use OCP\IUser;
 
 /**
  * @since 18.0.0
@@ -51,5 +50,4 @@ class BeforeUserLoggedInWithCookieEvent extends Event {
 	public function getUsername(): string {
 		return $this->username;
 	}
-
 }

@@ -4,6 +4,7 @@
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -45,16 +46,4 @@ $linkToCSS = \OC::$server->getURLGenerator()->linkToRoute(
 	]
 );
 
-$linkToJs = \OC::$server->getURLGenerator()->linkToRoute(
-	'theming.Theming.getJavascript',
-	[
-		'v' => \OC::$server->getConfig()->getAppValue('theming', 'cachebuster', '0'),
-	]
-);
-\OCP\Util::addHeader(
-	'script',
-	[
-		'src' => $linkToJs,
-		'nonce' => \OC::$server->getContentSecurityPolicyNonceManager()->getNonce()
-	], ''
-);
+\OCP\Util::addScript('theming', 'theming');

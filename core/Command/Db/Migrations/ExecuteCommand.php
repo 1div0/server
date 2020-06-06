@@ -23,7 +23,6 @@
 
 namespace OC\Core\Command\Db\Migrations;
 
-
 use OC\DB\MigrationService;
 use OC\Migration\ConsoleOutput;
 use OCP\App\IAppManager;
@@ -128,5 +127,4 @@ class ExecuteCommand extends Command implements CompletionAwareInterface {
 
 		return [];
 	}
-
 }

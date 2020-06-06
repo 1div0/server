@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -78,13 +79,13 @@ class BlockLegacyClientPluginTest extends TestCase {
 			->expects($this->once())
 			->method('getHeader')
 			->with('User-Agent')
-			->will($this->returnValue($userAgent));
+			->willReturn($userAgent);
 
 		$this->config
 			->expects($this->once())
 			->method('getSystemValue')
 			->with('minimum.supported.desktop.version', '2.0.0')
-			->will($this->returnValue('1.7.0'));
+			->willReturn('1.7.0');
 
 		$this->blockLegacyClientVersionPlugin->beforeHandler($request);
 	}
@@ -113,13 +114,13 @@ class BlockLegacyClientPluginTest extends TestCase {
 			->expects($this->once())
 			->method('getHeader')
 			->with('User-Agent')
-			->will($this->returnValue($userAgent));
+			->willReturn($userAgent);
 
 		$this->config
 			->expects($this->once())
 			->method('getSystemValue')
 			->with('minimum.supported.desktop.version', '2.0.0')
-			->will($this->returnValue('1.7.0'));
+			->willReturn('1.7.0');
 
 		$this->blockLegacyClientVersionPlugin->beforeHandler($request);
 	}
@@ -131,8 +132,7 @@ class BlockLegacyClientPluginTest extends TestCase {
 			->expects($this->once())
 			->method('getHeader')
 			->with('User-Agent')
-			->will($this->returnValue(null));
+			->willReturn(null);
 		$this->blockLegacyClientVersionPlugin->beforeHandler($request);
 	}
-
 }

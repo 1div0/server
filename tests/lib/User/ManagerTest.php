@@ -8,6 +8,7 @@
  */
 
 namespace Test\User;
+
 use OC\AllConfig;
 use OC\User\Database;
 use OC\User\Manager;
@@ -60,7 +61,7 @@ class ManagerTest extends TestCase {
 		$backend->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend);
@@ -76,7 +77,7 @@ class ManagerTest extends TestCase {
 		$backend->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend);
@@ -98,7 +99,7 @@ class ManagerTest extends TestCase {
 		$backend1->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		/**
 		 * @var \Test\Util\User\Dummy | \PHPUnit_Framework_MockObject_MockObject $backend2
@@ -107,7 +108,7 @@ class ManagerTest extends TestCase {
 		$backend2->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend1);
@@ -124,7 +125,7 @@ class ManagerTest extends TestCase {
 		$backend1->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		/**
 		 * @var \Test\Util\User\Dummy | \PHPUnit_Framework_MockObject_MockObject $backend2
@@ -148,17 +149,17 @@ class ManagerTest extends TestCase {
 		$backend->expects($this->once())
 			->method('checkPassword')
 			->with($this->equalTo('foo'), $this->equalTo('bar'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$backend->expects($this->any())
 			->method('implementsActions')
-			->will($this->returnCallback(function ($actions) {
+			->willReturnCallback(function ($actions) {
 				if ($actions === \OC\USER\BACKEND::CHECK_PASSWORD) {
 					return true;
 				} else {
 					return false;
 				}
-			}));
+			});
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend);
@@ -177,7 +178,7 @@ class ManagerTest extends TestCase {
 
 		$backend->expects($this->any())
 			->method('implementsActions')
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend);
@@ -193,7 +194,7 @@ class ManagerTest extends TestCase {
 		$backend->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$backend->expects($this->never())
 			->method('loginName2UserName');
 
@@ -211,7 +212,7 @@ class ManagerTest extends TestCase {
 		$backend->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend);
@@ -227,7 +228,7 @@ class ManagerTest extends TestCase {
 		$backend->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('bLeNdEr'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$backend->expects($this->never())
 			->method('loginName2UserName');
 
@@ -245,7 +246,7 @@ class ManagerTest extends TestCase {
 		$backend->expects($this->once())
 			->method('getUsers')
 			->with($this->equalTo('fo'))
-			->will($this->returnValue(array('foo', 'afoo', 'Afoo1', 'Bfoo')));
+			->willReturn(['foo', 'afoo', 'Afoo1', 'Bfoo']);
 		$backend->expects($this->never())
 			->method('loginName2UserName');
 
@@ -268,7 +269,7 @@ class ManagerTest extends TestCase {
 		$backend1->expects($this->once())
 			->method('getUsers')
 			->with($this->equalTo('fo'), $this->equalTo(3), $this->equalTo(1))
-			->will($this->returnValue(array('foo1', 'foo2')));
+			->willReturn(['foo1', 'foo2']);
 		$backend1->expects($this->never())
 			->method('loginName2UserName');
 
@@ -279,7 +280,7 @@ class ManagerTest extends TestCase {
 		$backend2->expects($this->once())
 			->method('getUsers')
 			->with($this->equalTo('fo'), $this->equalTo(3), $this->equalTo(1))
-			->will($this->returnValue(array('foo3')));
+			->willReturn(['foo3']);
 		$backend2->expects($this->never())
 			->method('loginName2UserName');
 
@@ -351,7 +352,7 @@ class ManagerTest extends TestCase {
 		$backend = $this->createMock(\Test\Util\User\Dummy::class);
 		$backend->expects($this->any())
 			->method('implementsActions')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$backend->expects($this->once())
 			->method('createUser')
@@ -360,7 +361,7 @@ class ManagerTest extends TestCase {
 		$backend->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(false));
+			->willReturn(false);
 		$backend->expects($this->never())
 			->method('loginName2UserName');
 
@@ -381,7 +382,7 @@ class ManagerTest extends TestCase {
 		$backend = $this->createMock(\Test\Util\User\Dummy::class);
 		$backend->expects($this->any())
 			->method('implementsActions')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$backend->expects($this->never())
 			->method('createUser');
@@ -389,7 +390,7 @@ class ManagerTest extends TestCase {
 		$backend->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend);
@@ -404,7 +405,7 @@ class ManagerTest extends TestCase {
 		$backend = $this->createMock(\Test\Util\User\Dummy::class);
 		$backend->expects($this->any())
 			->method('implementsActions')
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$backend->expects($this->never())
 			->method('createUser');
@@ -453,7 +454,7 @@ class ManagerTest extends TestCase {
 		$backend1 = $this->createMock(\Test\Util\User\Dummy::class);
 		$backend1->expects($this->any())
 			->method('implementsActions')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$backend1->expects($this->never())
 			->method('createUser');
@@ -461,7 +462,7 @@ class ManagerTest extends TestCase {
 		$backend1->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		/**
 		 * @var \Test\Util\User\Dummy | \PHPUnit_Framework_MockObject_MockObject $backend2
@@ -469,7 +470,7 @@ class ManagerTest extends TestCase {
 		$backend2 = $this->createMock(\Test\Util\User\Dummy::class);
 		$backend2->expects($this->any())
 			->method('implementsActions')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$backend2->expects($this->never())
 			->method('createUser');
@@ -477,7 +478,7 @@ class ManagerTest extends TestCase {
 		$backend2->expects($this->once())
 			->method('userExists')
 			->with($this->equalTo('foo'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend1);
@@ -501,16 +502,16 @@ class ManagerTest extends TestCase {
 		$backend = $this->createMock(\Test\Util\User\Dummy::class);
 		$backend->expects($this->once())
 			->method('countUsers')
-			->will($this->returnValue(7));
+			->willReturn(7);
 
 		$backend->expects($this->once())
 			->method('implementsActions')
 			->with(\OC\USER\BACKEND::COUNT_USERS)
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$backend->expects($this->once())
 			->method('getBackendName')
-			->will($this->returnValue('Mock_Test_Util_User_Dummy'));
+			->willReturn('Mock_Test_Util_User_Dummy');
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend);
@@ -530,28 +531,28 @@ class ManagerTest extends TestCase {
 		$backend1 = $this->createMock(\Test\Util\User\Dummy::class);
 		$backend1->expects($this->once())
 			->method('countUsers')
-			->will($this->returnValue(7));
+			->willReturn(7);
 
 		$backend1->expects($this->once())
 			->method('implementsActions')
 			->with(\OC\USER\BACKEND::COUNT_USERS)
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$backend1->expects($this->once())
 			->method('getBackendName')
-			->will($this->returnValue('Mock_Test_Util_User_Dummy'));
+			->willReturn('Mock_Test_Util_User_Dummy');
 
 		$backend2 = $this->createMock(\Test\Util\User\Dummy::class);
 		$backend2->expects($this->once())
 			->method('countUsers')
-			->will($this->returnValue(16));
+			->willReturn(16);
 
 		$backend2->expects($this->once())
 			->method('implementsActions')
 			->with(\OC\USER\BACKEND::COUNT_USERS)
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$backend2->expects($this->once())
 			->method('getBackendName')
-			->will($this->returnValue('Mock_Test_Util_User_Dummy'));
+			->willReturn('Mock_Test_Util_User_Dummy');
 
 		$manager = new \OC\User\Manager($this->config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend1);
@@ -672,21 +673,21 @@ class ManagerTest extends TestCase {
 			->expects($this->at(0))
 			->method('getUsersForUserValueCaseInsensitive')
 			->with('settings', 'email', 'test@example.com')
-			->will($this->returnValue(['uid1', 'uid99', 'uid2']));
+			->willReturn(['uid1', 'uid99', 'uid2']);
 
 		$backend = $this->createMock(\Test\Util\User\Dummy::class);
 		$backend->expects($this->at(0))
 			->method('userExists')
 			->with($this->equalTo('uid1'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$backend->expects($this->at(1))
 			->method('userExists')
 			->with($this->equalTo('uid99'))
-			->will($this->returnValue(false));
+			->willReturn(false);
 		$backend->expects($this->at(2))
 			->method('userExists')
 			->with($this->equalTo('uid2'))
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$manager = new \OC\User\Manager($config, $this->oldDispatcher, $this->eventDispatcher);
 		$manager->registerBackend($backend);

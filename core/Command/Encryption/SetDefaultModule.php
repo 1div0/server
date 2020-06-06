@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Ruben Homs <ruben@homs.codes>
  *
@@ -22,7 +23,6 @@
  */
 
 namespace OC\Core\Command\Encryption;
-
 
 use OCP\Encryption\IManager;
 use OCP\IConfig;
@@ -77,7 +77,7 @@ class SetDefaultModule extends Command {
 
 		if ($moduleId === $this->encryptionManager->getDefaultEncryptionModuleId()) {
 			$output->writeln('"' . $moduleId . '"" is already the default module');
-		} else if ($this->encryptionManager->setDefaultEncryptionModule($moduleId)) {
+		} elseif ($this->encryptionManager->setDefaultEncryptionModule($moduleId)) {
 			$output->writeln('<info>Set default module to "' . $moduleId . '"</info>');
 		} else {
 			$output->writeln('<error>The specified module "' . $moduleId . '" does not exist</error>');

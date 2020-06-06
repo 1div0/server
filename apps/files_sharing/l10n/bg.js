@@ -19,6 +19,7 @@ OC.L10N.register(
     "Restore" : "Възстановяне",
     "Restore share" : "Възстанови споделянето",
     "Something happened. Unable to restore the share." : "Споделянето не може да бъде възстановено.",
+    "error" : "грешка",
     "This will stop your current uploads." : "Това ще прекрати всички ваши текущи процеси по качване на файлове.",
     "Move or copy" : "Премести или копирай",
     "Download" : "Изтегли",
@@ -81,7 +82,6 @@ OC.L10N.register(
     "remote" : "отдалечен",
     "remote group" : "отдалечена група",
     "guest" : "гост",
-    "Via folder" : "С папка",
     "Link copied" : "Връзката е копирана",
     "Copy to clipboard" : "Копирай",
     "Password protection" : "Password protection",
@@ -121,7 +121,7 @@ OC.L10N.register(
     "Upload files to %s" : "Качване на файлове към %s",
     "Note" : "Бележка",
     "Select or drop files" : "Изберете файл или преместете с мишката",
-    "Uploading files…" : "Качване на файлове…",
-    "Uploaded files:" : "Качени файлове:"
+    "Uploaded files:" : "Качени файлове:",
+    "Uploading files…" : "Качване на файлове…"
 },
 "nplurals=2; plural=(n != 1);");

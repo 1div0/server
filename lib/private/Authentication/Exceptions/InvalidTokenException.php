@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
@@ -25,5 +28,4 @@ namespace OC\Authentication\Exceptions;
 use Exception;
 
 class InvalidTokenException extends Exception {
-	
 }

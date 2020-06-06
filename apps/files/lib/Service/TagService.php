@@ -2,6 +2,8 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Vincent Petry <pvince81@owncloud.com>
@@ -83,7 +85,7 @@ class TagService {
 	public function updateFileTags($path, $tags) {
 		$fileId = $this->homeFolder->get($path)->getId();
 
-		$currentTags = $this->tagger->getTagsForObjects(array($fileId));
+		$currentTags = $this->tagger->getTagsForObjects([$fileId]);
 
 		if (!empty($currentTags)) {
 			$currentTags = current($currentTags);

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  *
@@ -105,7 +106,7 @@ class OfflineUser {
 	 * @return array
 	 */
 	public function export() {
-		$data = array();
+		$data = [];
 		$data['ocName'] = $this->getOCName();
 		$data['dn'] = $this->getDN();
 		$data['uid'] = $this->getUID();
@@ -202,7 +203,7 @@ class OfflineUser {
 			'email'        => 'settings',
 			'lastLogin'    => 'login',
 		];
-		foreach($properties as $property => $app) {
+		foreach ($properties as $property => $app) {
 			$this->$property = $this->config->getUserValue($this->ocName, $app, $property, '');
 		}
 
@@ -223,9 +224,9 @@ class OfflineUser {
 			FROM `*PREFIX*share`
 			WHERE `uid_owner` = ?
 		', 1);
-		$query->execute(array($this->ocName));
+		$query->execute([$this->ocName]);
 		$sResult = $query->fetchColumn(0);
-		if((int)$sResult === 1) {
+		if ((int)$sResult === 1) {
 			$this->hasActiveShares = true;
 			return;
 		}
@@ -235,9 +236,9 @@ class OfflineUser {
 			FROM `*PREFIX*share_external`
 			WHERE `owner` = ?
 		', 1);
-		$query->execute(array($this->ocName));
+		$query->execute([$this->ocName]);
 		$sResult = $query->fetchColumn(0);
-		if((int)$sResult === 1) {
+		if ((int)$sResult === 1) {
 			$this->hasActiveShares = true;
 			return;
 		}

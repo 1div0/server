@@ -2,8 +2,8 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
@@ -46,7 +46,7 @@ class FtpTest extends \Test\Files\Storage\Storage {
 
 		$id = $this->getUniqueID();
 		$this->config = include('files_external/tests/config.ftp.php');
-		if ( ! is_array($this->config) or ! $this->config['run']) {
+		if (! is_array($this->config) or ! $this->config['run']) {
 			$this->markTestSkipped('FTP backend not configured');
 		}
 		$this->config['root'] .= '/' . $id; //make sure we have an new empty folder to work in
@@ -62,12 +62,12 @@ class FtpTest extends \Test\Files\Storage\Storage {
 		parent::tearDown();
 	}
 
-	public function testConstructUrl(){
-		$config = array ( 'host' => 'localhost',
-						  'user' => 'ftp',
-						  'password' => 'ftp',
-						  'root' => '/',
-						  'secure' => false );
+	public function testConstructUrl() {
+		$config =  [ 'host' => 'localhost',
+			'user' => 'ftp',
+			'password' => 'ftp',
+			'root' => '/',
+			'secure' => false ];
 		$instance = new FTP($config);
 		$this->assertEquals('ftp://ftp:ftp@localhost/', $instance->constructUrl(''));
 

@@ -23,7 +23,6 @@
 
 namespace Test\Collaboration\Collaborators;
 
-
 use OC\Collaboration\Collaborators\RemotePlugin;
 use OC\Collaboration\Collaborators\SearchResult;
 use OC\Federation\CloudIdManager;
@@ -93,9 +92,7 @@ class RemotePluginTest extends TestCase {
 		$this->config->expects($this->any())
 			->method('getAppValue')
 			->willReturnCallback(
-				function($appName, $key, $default)
-				use ($shareeEnumeration)
-				{
+				function ($appName, $key, $default) use ($shareeEnumeration) {
 					if ($appName === 'core' && $key === 'shareapi_allow_share_dialog_user_enumeration') {
 						return $shareeEnumeration ? 'yes' : 'no';
 					}
@@ -410,20 +407,20 @@ class RemotePluginTest extends TestCase {
 	}
 
 	public function dataTestSplitUserRemoteError() {
-		return array(
+		return [
 			// Invalid path
-			array('user@'),
+			['user@'],
 
 			// Invalid user
-			array('@server'),
-			array('us/er@server'),
-			array('us:er@server'),
+			['@server'],
+			['us/er@server'],
+			['us:er@server'],
 
 			// Invalid splitting
-			array('user'),
-			array(''),
-			array('us/erserver'),
-			array('us:erserver'),
-		);
+			['user'],
+			[''],
+			['us/erserver'],
+			['us:erserver'],
+		];
 	}
 }

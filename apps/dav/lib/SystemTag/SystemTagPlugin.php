@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -49,13 +50,13 @@ use Sabre\HTTP\ResponseInterface;
 class SystemTagPlugin extends \Sabre\DAV\ServerPlugin {
 
 	// namespace
-	const NS_OWNCLOUD = 'http://owncloud.org/ns';
-	const ID_PROPERTYNAME = '{http://owncloud.org/ns}id';
-	const DISPLAYNAME_PROPERTYNAME = '{http://owncloud.org/ns}display-name';
-	const USERVISIBLE_PROPERTYNAME = '{http://owncloud.org/ns}user-visible';
-	const USERASSIGNABLE_PROPERTYNAME = '{http://owncloud.org/ns}user-assignable';
-	const GROUPS_PROPERTYNAME = '{http://owncloud.org/ns}groups';
-	const CANASSIGN_PROPERTYNAME = '{http://owncloud.org/ns}can-assign';
+	public const NS_OWNCLOUD = 'http://owncloud.org/ns';
+	public const ID_PROPERTYNAME = '{http://owncloud.org/ns}id';
+	public const DISPLAYNAME_PROPERTYNAME = '{http://owncloud.org/ns}display-name';
+	public const USERVISIBLE_PROPERTYNAME = '{http://owncloud.org/ns}user-visible';
+	public const USERASSIGNABLE_PROPERTYNAME = '{http://owncloud.org/ns}user-assignable';
+	public const GROUPS_PROPERTYNAME = '{http://owncloud.org/ns}groups';
+	public const CANASSIGN_PROPERTYNAME = '{http://owncloud.org/ns}can-assign';
 
 	/**
 	 * @var \Sabre\DAV\Server $server
@@ -102,13 +103,12 @@ class SystemTagPlugin extends \Sabre\DAV\ServerPlugin {
 	 * @return void
 	 */
 	public function initialize(\Sabre\DAV\Server $server) {
-
 		$server->xml->namespaceMap[self::NS_OWNCLOUD] = 'oc';
 
 		$server->protectedProperties[] = self::ID_PROPERTYNAME;
 
-		$server->on('propFind', array($this, 'handleGetProperties'));
-		$server->on('propPatch', array($this, 'handleUpdateProperties'));
+		$server->on('propFind', [$this, 'handleGetProperties']);
+		$server->on('propPatch', [$this, 'handleUpdateProperties']);
 		$server->on('method:POST', [$this, 'httpPost']);
 
 		$this->server = $server;
@@ -193,8 +193,8 @@ class SystemTagPlugin extends \Sabre\DAV\ServerPlugin {
 			}
 		}
 
-		if($userVisible === false || $userAssignable === false || !empty($groups)) {
-			if(!$this->userSession->isLoggedIn() || !$this->groupManager->isAdmin($this->userSession->getUser()->getUID())) {
+		if ($userVisible === false || $userAssignable === false || !empty($groups)) {
+			if (!$this->userSession->isLoggedIn() || !$this->groupManager->isAdmin($this->userSession->getUser()->getUID())) {
 				throw new BadRequest('Not sufficient permissions');
 			}
 		}
@@ -225,29 +225,29 @@ class SystemTagPlugin extends \Sabre\DAV\ServerPlugin {
 			return;
 		}
 
-		$propFind->handle(self::ID_PROPERTYNAME, function() use ($node) {
+		$propFind->handle(self::ID_PROPERTYNAME, function () use ($node) {
 			return $node->getSystemTag()->getId();
 		});
 
-		$propFind->handle(self::DISPLAYNAME_PROPERTYNAME, function() use ($node) {
+		$propFind->handle(self::DISPLAYNAME_PROPERTYNAME, function () use ($node) {
 			return $node->getSystemTag()->getName();
 		});
 
-		$propFind->handle(self::USERVISIBLE_PROPERTYNAME, function() use ($node) {
+		$propFind->handle(self::USERVISIBLE_PROPERTYNAME, function () use ($node) {
 			return $node->getSystemTag()->isUserVisible() ? 'true' : 'false';
 		});
 
-		$propFind->handle(self::USERASSIGNABLE_PROPERTYNAME, function() use ($node) {
+		$propFind->handle(self::USERASSIGNABLE_PROPERTYNAME, function () use ($node) {
 			// this is the tag's inherent property "is user assignable"
 			return $node->getSystemTag()->isUserAssignable() ? 'true' : 'false';
 		});
 
-		$propFind->handle(self::CANASSIGN_PROPERTYNAME, function() use ($node) {
+		$propFind->handle(self::CANASSIGN_PROPERTYNAME, function () use ($node) {
 			// this is the effective permission for the current user
 			return $this->tagManager->canUserAssignTag($node->getSystemTag(), $this->userSession->getUser()) ? 'true' : 'false';
 		});
 
-		$propFind->handle(self::GROUPS_PROPERTYNAME, function() use ($node) {
+		$propFind->handle(self::GROUPS_PROPERTYNAME, function () use ($node) {
 			if (!$this->groupManager->isAdmin($this->userSession->getUser()->getUID())) {
 				// property only available for admins
 				throw new Forbidden();
@@ -280,7 +280,7 @@ class SystemTagPlugin extends \Sabre\DAV\ServerPlugin {
 			self::USERVISIBLE_PROPERTYNAME,
 			self::USERASSIGNABLE_PROPERTYNAME,
 			self::GROUPS_PROPERTYNAME,
-		], function($props) use ($node) {
+		], function ($props) use ($node) {
 			$tag = $node->getSystemTag();
 			$name = $tag->getName();
 			$userVisible = $tag->isUserVisible();
@@ -322,6 +322,5 @@ class SystemTagPlugin extends \Sabre\DAV\ServerPlugin {
 
 			return true;
 		});
-
 	}
 }

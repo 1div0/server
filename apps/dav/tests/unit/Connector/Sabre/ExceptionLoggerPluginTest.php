@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -62,7 +63,7 @@ class ExceptionLoggerPluginTest extends TestCase {
 		$config = $this->createMock(SystemConfig::class);
 		$config->expects($this->any())
 			->method('getValue')
-			->willReturnCallback(function($key, $default) {
+			->willReturnCallback(function ($key, $default) {
 				switch ($key) {
 					case 'loglevel':
 						return 0;
@@ -97,5 +98,4 @@ class ExceptionLoggerPluginTest extends TestCase {
 			[4, 'This path leads to nowhere', new InvalidPath('This path leads to nowhere')]
 		];
 	}
-
 }

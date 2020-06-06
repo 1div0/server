@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  *
  * @license AGPL-3.0
@@ -28,7 +29,7 @@ namespace OCP\Files\Cache;
  * @since 9.0.0
  */
 interface ICacheEntry {
-	const DIRECTORY_MIMETYPE = 'httpd/unix-directory';
+	public const DIRECTORY_MIMETYPE = 'httpd/unix-directory';
 
 	/**
 	 * Get the numeric id of a file

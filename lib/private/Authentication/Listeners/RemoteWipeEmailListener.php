@@ -90,7 +90,7 @@ class RemoteWipeEmailListener implements IEventListener {
 					'level' => ILogger::ERROR,
 				]);
 			}
-		} else if ($event instanceof RemoteWipeFinished) {
+		} elseif ($event instanceof RemoteWipeFinished) {
 			$uid = $event->getToken()->getUID();
 			$user = $this->userManager->get($uid);
 			if ($user === null) {
@@ -170,5 +170,4 @@ class RemoteWipeEmailListener implements IEventListener {
 
 		return $message;
 	}
-
 }

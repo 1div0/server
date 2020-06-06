@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Vincent Petry <pvince81@owncloud.com>
@@ -38,8 +39,7 @@ use OCP\SystemTag\TagNotFoundException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SystemTagObjectMapper implements ISystemTagObjectMapper {
-
-	const RELATION_TABLE = 'systemtag_object_mapping';
+	public const RELATION_TABLE = 'systemtag_object_mapping';
 
 	/** @var ISystemTagManager */
 	protected $tagManager;
@@ -51,12 +51,12 @@ class SystemTagObjectMapper implements ISystemTagObjectMapper {
 	protected $dispatcher;
 
 	/**
-	* Constructor.
-	*
-	* @param IDBConnection $connection database connection
-	* @param ISystemTagManager $tagManager system tag manager
-	* @param EventDispatcherInterface $dispatcher
-	*/
+	 * Constructor.
+	 *
+	 * @param IDBConnection $connection database connection
+	 * @param ISystemTagManager $tagManager system tag manager
+	 * @param EventDispatcherInterface $dispatcher
+	 */
 	public function __construct(IDBConnection $connection, ISystemTagManager $tagManager, EventDispatcherInterface $dispatcher) {
 		$this->connection = $connection;
 		$this->tagManager = $tagManager;
@@ -69,7 +69,7 @@ class SystemTagObjectMapper implements ISystemTagObjectMapper {
 	public function getTagIdsForObjects($objIds, string $objectType): array {
 		if (!\is_array($objIds)) {
 			$objIds = [$objIds];
-		} else if (empty($objIds)) {
+		} elseif (empty($objIds)) {
 			return [];
 		}
 
@@ -259,7 +259,7 @@ class SystemTagObjectMapper implements ISystemTagObjectMapper {
 		if (\count($tags) !== \count($tagIds)) {
 			// at least one tag missing, bail out
 			$foundTagIds = array_map(
-				function(ISystemTag $tag) {
+				function (ISystemTag $tag) {
 					return $tag->getId();
 				},
 				$tags

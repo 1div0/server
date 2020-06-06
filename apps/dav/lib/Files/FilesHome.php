@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -49,16 +50,16 @@ class FilesHome extends Directory {
 		parent::__construct($view, $userFolder);
 	}
 
-	function delete() {
+	public function delete() {
 		throw new Forbidden('Permission denied to delete home folder');
 	}
 
-	function getName() {
+	public function getName() {
 		list(,$name) = \Sabre\Uri\split($this->principalInfo['uri']);
 		return $name;
 	}
 
-	function setName($name) {
+	public function setName($name) {
 		throw new Forbidden('Permission denied to rename this folder');
 	}
 }

@@ -26,7 +26,6 @@ declare(strict_types=1);
 
 namespace OC\FullTextSearch\Model;
 
-
 use JsonSerializable;
 use OCP\FullTextSearch\Model\IDocumentAccess;
 use OCP\FullTextSearch\Model\IIndex;
@@ -923,7 +922,6 @@ class IndexDocument implements IIndexDocument, JsonSerializable {
 	 * @return array
 	 */
 	final public function getInfoAll(): array {
-
 		$info = [];
 		foreach ($this->info as $k => $v) {
 			if (substr($k, 0, 1) === '_') {
@@ -990,5 +988,4 @@ class IndexDocument implements IIndexDocument, JsonSerializable {
 			'score' => $this->getScore()
 		];
 	}
-
 }

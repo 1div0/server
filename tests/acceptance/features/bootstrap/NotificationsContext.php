@@ -24,7 +24,6 @@
 use Behat\Behat\Context\Context;
 
 class NotificationsContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 
 	/**
@@ -87,12 +86,11 @@ class NotificationsContext implements Context, ActorAwareInterface {
 		// As the waiting is long enough already the find timeout multiplier is
 		// capped at 2 when finding notifications.
 		$findTimeoutMultiplier = $this->actor->getFindTimeoutMultiplier();
-		$this->actor->setFindTimeoutMultiplier(max(2, $findTimeoutMultiplier));
+		$this->actor->setFindTimeoutMultiplier(min(2, $findTimeoutMultiplier));
 		$this->actor->find(self::acceptButtonInIncomingShareNotificationForFile($fileName), 35)->click();
 		$this->actor->setFindTimeoutMultiplier($findTimeoutMultiplier);
 
 		// Hide the notifications again
 		$this->actor->find(self::notificationsButton(), 10)->click();
 	}
-
 }

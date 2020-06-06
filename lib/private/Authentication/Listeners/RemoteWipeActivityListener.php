@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace OC\Authentication\Listeners;
 
 use BadMethodCallException;
-use OC\Authentication\Events\ARemoteWipeEvent;
 use OC\Authentication\Events\RemoteWipeFinished;
 use OC\Authentication\Events\RemoteWipeStarted;
 use OC\Authentication\Token\IToken;
@@ -53,7 +52,7 @@ class RemoteWipeActivityListener implements IEventListener {
 	public function handle(Event $event): void {
 		if ($event instanceof RemoteWipeStarted) {
 			$this->publishActivity('remote_wipe_start', $event->getToken());
-		} else if ($event instanceof RemoteWipeFinished) {
+		} elseif ($event instanceof RemoteWipeFinished) {
 			$this->publishActivity('remote_wipe_finish', $event->getToken());
 		}
 	}
@@ -77,5 +76,4 @@ class RemoteWipeActivityListener implements IEventListener {
 			]);
 		}
 	}
-
 }

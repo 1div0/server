@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -38,7 +39,7 @@ class Platform {
 	/**
 	 * @param IConfig $config
 	 */
-	function __construct(IConfig $config) {
+	public function __construct(IConfig $config) {
 		$this->config = $config;
 	}
 

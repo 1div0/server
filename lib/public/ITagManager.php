@@ -3,10 +3,10 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bernhard Reiter <ockham@raz.or.at>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Tanghus <thomas@tanghus.net>
- * @author Vincent Petry <pvince81@owncloud.com>
  *
  * @license AGPL-3.0
  *
@@ -59,6 +59,6 @@ interface ITagManager {
 	 * logged in user
 	 * @return \OCP\ITags
 	 * @since 6.0.0 - parameter $includeShared and $userId were added in 8.0.0
-	*/
-	public function load($type, $defaultTags = array(), $includeShared = false, $userId = null);
+	 */
+	public function load($type, $defaultTags = [], $includeShared = false, $userId = null);
 }

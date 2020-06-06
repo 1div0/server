@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -28,7 +29,6 @@ use OCA\Files_External\Lib\Backend\Backend;
 use OCA\Files_External\Lib\StorageConfig;
 
 class BackendTest extends \Test\TestCase {
-
 	public function testJsonSerialization() {
 		$backend = $this->getMockBuilder(Backend::class)
 			->setMethods(['jsonSerializeDefinition'])
@@ -78,7 +78,7 @@ class BackendTest extends \Test\TestCase {
 
 	public function testLegacyAuthMechanismCallback() {
 		$backend = new Backend();
-		$backend->setLegacyAuthMechanismCallback(function(array $params) {
+		$backend->setLegacyAuthMechanismCallback(function (array $params) {
 			if (isset($params['ping'])) {
 				return 'pong';
 			}
@@ -89,5 +89,4 @@ class BackendTest extends \Test\TestCase {
 		$this->assertEquals('foobar', $backend->getLegacyAuthMechanism(['other' => true]));
 		$this->assertEquals('foobar', $backend->getLegacyAuthMechanism());
 	}
-
 }

@@ -2,9 +2,10 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
  * @license AGPL-3.0
@@ -48,10 +49,10 @@ class SystemPrincipalBackendTest extends TestCase {
 				'uri' => 'principals/system/system',
 				'{DAV:}displayname' => 'system',
 			],
-			[
-				'uri' => 'principals/system/public',
-				'{DAV:}displayname' => 'public',
-			]
+				[
+					'uri' => 'principals/system/public',
+					'{DAV:}displayname' => 'public',
+				]
 			], 'principals/system'],
 		];
 	}
@@ -125,7 +126,7 @@ class SystemPrincipalBackendTest extends TestCase {
 
 	public function providesPrincipalForGetGroupMembership() {
 		return [
-				['principals/system/a'],
+			['principals/system/a'],
 		];
 	}
 
@@ -137,6 +138,4 @@ class SystemPrincipalBackendTest extends TestCase {
 		$result = $backend->getGroupMembership('principals/system/system');
 		$this->assertEquals([], $result);
 	}
-
-
 }

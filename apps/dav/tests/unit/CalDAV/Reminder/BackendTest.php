@@ -8,7 +8,7 @@ declare(strict_types=1);
  *
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -31,7 +31,6 @@ namespace OCA\DAV\Tests\unit\CalDAV\Reminder;
 
 use OCA\DAV\CalDAV\Reminder\Backend as ReminderBackend;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use Test\TestCase;
 
 class BackendTest extends TestCase {

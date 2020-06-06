@@ -46,7 +46,7 @@ class DummyMountProvider implements IMountProvider {
 	 * @param IStorageFactory $loader
 	 * @return \OCP\Files\Mount\IMountPoint[]
 	 */
-	public function  getMountsForUser(IUser $user, IStorageFactory $loader) {
+	public function getMountsForUser(IUser $user, IStorageFactory $loader) {
 		return isset($this->mounts[$user->getUID()]) ? $this->mounts[$user->getUID()] : [];
 	}
 }
@@ -59,14 +59,13 @@ class DummyMountProvider implements IMountProvider {
  * @package Test\Files
  */
 class FilesystemTest extends \Test\TestCase {
-
-	const TEST_FILESYSTEM_USER1 = "test-filesystem-user1";
-	const TEST_FILESYSTEM_USER2 = "test-filesystem-user1";
+	public const TEST_FILESYSTEM_USER1 = "test-filesystem-user1";
+	public const TEST_FILESYSTEM_USER2 = "test-filesystem-user1";
 
 	/**
 	 * @var array tmpDirs
 	 */
-	private $tmpDirs = array();
+	private $tmpDirs = [];
 
 	/**
 	 * @return array
@@ -74,7 +73,7 @@ class FilesystemTest extends \Test\TestCase {
 	private function getStorageData() {
 		$dir = \OC::$server->getTempManager()->getTemporaryFolder();
 		$this->tmpDirs[] = $dir;
-		return array('datadir' => $dir);
+		return ['datadir' => $dir];
 	}
 
 	protected function setUp(): void {
@@ -225,29 +224,29 @@ class FilesystemTest extends \Test\TestCase {
 	}
 
 	public function isValidPathData() {
-		return array(
-			array('/', true),
-			array('/path', true),
-			array('/foo/bar', true),
-			array('/foo//bar/', true),
-			array('/foo////bar', true),
-			array('/foo//\///bar', true),
-			array('/foo/bar/.', true),
-			array('/foo/bar/./', true),
-			array('/foo/bar/./.', true),
-			array('/foo/bar/././', true),
-			array('/foo/bar/././..bar', true),
-			array('/foo/bar/././..bar/a', true),
-			array('/foo/bar/././..', false),
-			array('/foo/bar/././../', false),
-			array('/foo/bar/.././', false),
-			array('/foo/bar/../../', false),
-			array('/foo/bar/../..\\', false),
-			array('..', false),
-			array('../', false),
-			array('../foo/bar', false),
-			array('..\foo/bar', false),
-		);
+		return [
+			['/', true],
+			['/path', true],
+			['/foo/bar', true],
+			['/foo//bar/', true],
+			['/foo////bar', true],
+			['/foo//\///bar', true],
+			['/foo/bar/.', true],
+			['/foo/bar/./', true],
+			['/foo/bar/./.', true],
+			['/foo/bar/././', true],
+			['/foo/bar/././..bar', true],
+			['/foo/bar/././..bar/a', true],
+			['/foo/bar/././..', false],
+			['/foo/bar/././../', false],
+			['/foo/bar/.././', false],
+			['/foo/bar/../../', false],
+			['/foo/bar/../..\\', false],
+			['..', false],
+			['../', false],
+			['../foo/bar', false],
+			['..\foo/bar', false],
+		];
 	}
 
 	/**
@@ -258,18 +257,18 @@ class FilesystemTest extends \Test\TestCase {
 	}
 
 	public function isFileBlacklistedData() {
-		return array(
-			array('/etc/foo/bar/foo.txt', false),
-			array('\etc\foo/bar\foo.txt', false),
-			array('.htaccess', true),
-			array('.htaccess/', true),
-			array('.htaccess\\', true),
-			array('/etc/foo\bar/.htaccess\\', true),
-			array('/etc/foo\bar/.htaccess/', true),
-			array('/etc/foo\bar/.htaccess/foo', false),
-			array('//foo//bar/\.htaccess/', true),
-			array('\foo\bar\.HTAccess', true),
-		);
+		return [
+			['/etc/foo/bar/foo.txt', false],
+			['\etc\foo/bar\foo.txt', false],
+			['.htaccess', true],
+			['.htaccess/', true],
+			['.htaccess\\', true],
+			['/etc/foo\bar/.htaccess\\', true],
+			['/etc/foo\bar/.htaccess/', true],
+			['/etc/foo\bar/.htaccess/foo', false],
+			['//foo//bar/\.htaccess/', true],
+			['\foo\bar\.HTAccess', true],
+		];
 	}
 
 	/**
@@ -299,12 +298,11 @@ class FilesystemTest extends \Test\TestCase {
 			$userObj = \OC::$server->getUserManager()->get($user);
 			\OC::$server->getUserSession()->setUser($userObj);
 			\OC\Files\Filesystem::init($user, '/' . $user . '/files');
-
 		}
 		\OC_Hook::clear('OC_Filesystem');
 		\OC_Hook::connect('OC_Filesystem', 'post_write', $this, 'dummyHook');
 
-		\OC\Files\Filesystem::mount('OC\Files\Storage\Temporary', array(), '/');
+		\OC\Files\Filesystem::mount('OC\Files\Storage\Temporary', [], '/');
 
 		$rootView = new \OC\Files\View('');
 		$rootView->mkdir('/' . $user);
@@ -391,12 +389,14 @@ class FilesystemTest extends \Test\TestCase {
 		$this->assertTrue($homeMount->instanceOfStorage('\OCP\Files\IHomeStorage'));
 		if ($homeMount->instanceOfStorage('\OC\Files\ObjectStore\HomeObjectStoreStorage')) {
 			$this->assertEquals('object::user:' . $userId, $homeMount->getId());
-		} else if ($homeMount->instanceOfStorage('\OC\Files\Storage\Home')) {
+		} elseif ($homeMount->instanceOfStorage('\OC\Files\Storage\Home')) {
 			$this->assertEquals('home::' . $userId, $homeMount->getId());
 		}
 
 		$user = \OC::$server->getUserManager()->get($userId);
-		if ($user !== null) { $user->delete(); }
+		if ($user !== null) {
+			$user->delete();
+		}
 	}
 
 	public function dummyHook($arguments) {
@@ -425,7 +425,9 @@ class FilesystemTest extends \Test\TestCase {
 		$this->assertTrue($storage->instanceOfStorage('\OCP\Files\IHomeStorage'));
 		$this->assertEquals('cache', $internalPath);
 		$user = \OC::$server->getUserManager()->get($userId);
-		if ($user !== null) { $user->delete(); }
+		if ($user !== null) {
+			$user->delete();
+		}
 
 		$config->setSystemValue('cache_path', $oldCachePath);
 	}
@@ -454,7 +456,9 @@ class FilesystemTest extends \Test\TestCase {
 		$this->assertTrue($storage->instanceOfStorage('\OC\Files\Storage\Local'));
 		$this->assertEquals('', $internalPath);
 		$user = \OC::$server->getUserManager()->get($userId);
-		if ($user !== null) { $user->delete(); }
+		if ($user !== null) {
+			$user->delete();
+		}
 
 		$config->setSystemValue('cache_path', $oldCachePath);
 	}

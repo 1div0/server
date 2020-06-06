@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -39,7 +40,6 @@ use OCP\Share\IShare;
  * @group DB
  */
 class SharedStorageTest extends TestCase {
-
 	protected function setUp(): void {
 		parent::setUp();
 		\OCA\Files_Trashbin\Trashbin::registerHooks();
@@ -406,7 +406,7 @@ class SharedStorageTest extends TestCase {
 
 		$mountConfigManager = \OC::$server->getMountProviderCollection();
 		$mounts = $mountConfigManager->getMountsForUser(\OC::$server->getUserManager()->get(self::TEST_FILES_SHARING_API_USER3));
-		array_walk($mounts, array(\OC\Files\Filesystem::getMountManager(), 'addMount'));
+		array_walk($mounts, [\OC\Files\Filesystem::getMountManager(), 'addMount']);
 
 		$this->assertTrue($rootView->file_exists('/' . self::TEST_FILES_SHARING_API_USER3 . '/files/' . $this->filename));
 
@@ -443,7 +443,7 @@ class SharedStorageTest extends TestCase {
 		list($sharedStorage,) = $view->resolvePath($this->folder);
 		$this->assertTrue($sharedStorage->instanceOfStorage('OCA\Files_Sharing\ISharedStorage'));
 
-		$sourceStorage = new \OC\Files\Storage\Temporary(array());
+		$sourceStorage = new \OC\Files\Storage\Temporary([]);
 		$sourceStorage->file_put_contents('foo.txt', 'asd');
 
 		$sharedStorage->copyFromStorage($sourceStorage, 'foo.txt', 'bar.txt');
@@ -476,7 +476,7 @@ class SharedStorageTest extends TestCase {
 		list($sharedStorage,) = $view->resolvePath($this->folder);
 		$this->assertTrue($sharedStorage->instanceOfStorage('OCA\Files_Sharing\ISharedStorage'));
 
-		$sourceStorage = new \OC\Files\Storage\Temporary(array());
+		$sourceStorage = new \OC\Files\Storage\Temporary([]);
 		$sourceStorage->file_put_contents('foo.txt', 'asd');
 
 		$sharedStorage->moveFromStorage($sourceStorage, 'foo.txt', 'bar.txt');
@@ -564,7 +564,6 @@ class SharedStorageTest extends TestCase {
 
 		$this->view->unlink($this->folder);
 		$this->shareManager->deleteShare($share);
-
 	}
 
 	public function testInitWithNonExistingUser() {

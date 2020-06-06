@@ -5,6 +5,7 @@
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Christoph Schaefer "christophł@wolkesicher.de"
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Daniel Rudolf <github.com@daniel-rudolf.de>
  * @author Greta Doci <gretadoci@gmail.com>
@@ -135,7 +136,7 @@ class AppManager implements IAppManager {
 			$values = $this->appConfig->getValues(false, 'enabled');
 
 			$alwaysEnabledApps = $this->getAlwaysEnabledApps();
-			foreach($alwaysEnabledApps as $appId) {
+			foreach ($alwaysEnabledApps as $appId) {
 				$values[$appId] = 'yes';
 			}
 
@@ -240,7 +241,7 @@ class AppManager implements IAppManager {
 		} elseif ($user === null) {
 			return false;
 		} else {
-			if(empty($enabled)){
+			if (empty($enabled)) {
 				return false;
 			}
 
@@ -384,7 +385,6 @@ class AppManager implements IAppManager {
 			ManagerEvent::EVENT_APP_ENABLE_FOR_GROUPS, $appId, $groups
 		));
 		$this->clearAppsCache();
-
 	}
 
 	/**
@@ -427,7 +427,7 @@ class AppManager implements IAppManager {
 	 */
 	public function getAppPath($appId) {
 		$appPath = \OC_App::getAppPath($appId);
-		if($appPath === false) {
+		if ($appPath === false) {
 			throw new AppPathNotFoundException('Could not find path for ' . $appId);
 		}
 		return $appPath;
@@ -442,7 +442,7 @@ class AppManager implements IAppManager {
 	 */
 	public function getAppWebPath(string $appId): string {
 		$appWebPath = \OC_App::getAppWebPath($appId);
-		if($appWebPath === false) {
+		if ($appWebPath === false) {
 			throw new AppPathNotFoundException('Could not find web path for ' . $appId);
 		}
 		return $appWebPath;
@@ -522,7 +522,7 @@ class AppManager implements IAppManager {
 	}
 
 	public function getAppVersion(string $appId, bool $useCache = true): string {
-		if(!$useCache || !isset($this->appVersions[$appId])) {
+		if (!$useCache || !isset($this->appVersions[$appId])) {
 			$appInfo = $this->getAppInfo($appId);
 			$this->appVersions[$appId] = ($appInfo !== null && isset($appInfo['version'])) ? $appInfo['version'] : '0';
 		}
@@ -540,12 +540,12 @@ class AppManager implements IAppManager {
 	 */
 	public function getIncompatibleApps(string $version): array {
 		$apps = $this->getInstalledApps();
-		$incompatibleApps = array();
+		$incompatibleApps = [];
 		foreach ($apps as $appId) {
 			$info = $this->getAppInfo($appId);
 			if ($info === null) {
 				$incompatibleApps[] = ['id' => $appId];
-			} else if (!\OC_App::isAppCompatible($version, $info)) {
+			} elseif (!\OC_App::isAppCompatible($version, $info)) {
 				$incompatibleApps[] = $info;
 			}
 		}

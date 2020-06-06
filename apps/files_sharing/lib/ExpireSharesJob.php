@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -68,10 +69,9 @@ class ExpireSharesJob extends TimedJob {
 			);
 
 		$shares = $qb->execute();
-		while($share = $shares->fetch()) {
+		while ($share = $shares->fetch()) {
 			\OC\Share\Share::unshare($share['item_type'], $share['file_source'], \OCP\Share::SHARE_TYPE_LINK, null, $share['uid_owner']);
 		}
 		$shares->closeCursor();
 	}
-
 }

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017 Bjoern Schiessle <bjoern@schiessle.org>
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -22,7 +23,6 @@
  */
 
 namespace OCA\Encryption\Command;
-
 
 use OCA\Encryption\Util;
 use OCP\IConfig;
@@ -51,7 +51,6 @@ class DisableMasterKey extends Command {
 	public function __construct(Util $util,
 								IConfig $config,
 								QuestionHelper $questionHelper) {
-
 		$this->util = $util;
 		$this->config = $config;
 		$this->questionHelper = $questionHelper;
@@ -65,10 +64,9 @@ class DisableMasterKey extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-
 		$isMasterKeyEnabled = $this->util->isMasterKeyEnabled();
 
-		if(!$isMasterKeyEnabled) {
+		if (!$isMasterKeyEnabled) {
 			$output->writeln('Master key already disabled');
 		} else {
 			$question = new ConfirmationQuestion(
@@ -84,7 +82,5 @@ class DisableMasterKey extends Command {
 				$output->writeln('aborted.');
 			}
 		}
-
 	}
-
 }

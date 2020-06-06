@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Vincent Petry <pvince81@owncloud.com>
@@ -42,7 +43,7 @@ trait CommandLine {
 	 * @return int exit code
 	 */
 	public function runOcc($args = []) {
-		$args = array_map(function($arg) {
+		$args = array_map(function ($arg) {
 			return escapeshellarg($arg);
 		}, $args);
 		$args[] = '--no-ansi';
@@ -124,7 +125,7 @@ trait CommandLine {
 				$msg .= ' Exceptions: ' . implode(', ', $exceptions);
 			}
 			throw new \Exception($msg);
-		} else if (!empty($exceptions)) {
+		} elseif (!empty($exceptions)) {
 			$msg = 'The command was successful but triggered exceptions: ' . implode(', ', $exceptions);
 			throw new \Exception($msg);
 		}

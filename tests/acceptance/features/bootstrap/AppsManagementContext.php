@@ -26,7 +26,6 @@
 use Behat\Behat\Context\Context;
 
 class AppsManagementContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 
 	/**
@@ -60,7 +59,7 @@ class AppsManagementContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function bundleButton($bundle) {
-		return Locator::forThe()->xpath("//div[@id='app-content']//div[@class='apps-header']/h2[normalize-space() = '$bundle']/input")->
+		return Locator::forThe()->xpath("//main[@id='app-content']//div[@class='apps-header']/h2[normalize-space() = '$bundle']/input")->
 		describedAs("Button to enable / disable bundles");
 	}
 
@@ -68,7 +67,7 @@ class AppsManagementContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function rowForApp($app) {
-		return Locator::forThe()->xpath("//div[@id='app-content']//div[@class='app-name'][normalize-space() = '$app']/..")->
+		return Locator::forThe()->xpath("//main[@id='app-content']//div[@class='app-name'][normalize-space() = '$app']/..")->
 				describedAs("Row for app $app in Apps Management");
 	}
 
@@ -76,7 +75,7 @@ class AppsManagementContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function emptyAppList() {
-		return Locator::forThe()->xpath("//div[@id='app-content']//div[@id='apps-list-empty']")->
+		return Locator::forThe()->xpath("//main[@id='app-content']//div[@id='apps-list-empty']")->
 			describedAs("Empty apps list view");
 	}
 
@@ -84,7 +83,7 @@ class AppsManagementContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function appEntries() {
-		return Locator::forThe()->xpath("//div[@id='app-content']//div[@class='section']")->
+		return Locator::forThe()->xpath("//main[@id='app-content']//div[@class='section']")->
 			describedAs("Entries in apps list");
 	}
 
@@ -227,6 +226,4 @@ class AppsManagementContext implements Context, ActorAwareInterface {
 			PHPUnit_Framework_Assert::fail("The sidebar was not shown yet after $timeout seconds");
 		}
 	}
-
-
 }

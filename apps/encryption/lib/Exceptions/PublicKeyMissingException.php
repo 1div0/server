@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -31,10 +32,9 @@ class PublicKeyMissingException extends GenericEncryptionException {
 	 * @param string $userId
 	 */
 	public function __construct($userId) {
-		if(empty($userId)) {
+		if (empty($userId)) {
 			$userId = "<no-user-id-given>";
 		}
 		parent::__construct("Public Key missing for user: $userId");
 	}
-
 }

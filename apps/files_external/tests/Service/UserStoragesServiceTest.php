@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
@@ -64,7 +65,7 @@ class UserStoragesServiceTest extends StoragesServiceTest {
 		$userSession
 			->expects($this->any())
 			->method('getUser')
-			->will($this->returnValue($this->user));
+			->willReturn($this->user);
 
 		$this->service = new UserStoragesService($this->backendService, $this->dbConfig, $userSession, $this->mountCache);
 	}

@@ -4,6 +4,7 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author AW-UC <git@a-wesemann.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
@@ -32,7 +33,7 @@ use OCP\ILogger;
 class NaturalSort {
 	private static $instance;
 	private $collator;
-	private $cache = array();
+	private $cache = [];
 
 	/**
 	 * Instantiate a new \OC\NaturalSort instance.
@@ -58,7 +59,7 @@ class NaturalSort {
 		if (isset($this->cache[$t])) {
 			return $this->cache[$t];
 		}
-		$tz = array();
+		$tz = [];
 		$x = 0;
 		$y = -1;
 		$n = null;
@@ -90,8 +91,7 @@ class NaturalSort {
 			// German umlauts, so using en_US instead
 			if (class_exists('Collator')) {
 				$this->collator = new \Collator('en_US');
-			}
-			else {
+			} else {
 				$this->collator = new \OC\NaturalSort_DefaultCollator();
 			}
 		}

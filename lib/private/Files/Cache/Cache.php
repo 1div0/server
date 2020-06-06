@@ -6,6 +6,7 @@
  * @author Ari Selseng <ari@selseng.net>
  * @author Artem Kochnev <MrJeos@gmail.com>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Florin Peter <github@florin-peter.de>
  * @author Frédéric Fortier <frederic.fortier@oronospolytechnique.com>
  * @author Jens-Christian Fischer <jens-christian.fischer@switch.ch>
@@ -155,7 +156,7 @@ class Cache implements ICache {
 		//merge partial data
 		if (!$data and is_string($file) and isset($this->partial[$file])) {
 			return $this->partial[$file];
-		} else if (!$data) {
+		} elseif (!$data) {
 			return $data;
 		} else {
 			return self::cacheEntryFromData($data, $this->mimetypeLoader);
@@ -274,7 +275,9 @@ class Cache implements ICache {
 		}
 
 		$data['path'] = $file;
-		$data['parent'] = $this->getParentId($file);
+		if (!isset($data['parent'])) {
+			$data['parent'] = $this->getParentId($file);
+		}
 		$data['name'] = basename($file);
 
 		[$values, $extensionValues] = $this->normalizeData($data);
@@ -307,6 +310,10 @@ class Cache implements ICache {
 			}
 		} catch (UniqueConstraintViolationException $e) {
 			// entry exists already
+			if ($this->connection->inTransaction()) {
+				$this->connection->commit();
+				$this->connection->beginTransaction();
+			}
 		}
 
 		// The file was created in the mean time
@@ -325,7 +332,6 @@ class Cache implements ICache {
 	 * @param array $data [$key => $value] the metadata to update, only the fields provided in the array will be updated, non-provided values will remain unchanged
 	 */
 	public function update($id, array $data) {
-
 		if (isset($data['path'])) {
 			// normalize path
 			$data['path'] = $this->normalize($data['path']);
@@ -419,14 +425,14 @@ class Cache implements ICache {
 			if (array_search($name, $fields) !== false) {
 				if ($name === 'path') {
 					$params['path_hash'] = md5($value);
-				} else if ($name === 'mimetype') {
+				} elseif ($name === 'mimetype') {
 					$params['mimepart'] = $this->mimetypeLoader->getId(substr($value, 0, strpos($value, '/')));
 					$value = $this->mimetypeLoader->getId($value);
-				} else if ($name === 'storage_mtime') {
+				} elseif ($name === 'storage_mtime') {
 					if (!$doNotCopyStorageMTime && !isset($data['mtime'])) {
 						$params['mtime'] = $value;
 					}
-				} else if ($name === 'encrypted') {
+				} elseif ($name === 'encrypted') {
 					if (isset($data['encryptedVersion'])) {
 						$value = $data['encryptedVersion'];
 					} else {
@@ -548,7 +554,7 @@ class Cache implements ICache {
 	 */
 	private function removeChildren(ICacheEntry $entry) {
 		$children = $this->getFolderContentsById($entry->getId());
-		$childIds = array_map(function(ICacheEntry $cacheEntry) {
+		$childIds = array_map(function (ICacheEntry $cacheEntry) {
 			return $cacheEntry->getId();
 		}, $children);
 		$childFolders = array_filter($children, function ($child) {
@@ -609,8 +615,8 @@ class Cache implements ICache {
 			$sourceId = $sourceData['fileid'];
 			$newParentId = $this->getParentId($targetPath);
 
-			list($sourceStorageId, $sourcePath) = $sourceCache->getMoveInfo($sourcePath);
-			list($targetStorageId, $targetPath) = $this->getMoveInfo($targetPath);
+			[$sourceStorageId, $sourcePath] = $sourceCache->getMoveInfo($sourcePath);
+			[$targetStorageId, $targetPath] = $this->getMoveInfo($targetPath);
 
 			if (is_null($sourceStorageId) || $sourceStorageId === false) {
 				throw new \Exception('Invalid source storage id: ' . $sourceStorageId);
@@ -880,7 +886,7 @@ class Cache implements ICache {
 				->whereParent($id);
 
 			if ($row = $query->execute()->fetch()) {
-				list($sum, $min) = array_values($row);
+				[$sum, $min] = array_values($row);
 				$sum = 0 + $sum;
 				$min = 0 + $min;
 				if ($min === -1) {
@@ -958,7 +964,7 @@ class Cache implements ICache {
 	 * @return array first element holding the storage id, second the path
 	 * @deprecated use getPathById() instead
 	 */
-	static public function getById($id) {
+	public static function getById($id) {
 		$query = \OC::$server->getDatabaseConnection()->getQueryBuilder();
 		$query->select('path', 'storage')
 			->from('filecache')
@@ -984,7 +990,6 @@ class Cache implements ICache {
 	 * @return string
 	 */
 	public function normalize($path) {
-
 		return trim(\OC_Util::normalizeUnicode($path), '/');
 	}
 }

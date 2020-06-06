@@ -3,6 +3,7 @@
  * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -56,7 +57,7 @@ class LoginData {
 
 	public function __construct(IRequest $request,
 								string $username,
-								string $password,
+								?string $password,
 								string $redirectUrl = null,
 								string $timeZone = '',
 								string $timeZoneOffset = '') {
@@ -80,7 +81,7 @@ class LoginData {
 		return $this->username;
 	}
 
-	public function getPassword(): string {
+	public function getPassword(): ?string {
 		return $this->password;
 	}
 
@@ -117,5 +118,4 @@ class LoginData {
 	public function isRememberLogin(): bool {
 		return $this->rememberLogin;
 	}
-
 }

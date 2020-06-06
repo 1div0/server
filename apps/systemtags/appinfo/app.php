@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -32,14 +33,14 @@ use OCA\SystemTags\Activity\Listener;
 $eventDispatcher = \OC::$server->getEventDispatcher();
 $eventDispatcher->addListener(
 	'OCA\Files::loadAdditionalScripts',
-	function() {
+	function () {
 		// FIXME: no public API for these ?
 		\OCP\Util::addScript('dist/systemtags');
 		\OCP\Util::addScript('systemtags', 'systemtags');
 	}
 );
 
-$managerListener = function(ManagerEvent $event) {
+$managerListener = function (ManagerEvent $event) {
 	/** @var \OCA\SystemTags\Activity\Listener $listener */
 	$listener = \OC::$server->query(Listener::class);
 	$listener->event($event);
@@ -49,7 +50,7 @@ $eventDispatcher->addListener(ManagerEvent::EVENT_CREATE, $managerListener);
 $eventDispatcher->addListener(ManagerEvent::EVENT_DELETE, $managerListener);
 $eventDispatcher->addListener(ManagerEvent::EVENT_UPDATE, $managerListener);
 
-$mapperListener = function(MapperEvent $event) {
+$mapperListener = function (MapperEvent $event) {
 	$application = new \OCP\AppFramework\App('systemtags');
 	/** @var \OCA\SystemTags\Activity\Listener $listener */
 	$listener = \OC::$server->query(Listener::class);
@@ -69,4 +70,3 @@ $eventDispatcher->addListener(MapperEvent::EVENT_UNASSIGN, $mapperListener);
 		'name' => $l->t('Tags'),
 	];
 });
-

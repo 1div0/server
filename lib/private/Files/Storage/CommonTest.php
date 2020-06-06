@@ -4,6 +4,7 @@
  *
  * @author Bart Visscher <bartv@thisnet.nl>
  * @author Christopher Schäpers <kondou@ts.unde.re>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Felix Moeller <mail@felixmoeller.de>
  * @author Michael Gapczynski <GapczynskiM@gmail.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -32,7 +33,7 @@
 
 namespace OC\Files\Storage;
 
-class CommonTest extends \OC\Files\Storage\Common{
+class CommonTest extends \OC\Files\Storage\Common {
 	/**
 	 * underlying local storage used for missing functions
 	 * @var \OC\Files\Storage\Local
@@ -43,7 +44,7 @@ class CommonTest extends \OC\Files\Storage\Common{
 		$this->storage=new \OC\Files\Storage\Local($params);
 	}
 
-	public function getId(){
+	public function getId() {
 		return 'test::'.$this->storage->getId();
 	}
 	public function mkdir($path) {

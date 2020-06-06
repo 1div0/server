@@ -4,6 +4,7 @@
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Härtl <jus@bitgrid.net>
+ * @author Robin Appelman <robin@icewind.nl>
  * @author Tobias Kaminsky <tobias@kaminsky.me>
  *
  * @license GNU AGPL version 3 or any later version
@@ -34,8 +35,6 @@ use OCP\DirectEditing\ACreateFromTemplate;
 use OCP\DirectEditing\IEditor;
 use \OCP\DirectEditing\IManager;
 use OCP\DirectEditing\IToken;
-use OCP\DirectEditing\RegisterDirectEditorEvent;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
@@ -50,7 +49,6 @@ use function array_key_exists;
 use function in_array;
 
 class Manager implements IManager {
-
 	private const TOKEN_CLEANUP_TIME = 12 * 60 * 60 ;
 
 	public const TABLE_TOKENS = 'direct_edit';
@@ -173,7 +171,6 @@ class Manager implements IManager {
 			}
 			$editor = $this->getEditor($tokenObject->getEditor());
 			$this->accessToken($token);
-
 		} catch (\Throwable $throwable) {
 			$this->invalidateToken($token);
 			return new NotFoundResponse();
@@ -278,5 +275,4 @@ class Manager implements IManager {
 		}
 		return $files[0];
 	}
-
 }

@@ -31,9 +31,9 @@ $urlGenerator = $_['urlGenerator'];
 	<h2><?php p($l->t('Connect to your account')) ?></h2>
 	<p class="info">
 		<?php print_unescaped($l->t('Please log in before granting %1$s access to your %2$s account.', [
-								'<strong>' . \OCP\Util::sanitizeHTML($_['client']) . '</strong>',
-								\OCP\Util::sanitizeHTML($_['instanceName'])
-							])) ?>
+			'<strong>' . \OCP\Util::sanitizeHTML($_['client']) . '</strong>',
+			\OCP\Util::sanitizeHTML($_['instanceName'])
+		])) ?>
 	</p>
 
 	<br/>
@@ -59,6 +59,6 @@ $urlGenerator = $_['urlGenerator'];
 	</form>
 </div>
 
-<?php if(empty($_['oauthState'])): ?>
+<?php if (empty($_['oauthState'])): ?>
 <a id="app-token-login" class="warning" href="#"><?php p($l->t('Alternative log in using app token')) ?></a>
 <?php endif; ?>

@@ -6,9 +6,10 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2019, Thomas Citharel
  * @copyright Copyright (c) 2019, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -94,10 +95,12 @@ class PushProvider extends AbstractProvider {
 		$eventDetails = $this->extractEventDetails($vevent);
 		$eventDetails['calendar_displayname'] = $calendarDisplayName;
 		$eventUUID = (string) $vevent->UID;
-		// Empty Notification ObjectId will be catched by OC\Notification\Notification
-		$eventUUIDHash = $eventUUID ? hash('sha256', $eventUUID, false) : '';
+		if (!$eventUUID) {
+			return;
+		};
+		$eventUUIDHash = hash('sha256', $eventUUID, false);
 
-		foreach($users as $user) {
+		foreach ($users as $user) {
 			/** @var INotification $notification */
 			$notification = $this->manager->createNotification();
 			$notification->setApp(Application::APP_ID)

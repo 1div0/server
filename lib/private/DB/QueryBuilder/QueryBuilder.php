@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Robin Appelman <robin@icewind.nl>
@@ -114,11 +115,11 @@ class QueryBuilder implements IQueryBuilder {
 	public function expr() {
 		if ($this->connection instanceof OracleConnection) {
 			return new OCIExpressionBuilder($this->connection, $this);
-		} else if ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+		} elseif ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
 			return new PgSqlExpressionBuilder($this->connection, $this);
-		} else if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+		} elseif ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
 			return new MySqlExpressionBuilder($this->connection, $this);
-		} else if ($this->connection->getDatabasePlatform() instanceof SqlitePlatform) {
+		} elseif ($this->connection->getDatabasePlatform() instanceof SqlitePlatform) {
 			return new SqliteExpressionBuilder($this->connection, $this);
 		} else {
 			return new ExpressionBuilder($this->connection, $this);
@@ -144,9 +145,9 @@ class QueryBuilder implements IQueryBuilder {
 	public function func() {
 		if ($this->connection instanceof OracleConnection) {
 			return new OCIFunctionBuilder($this->helper);
-		} else if ($this->connection->getDatabasePlatform() instanceof SqlitePlatform) {
+		} elseif ($this->connection->getDatabasePlatform() instanceof SqlitePlatform) {
 			return new SqliteFunctionBuilder($this->helper);
-		} else if ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+		} elseif ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
 			return new PgSqlFunctionBuilder($this->helper);
 		} else {
 			return new FunctionBuilder($this->helper);
@@ -273,7 +274,7 @@ class QueryBuilder implements IQueryBuilder {
 	 *
 	 * @return $this This QueryBuilder instance.
 	 */
-	public function setParameters(array $params, array $types = array()) {
+	public function setParameters(array $params, array $types = []) {
 		$this->queryBuilder->setParameters($params, $types);
 
 		return $this;
@@ -412,7 +413,6 @@ class QueryBuilder implements IQueryBuilder {
 	 * @return $this This QueryBuilder instance.
 	 */
 	public function selectAlias($select, $alias) {
-
 		$this->queryBuilder->addSelect(
 			$this->helper->quoteColumnName($select) . ' AS ' . $this->helper->quoteColumnName($alias)
 		);
@@ -434,7 +434,6 @@ class QueryBuilder implements IQueryBuilder {
 	 * @return $this This QueryBuilder instance.
 	 */
 	public function selectDistinct($select) {
-
 		$this->queryBuilder->addSelect(
 			'DISTINCT ' . $this->helper->quoteColumnName($select)
 		);

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -41,8 +42,8 @@ class ContactsManagerTest extends TestCase {
 		/** @var CardDavBackend | \PHPUnit_Framework_MockObject_MockObject $backEnd */
 		$backEnd = $this->getMockBuilder(CardDavBackend::class)->disableOriginalConstructor()->getMock();
 		$backEnd->method('getAddressBooksForUser')->willReturn([
-				['{DAV:}displayname' => 'Test address book', 'uri' => 'default'],
-			]);
+			['{DAV:}displayname' => 'Test address book', 'uri' => 'default'],
+		]);
 
 		$l = $this->createMock(IL10N::class);
 		$app = new ContactsManager($backEnd, $l);

@@ -7,6 +7,7 @@
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Joas Schilling <coding@schilljs.com>
+ * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Michael Weimann <mail@michael-weimann.eu>
@@ -34,6 +35,7 @@ namespace OC\Core\Controller;
 use OC\AppFramework\Http\Request;
 use OC\Authentication\Login\Chain;
 use OC\Authentication\Login\LoginData;
+use OC\Authentication\WebAuthn\Manager as WebAuthnManager;
 use OC\Security\Bruteforce\Throttler;
 use OC\User\Session;
 use OC_App;
@@ -56,9 +58,8 @@ use OCP\IUserSession;
 use OCP\Util;
 
 class LoginController extends Controller {
-
-	const LOGIN_MSG_INVALIDPASSWORD = 'invalidpassword';
-	const LOGIN_MSG_USERDISABLED = 'userdisabled';
+	public const LOGIN_MSG_INVALIDPASSWORD = 'invalidpassword';
+	public const LOGIN_MSG_USERDISABLED = 'userdisabled';
 
 	/** @var IUserManager */
 	private $userManager;
@@ -80,6 +81,8 @@ class LoginController extends Controller {
 	private $loginChain;
 	/** @var IInitialStateService */
 	private $initialStateService;
+	/** @var WebAuthnManager */
+	private $webAuthnManager;
 
 	public function __construct(?string $appName,
 								IRequest $request,
@@ -92,7 +95,8 @@ class LoginController extends Controller {
 								Defaults $defaults,
 								Throttler $throttler,
 								Chain $loginChain,
-								IInitialStateService $initialStateService) {
+								IInitialStateService $initialStateService,
+								WebAuthnManager $webAuthnManager) {
 		parent::__construct($appName, $request);
 		$this->userManager = $userManager;
 		$this->config = $config;
@@ -104,6 +108,7 @@ class LoginController extends Controller {
 		$this->throttler = $throttler;
 		$this->loginChain = $loginChain;
 		$this->initialStateService = $initialStateService;
+		$this->webAuthnManager = $webAuthnManager;
 	}
 
 	/**
@@ -181,6 +186,8 @@ class LoginController extends Controller {
 
 		$this->setPasswordResetInitialState($user);
 
+		$this->initialStateService->provideInitialState('core', 'webauthn-available', $this->webAuthnManager->isWebAuthnAvailable());
+
 		// OpenGraph Support: http://ogp.me/
 		Util::addHeader('meta', ['property' => 'og:title', 'content' => Util::sanitizeHTML($this->defaults->getName())]);
 		Util::addHeader('meta', ['property' => 'og:description', 'content' => Util::sanitizeHTML($this->defaults->getSlogan())]);
@@ -253,7 +260,7 @@ class LoginController extends Controller {
 
 	private function generateRedirect(?string $redirectUrl): RedirectResponse {
 		if ($redirectUrl !== null && $this->userSession->isLoggedIn()) {
-			$location = $this->urlGenerator->getAbsoluteURL(urldecode($redirectUrl));
+			$location = $this->urlGenerator->getAbsoluteURL($redirectUrl);
 			// Deny the redirect if the URL contains a @
 			// This prevents unvalidated redirects like ?redirect_url=:user@domain.com
 			if (strpos($location, '@') === false) {

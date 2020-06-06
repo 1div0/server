@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  *
  * @license AGPL-3.0
@@ -84,7 +85,7 @@ class GetConfig extends Base {
 				foreach ($configNames as $configName) {
 					if (isset($configValue[$configName])) {
 						$configValue = $configValue[$configName];
-					} else if (!$input->hasParameterOption('--default-value')) {
+					} elseif (!$input->hasParameterOption('--default-value')) {
 						return 1;
 					} else {
 						$configValue = $defaultValue;

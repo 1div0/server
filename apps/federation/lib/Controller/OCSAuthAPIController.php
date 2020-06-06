@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -46,7 +47,7 @@ use OCP\Security\ISecureRandom;
  *
  * @package OCA\Federation\Controller
  */
-class OCSAuthAPIController extends OCSController{
+class OCSAuthAPIController extends OCSController {
 
 	/** @var ISecureRandom  */
 	private $secureRandom;
@@ -181,7 +182,6 @@ class OCSAuthAPIController extends OCSController{
 	 * @throws OCSForbiddenException
 	 */
 	public function getSharedSecret($url, $token) {
-
 		if ($this->trustedServers->isTrustedServer($url) === false) {
 			$this->logger->error('remote server not trusted (' . $url . ') while getting shared secret', ['app' => 'federation']);
 			throw new OCSForbiddenException();

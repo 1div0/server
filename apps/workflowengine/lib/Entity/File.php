@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Arthur Schiwon <blizzz@arthur-schiwon.de>
@@ -45,7 +46,6 @@ use OCP\WorkflowEngine\IEntity;
 use OCP\WorkflowEngine\IRuleMatcher;
 
 class File implements IEntity, IDisplayText, IUrl {
-
 	private const EVENT_NAMESPACE = '\OCP\Files::';
 
 	/** @var IL10N */
@@ -124,7 +124,7 @@ class File implements IEntity, IDisplayText, IUrl {
 	public function isLegitimatedForUserId(string $uid): bool {
 		try {
 			$node = $this->getNode();
-			if($node->getOwner()->getUID() === $uid) {
+			if ($node->getOwner()->getUID() === $uid) {
 				return true;
 			}
 			$acl = $this->shareManager->getAccessList($node, true, true);
@@ -191,19 +191,19 @@ class File implements IEntity, IDisplayText, IUrl {
 				return $this->l10n->t('%s copied %s', $options);
 			case MapperEvent::EVENT_ASSIGN:
 				$tagNames = [];
-				if($this->event instanceof MapperEvent) {
+				if ($this->event instanceof MapperEvent) {
 					$tagIDs = $this->event->getTags();
 					$tagObjects = $this->tagManager->getTagsByIds($tagIDs);
 					foreach ($tagObjects as $systemTag) {
 						/** @var ISystemTag $systemTag */
-						if($systemTag->isUserVisible()) {
+						if ($systemTag->isUserVisible()) {
 							$tagNames[] = $systemTag->getName();
 						}
 					}
 				}
 				$filename = array_pop($options);
 				$tagString = implode(', ', $tagNames);
-				if($tagString === '') {
+				if ($tagString === '') {
 					return '';
 				}
 				array_push($options, $tagString, $filename);

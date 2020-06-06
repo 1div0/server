@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2019, Thomas Citharel
  * @copyright Copyright (c) 2019, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -44,7 +45,7 @@ use Sabre\VObject\Property;
  *
  * @package OCA\DAV\CalDAV\Reminder\NotificationProvider
  */
-abstract class AbstractProvider implements INotificationProvider  {
+abstract class AbstractProvider implements INotificationProvider {
 
 	/** @var string */
 	public const NOTIFICATION_TYPE = '';

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -36,7 +37,7 @@ class CompFilter implements XmlDeserializable {
 	 * @throws BadRequest
 	 * @return string
 	 */
-	static function xmlDeserialize(Reader $reader) {
+	public static function xmlDeserialize(Reader $reader) {
 		$att = $reader->parseAttributes();
 		$componentName = $att['name'];
 

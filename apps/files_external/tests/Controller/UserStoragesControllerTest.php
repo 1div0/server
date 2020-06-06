@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
@@ -76,7 +77,7 @@ class UserStoragesControllerTest extends StoragesControllerTest {
 
 		$this->service->expects($this->exactly(2))
 			->method('createStorage')
-			->will($this->returnValue($storageConfig));
+			->willReturn($storageConfig);
 		$this->service->expects($this->never())
 			->method('addStorage');
 		$this->service->expects($this->never())
@@ -86,7 +87,7 @@ class UserStoragesControllerTest extends StoragesControllerTest {
 			'mount',
 			'\OCA\Files_External\Lib\Storage\SMB',
 			'\Auth\Mechanism',
-			array(),
+			[],
 			[],
 			[],
 			[],
@@ -100,7 +101,7 @@ class UserStoragesControllerTest extends StoragesControllerTest {
 			'mount',
 			'\OCA\Files_External\Lib\Storage\SMB',
 			'\Auth\Mechanism',
-			array(),
+			[],
 			[],
 			[],
 			[],
@@ -109,5 +110,4 @@ class UserStoragesControllerTest extends StoragesControllerTest {
 
 		$this->assertEquals(Http::STATUS_UNPROCESSABLE_ENTITY, $response->getStatus());
 	}
-
 }

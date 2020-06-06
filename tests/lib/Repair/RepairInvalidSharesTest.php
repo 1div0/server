@@ -8,7 +8,6 @@
 
 namespace Test\Repair;
 
-
 use OC\Repair\RepairInvalidShares;
 use OC\Share\Constants;
 use OCP\IConfig;
@@ -40,7 +39,7 @@ class RepairInvalidSharesTest extends TestCase {
 		$config->expects($this->any())
 			->method('getSystemValue')
 			->with('version')
-			->will($this->returnValue('12.0.0.0'));
+			->willReturn('12.0.0.0');
 
 		$this->connection = \OC::$server->getDatabaseConnection();
 		$this->deleteAllShares();

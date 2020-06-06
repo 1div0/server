@@ -2,6 +2,7 @@
 /**
  * @copyright 2016 Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -31,6 +32,5 @@ use OCP\Files\SimpleFS\ISimpleRoot;
  * @package OCP\Files
  * @since 11.0.0
  */
-interface IAppData extends ISimpleRoot  {
-	
+interface IAppData extends ISimpleRoot {
 }

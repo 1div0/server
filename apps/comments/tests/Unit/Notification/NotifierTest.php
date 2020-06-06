@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -84,9 +85,9 @@ class NotifierTest extends TestCase {
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function ($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 
 		$this->notification = $this->createMock(INotification::class);
 		$this->comment = $this->createMock(IComment::class);
@@ -615,5 +616,4 @@ class NotifierTest extends TestCase {
 
 		$this->notifier->prepare($this->notification, $this->lc);
 	}
-
 }

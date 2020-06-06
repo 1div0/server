@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -26,6 +27,7 @@
 
 namespace OCA\Comments\AppInfo;
 
+use OCA\Comments\Capabilities;
 use OCA\Comments\Controller\Notifications;
 use OCA\Comments\EventHandler;
 use OCA\Comments\JSSettingsHelper;
@@ -41,10 +43,9 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Util;
 
 class Application extends App {
+	public const APP_ID = 'comments';
 
-	const APP_ID = 'comments';
-
-	public function __construct (array $urlParams = array()) {
+	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_ID, $urlParams);
 		$container = $this->getContainer();
 
@@ -67,6 +68,7 @@ class Application extends App {
 		$this->registerNotifier();
 		$this->registerCommentsEventHandler();
 
+		$this->getContainer()->registerCapability(Capabilities::class);
 		$server->getSearch()->registerProvider(Provider::class, ['apps' => ['files']]);
 	}
 
@@ -76,8 +78,8 @@ class Application extends App {
 	}
 
 	protected function registerDavEntity(IEventDispatcher $dispatcher) {
-		$dispatcher->addListener(CommentsEntityEvent::EVENT_ENTITY, function(CommentsEntityEvent $event) {
-			$event->addEntityCollection('files', function($name) {
+		$dispatcher->addListener(CommentsEntityEvent::EVENT_ENTITY, function (CommentsEntityEvent $event) {
+			$event->addEntityCollection('files', function ($name) {
 				$nodes = \OC::$server->getUserFolder()->getById((int)$name);
 				return !empty($nodes);
 			});

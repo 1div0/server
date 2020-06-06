@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -52,25 +53,25 @@ class Report extends Command {
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$table = new Table($output);
-		$table->setHeaders(array('User Report', ''));
+		$table->setHeaders(['User Report', '']);
 		$userCountArray = $this->countUsers();
-		if(!empty($userCountArray)) {
+		if (!empty($userCountArray)) {
 			$total = 0;
-			$rows = array();
-			foreach($userCountArray as $classname => $users) {
+			$rows = [];
+			foreach ($userCountArray as $classname => $users) {
 				$total += $users;
-				$rows[] = array($classname, $users);
+				$rows[] = [$classname, $users];
 			}
 
-			$rows[] = array(' ');
-			$rows[] = array('total users', $total);
+			$rows[] = [' '];
+			$rows[] = ['total users', $total];
 		} else {
-			$rows[] = array('No backend enabled that supports user counting', '');
+			$rows[] = ['No backend enabled that supports user counting', ''];
 		}
 
 		$userDirectoryCount = $this->countUserDirectories();
-		$rows[] = array(' ');
-		$rows[] = array('user directories', $userDirectoryCount);
+		$rows[] = [' '];
+		$rows[] = ['user directories', $userDirectoryCount];
 
 		$table->setRows($rows);
 		$table->render();

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016 Bjoern Schiessle <bjoern@schiessle.org>
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -24,12 +25,11 @@
 
 namespace OCA\ShareByMail\Tests;
 
-
 use OCA\ShareByMail\Settings;
 use OCA\ShareByMail\Settings\SettingsManager;
 use Test\TestCase;
 
-class SettingsTest extends TestCase  {
+class SettingsTest extends TestCase {
 
 	/** @var  Settings */
 	private $instance;
@@ -56,13 +56,13 @@ class SettingsTest extends TestCase  {
 		];
 
 		$after = [
-				'oc_appconfig' =>
-					json_encode([
-						'key1' => 'value1',
-						'key2' => 'value2',
-						'shareByMailEnabled' => true
-					]),
-				'oc_foo' => 'oc_bar'
+			'oc_appconfig' =>
+				json_encode([
+					'key1' => 'value1',
+					'key2' => 'value2',
+					'shareByMailEnabled' => true
+				]),
+			'oc_foo' => 'oc_bar'
 		];
 
 		$this->instance->announceShareProvider(['array' => &$before]);
@@ -94,5 +94,4 @@ class SettingsTest extends TestCase  {
 		$this->instance->announceShareByMailSettings(['array' => &$before]);
 		$this->assertSame($after, $before);
 	}
-
 }

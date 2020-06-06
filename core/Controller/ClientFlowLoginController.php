@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017 Lukas Reschke <lukas@statuscode.ch>
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Mario Danic <mario@lovelyhq.com>
@@ -77,7 +78,7 @@ class ClientFlowLoginController extends Controller {
 	/** @var EventDispatcherInterface */
 	private $eventDispatcher;
 
-	const stateName = 'client.flow.state.token';
+	public const stateName = 'client.flow.state.token';
 
 	/**
 	 * @param string $appName
@@ -135,7 +136,7 @@ class ClientFlowLoginController extends Controller {
 	 */
 	private function isValidToken($stateToken) {
 		$currentToken = $this->session->get(self::stateName);
-		if(!is_string($stateToken) || !is_string($currentToken)) {
+		if (!is_string($stateToken) || !is_string($currentToken)) {
 			return false;
 		}
 		return hash_equals($currentToken, $stateToken);
@@ -169,7 +170,7 @@ class ClientFlowLoginController extends Controller {
 	public function showAuthPickerPage($clientIdentifier = '') {
 		$clientName = $this->getClientName();
 		$client = null;
-		if($clientIdentifier !== '') {
+		if ($clientIdentifier !== '') {
 			$client = $this->clientMapper->getByIdentifier($clientIdentifier);
 			$clientName = $client->getName();
 		}
@@ -237,13 +238,13 @@ class ClientFlowLoginController extends Controller {
 	 */
 	public function grantPage($stateToken = '',
 								 $clientIdentifier = '') {
-		if(!$this->isValidToken($stateToken)) {
+		if (!$this->isValidToken($stateToken)) {
 			return $this->stateTokenForbiddenResponse();
 		}
 
 		$clientName = $this->getClientName();
 		$client = null;
-		if($clientIdentifier !== '') {
+		if ($clientIdentifier !== '') {
 			$client = $this->clientMapper->getByIdentifier($clientIdentifier);
 			$clientName = $client->getName();
 		}
@@ -284,7 +285,7 @@ class ClientFlowLoginController extends Controller {
 	 */
 	public function generateAppPassword($stateToken,
 										$clientIdentifier = '') {
-		if(!$this->isValidToken($stateToken)) {
+		if (!$this->isValidToken($stateToken)) {
 			$this->session->remove(self::stateName);
 			return $this->stateTokenForbiddenResponse();
 		}
@@ -315,7 +316,7 @@ class ClientFlowLoginController extends Controller {
 
 		$clientName = $this->getClientName();
 		$client = false;
-		if($clientIdentifier !== '') {
+		if ($clientIdentifier !== '') {
 			$client = $this->clientMapper->getByIdentifier($clientIdentifier);
 			$clientName = $client->getName();
 		}
@@ -332,7 +333,7 @@ class ClientFlowLoginController extends Controller {
 			IToken::DO_NOT_REMEMBER
 		);
 
-		if($client) {
+		if ($client) {
 			$code = $this->random->generate(128, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
 			$accessToken = new AccessToken();
 			$accessToken->setClientId($client->getId());
@@ -376,6 +377,24 @@ class ClientFlowLoginController extends Controller {
 			return $this->stateTokenForbiddenResponse();
 		}
 
+		try {
+			$token = $this->tokenProvider->getToken($password);
+			if ($token->getLoginName() !== $user) {
+				throw new InvalidTokenException('login name does not match');
+			}
+		} catch (InvalidTokenException $e) {
+			$response = new StandaloneTemplateResponse(
+				$this->appName,
+				'403',
+				[
+					'message' => $this->l10n->t('Invalid app password'),
+				],
+				'guest'
+			);
+			$response->setStatus(Http::STATUS_FORBIDDEN);
+			return $response;
+		}
+
 		$redirectUri = 'nc://login/server:' . $this->getServerPath() . '&user:' . urlencode($user) . '&password:' . urlencode($password);
 		return new Http\RedirectResponse($redirectUri);
 	}
@@ -385,7 +404,7 @@ class ClientFlowLoginController extends Controller {
 
 		if (strpos($this->request->getRequestUri(), '/index.php') !== false) {
 			$serverPostfix = substr($this->request->getRequestUri(), 0, strpos($this->request->getRequestUri(), '/index.php'));
-		} else if (strpos($this->request->getRequestUri(), '/login/flow') !== false) {
+		} elseif (strpos($this->request->getRequestUri(), '/login/flow') !== false) {
 			$serverPostfix = substr($this->request->getRequestUri(), 0, strpos($this->request->getRequestUri(), '/login/flow'));
 		}
 

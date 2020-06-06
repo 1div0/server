@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2019 Julius Härtl <jus@bitgrid.net>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Härtl <jus@bitgrid.net>
  *
  * @license GNU AGPL version 3 or any later version
@@ -67,24 +68,24 @@ class UserContext {
 		if ($this->userId !== null) {
 			return $this->userId;
 		}
-		if($this->session && $this->session->getUser() !== null) {
+		if ($this->session && $this->session->getUser() !== null) {
 			return $this->session->getUser()->getUID();
 		}
 		try {
 			$shareToken = $this->request->getParam('token');
 			$share = $this->shareManager->getShareByToken($shareToken);
 			return $share->getShareOwner();
-		} catch (ShareNotFound $e) {}
+		} catch (ShareNotFound $e) {
+		}
 
 		return null;
 	}
 
 	protected function getUser(): ?IUser {
 		$userId = $this->getUserId();
-		if($userId !== null) {
+		if ($userId !== null) {
 			return $this->userManager->get($userId);
 		}
 		return null;
 	}
-
 }

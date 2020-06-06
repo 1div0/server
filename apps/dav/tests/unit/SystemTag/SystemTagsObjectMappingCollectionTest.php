@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -24,7 +25,6 @@
  */
 
 namespace OCA\DAV\Tests\unit\SystemTag;
-
 
 use OC\SystemTag\SystemTag;
 use OCP\IUser;
@@ -62,7 +62,7 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 	}
 
 	public function getNode() {
-		return new \OCA\DAV\SystemTag\SystemTagsObjectMappingCollection (
+		return new \OCA\DAV\SystemTag\SystemTagsObjectMappingCollection(
 			111,
 			'files',
 			$this->user,
@@ -76,16 +76,16 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 		$this->tagManager->expects($this->once())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->tagManager->expects($this->once())
 			->method('canUserAssignTag')
 			->with($tag)
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->tagManager->expects($this->once())
 			->method('getTagsByIds')
 			->with(['555'])
-			->will($this->returnValue([$tag]));
+			->willReturn([$tag]);
 		$this->tagMapper->expects($this->once())
 			->method('assignTags')
 			->with(111, 'files', '555');
@@ -110,16 +110,16 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 		$this->tagManager->expects($this->once())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue($userVisible));
+			->willReturn($userVisible);
 		$this->tagManager->expects($this->any())
 			->method('canUserAssignTag')
 			->with($tag)
-			->will($this->returnValue($userAssignable));
+			->willReturn($userAssignable);
 
 		$this->tagManager->expects($this->once())
 			->method('getTagsByIds')
 			->with(['555'])
-			->will($this->returnValue([$tag]));
+			->willReturn([$tag]);
 		$this->tagMapper->expects($this->never())
 			->method('assignTags');
 
@@ -157,17 +157,17 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 		$this->tagManager->expects($this->once())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->tagMapper->expects($this->once())
 			->method('haveTag')
 			->with([111], 'files', '555', true)
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->tagManager->expects($this->once())
 			->method('getTagsByIds')
 			->with(['555'])
-			->will($this->returnValue(['555' => $tag]));
+			->willReturn(['555' => $tag]);
 
 		$childNode = $this->getNode()->getChild('555');
 
@@ -183,17 +183,17 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 		$this->tagManager->expects($this->once())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$this->tagMapper->expects($this->once())
 			->method('haveTag')
 			->with([111], 'files', '555', true)
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->tagManager->expects($this->once())
 			->method('getTagsByIds')
 			->with(['555'])
-			->will($this->returnValue(['555' => $tag]));
+			->willReturn(['555' => $tag]);
 
 		$this->getNode()->getChild('555');
 	}
@@ -205,7 +205,7 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 		$this->tagMapper->expects($this->once())
 			->method('haveTag')
 			->with([111], 'files', '777')
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$this->getNode()->getChild('777');
 	}
@@ -242,18 +242,18 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 		$this->tagMapper->expects($this->once())
 			->method('getTagIdsForObjects')
 			->with([111], 'files')
-			->will($this->returnValue(['111' => ['555', '556', '557']]));
+			->willReturn(['111' => ['555', '556', '557']]);
 
 		$this->tagManager->expects($this->once())
 			->method('getTagsByIds')
 			->with(['555', '556', '557'])
-			->will($this->returnValue(['555' => $tag1, '556' => $tag2, '557' => $tag3]));
+			->willReturn(['555' => $tag1, '556' => $tag2, '557' => $tag3]);
 
 		$this->tagManager->expects($this->exactly(3))
 			->method('canUserSeeTag')
-			->will($this->returnCallback(function($tag) {
+			->willReturnCallback(function ($tag) {
 				return $tag->isUserVisible();
-			}));
+			});
 
 		$children = $this->getNode()->getChildren();
 
@@ -277,17 +277,17 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 		$this->tagMapper->expects($this->once())
 			->method('haveTag')
 			->with([111], 'files', '555')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->tagManager->expects($this->once())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->tagManager->expects($this->once())
 			->method('getTagsByIds')
 			->with(['555'])
-			->will($this->returnValue([$tag]));
+			->willReturn([$tag]);
 
 		$this->assertTrue($this->getNode()->childExists('555'));
 	}
@@ -298,12 +298,12 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 		$this->tagMapper->expects($this->once())
 			->method('haveTag')
 			->with([111], 'files', '555')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->tagManager->expects($this->once())
 			->method('getTagsByIds')
 			->with(['555'])
-			->will($this->returnValue([$tag]));
+			->willReturn([$tag]);
 
 		$this->assertFalse($this->getNode()->childExists('555'));
 	}
@@ -312,7 +312,7 @@ class SystemTagsObjectMappingCollectionTest extends \Test\TestCase {
 		$this->tagMapper->expects($this->once())
 			->method('haveTag')
 			->with([111], 'files', '555')
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$this->assertFalse($this->getNode()->childExists('555'));
 	}

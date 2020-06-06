@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Andreas Fischer <bantu@owncloud.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -51,17 +52,14 @@ class Crypto implements ICrypto {
 	private $ivLength = 16;
 	/** @var IConfig */
 	private $config;
-	/** @var ISecureRandom */
-	private $random;
 
 	/**
 	 * @param IConfig $config
 	 * @param ISecureRandom $random
 	 */
-	public function __construct(IConfig $config, ISecureRandom $random) {
+	public function __construct(IConfig $config) {
 		$this->cipher = new AES();
 		$this->config = $config;
-		$this->random = $random;
 	}
 
 	/**
@@ -70,7 +68,7 @@ class Crypto implements ICrypto {
 	 * @return string Calculated HMAC
 	 */
 	public function calculateHMAC(string $message, string $password = ''): string {
-		if($password === '') {
+		if ($password === '') {
 			$password = $this->config->getSystemValue('secret');
 		}
 
@@ -89,18 +87,19 @@ class Crypto implements ICrypto {
 	 * @return string Authenticated ciphertext
 	 */
 	public function encrypt(string $plaintext, string $password = ''): string {
-		if($password === '') {
+		if ($password === '') {
 			$password = $this->config->getSystemValue('secret');
 		}
 		$this->cipher->setPassword($password);
 
-		$iv = $this->random->generate($this->ivLength);
+		$iv = \random_bytes($this->ivLength);
 		$this->cipher->setIV($iv);
 
 		$ciphertext = bin2hex($this->cipher->encrypt($plaintext));
+		$iv = bin2hex($iv);
 		$hmac = bin2hex($this->calculateHMAC($ciphertext.$iv, $password));
 
-		return $ciphertext.'|'.$iv.'|'.$hmac;
+		return $ciphertext.'|'.$iv.'|'.$hmac.'|2';
 	}
 
 	/**
@@ -118,13 +117,21 @@ class Crypto implements ICrypto {
 		$this->cipher->setPassword($password);
 
 		$parts = explode('|', $authenticatedCiphertext);
-		if (\count($parts) !== 3) {
+		$partCount = \count($parts);
+		if ($partCount < 3 || $partCount > 4) {
 			throw new \Exception('Authenticated ciphertext could not be decoded.');
 		}
 
 		$ciphertext = hex2bin($parts[0]);
 		$iv = $parts[1];
 		$hmac = hex2bin($parts[2]);
+
+		if ($partCount === 4) {
+			$version = $parts[3];
+			if ($version === '2') {
+				$iv = hex2bin($iv);
+			}
+		}
 
 		$this->cipher->setIV($iv);
 
@@ -139,5 +146,4 @@ class Crypto implements ICrypto {
 
 		return $result;
 	}
-
 }

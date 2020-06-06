@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -24,7 +25,6 @@
  */
 
 namespace OCA\DAV\Tests\unit\SystemTag;
-
 
 use OC\SystemTag\SystemTag;
 use OCP\IUser;
@@ -118,11 +118,11 @@ class SystemTagNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($this->once())
 			->method('canUserSeeTag')
 			->with($originalTag)
-			->will($this->returnValue($originalTag->isUserVisible() || $isAdmin));
+			->willReturn($originalTag->isUserVisible() || $isAdmin);
 		$this->tagManager->expects($this->once())
 			->method('canUserAssignTag')
 			->with($originalTag)
-			->will($this->returnValue($originalTag->isUserAssignable() || $isAdmin));
+			->willReturn($originalTag->isUserAssignable() || $isAdmin);
 		$this->tagManager->expects($this->once())
 			->method('updateTag')
 			->with(1, $changedArgs[0], $changedArgs[1], $changedArgs[2]);
@@ -178,11 +178,11 @@ class SystemTagNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($this->any())
 			->method('canUserSeeTag')
 			->with($originalTag)
-			->will($this->returnValue($originalTag->isUserVisible()));
+			->willReturn($originalTag->isUserVisible());
 		$this->tagManager->expects($this->any())
 			->method('canUserAssignTag')
 			->with($originalTag)
-			->will($this->returnValue($originalTag->isUserAssignable()));
+			->willReturn($originalTag->isUserAssignable());
 		$this->tagManager->expects($this->never())
 			->method('updateTag');
 
@@ -206,11 +206,11 @@ class SystemTagNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($this->any())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->tagManager->expects($this->any())
 			->method('canUserAssignTag')
 			->with($tag)
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->tagManager->expects($this->once())
 			->method('updateTag')
 			->with(1, 'Renamed', true, true)
@@ -226,11 +226,11 @@ class SystemTagNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($this->any())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->tagManager->expects($this->any())
 			->method('canUserAssignTag')
 			->with($tag)
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->tagManager->expects($this->once())
 			->method('updateTag')
 			->with(1, 'Renamed', true, true)
@@ -246,7 +246,7 @@ class SystemTagNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($isAdmin ? $this->once() : $this->never())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue(true));
+			->willReturn(true);
 		$this->tagManager->expects($isAdmin ? $this->once() : $this->never())
 			->method('deleteTags')
 			->with('1');
@@ -278,7 +278,7 @@ class SystemTagNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($this->any())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue($tag->isUserVisible()));
+			->willReturn($tag->isUserVisible());
 		$this->tagManager->expects($this->never())
 			->method('deleteTags');
 
@@ -294,7 +294,7 @@ class SystemTagNodeTest extends \Test\TestCase {
 		$this->tagManager->expects($this->any())
 			->method('canUserSeeTag')
 			->with($tag)
-			->will($this->returnValue($tag->isUserVisible()));
+			->willReturn($tag->isUserVisible());
 		$this->tagManager->expects($this->once())
 			->method('deleteTags')
 			->with('1')

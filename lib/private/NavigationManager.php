@@ -4,6 +4,7 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
@@ -92,13 +93,13 @@ class NavigationManager implements INavigationManager {
 		}
 
 		$entry['active'] = false;
-		if(!isset($entry['icon'])) {
+		if (!isset($entry['icon'])) {
 			$entry['icon'] = '';
 		}
-		if(!isset($entry['classes'])) {
+		if (!isset($entry['classes'])) {
 			$entry['classes'] = '';
 		}
-		if(!isset($entry['type'])) {
+		if (!isset($entry['type'])) {
 			$entry['type'] = 'link';
 		}
 		$this->entries[$entry['id']] = $entry;
@@ -115,11 +116,11 @@ class NavigationManager implements INavigationManager {
 		foreach ($this->closureEntries as $c) {
 			$this->add($c());
 		}
-		$this->closureEntries = array();
+		$this->closureEntries = [];
 
 		$result = $this->entries;
 		if ($type !== 'all') {
-			$result = array_filter($this->entries, function($entry) use ($type) {
+			$result = array_filter($this->entries, function ($entry) use ($type) {
 				return $entry['type'] === $type;
 			});
 		}
@@ -134,10 +135,10 @@ class NavigationManager implements INavigationManager {
 	 * @return array
 	 */
 	private function proceedNavigation(array $list): array {
-		uasort($list, function($a, $b) {
+		uasort($list, function ($a, $b) {
 			if (isset($a['order']) && isset($b['order'])) {
 				return ($a['order'] < $b['order']) ? -1 : 1;
-			} else if (isset($a['order']) || isset($b['order'])) {
+			} elseif (isset($a['order']) || isset($b['order'])) {
 				return isset($a['order']) ? -1 : 1;
 			} else {
 				return ($a['name'] < $b['name']) ? -1 : 1;
@@ -230,7 +231,7 @@ class NavigationManager implements INavigationManager {
 			]);
 
 			$logoutUrl = \OC_User::getLogoutUrl($this->urlGenerator);
-			if($logoutUrl !== '') {
+			if ($logoutUrl !== '') {
 				// Logout
 				$this->add([
 					'type' => 'settings',

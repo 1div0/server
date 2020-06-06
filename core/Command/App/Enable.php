@@ -6,6 +6,7 @@
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
+ * @author Sander Ruitenbeek <s.ruitenbeek@getgoing.nl>
  *
  * @license AGPL-3.0
  *
@@ -105,6 +106,10 @@ class Enable extends Command implements CompletionAwareInterface {
 			return $group->getDisplayName();
 		}, $groupIds);
 
+		if ($this->appManager->isInstalled($appId) && $groupIds === []) {
+			$output->writeln($appId . ' already enabled');
+			return;
+		}
 
 		try {
 			/** @var Installer $installer */

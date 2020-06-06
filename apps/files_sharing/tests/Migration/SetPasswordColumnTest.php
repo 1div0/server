@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -22,7 +23,6 @@
  */
 
 namespace OCA\Files_Sharing\Tests\Migration;
-
 
 use OCA\Files_Sharing\Migration\SetPasswordColumn;
 use OCA\Files_Sharing\Tests\TestCase;
@@ -110,7 +110,7 @@ class SetPasswordColumnTest extends TestCase {
 
 		foreach ($allShares as $share) {
 			if ((int)$share['share_type'] === Share::SHARE_TYPE_LINK) {
-				$this->assertNull( $share['share_with']);
+				$this->assertNull($share['share_with']);
 				$this->assertSame('shareWith', $share['password']);
 			} else {
 				$this->assertSame('shareWith', $share['share_with']);

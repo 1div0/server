@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -27,6 +28,7 @@ namespace OCA\DAV\Tests\unit\Connector\Sabre;
 
 use OCA\DAV\Connector\Sabre\MaintenancePlugin;
 use OCP\IConfig;
+use OCP\IL10N;
 use Test\TestCase;
 
 /**
@@ -37,6 +39,8 @@ use Test\TestCase;
 class MaintenancePluginTest extends TestCase {
 	/** @var IConfig */
 	private $config;
+	/** @var \PHPUnit\Framework\MockObject\Builder\InvocationMocker|\PHPUnit_Framework_MockObject_Builder_InvocationMocker|IL10N  */
+	private $l10n;
 	/** @var MaintenancePlugin */
 	private $maintenancePlugin;
 
@@ -44,10 +48,11 @@ class MaintenancePluginTest extends TestCase {
 		parent::setUp();
 
 		$this->config = $this->getMockBuilder(IConfig::class)->getMock();
-		$this->maintenancePlugin = new MaintenancePlugin($this->config);
+		$this->l10n = $this->getMockBuilder(IL10N::class)->getMock();
+		$this->maintenancePlugin = new MaintenancePlugin($this->config, $this->l10n);
 	}
 
-	
+
 	public function testMaintenanceMode() {
 		$this->expectException(\Sabre\DAV\Exception\ServiceUnavailable::class);
 		$this->expectExceptionMessage('System in maintenance mode.');
@@ -56,9 +61,12 @@ class MaintenancePluginTest extends TestCase {
 			->expects($this->exactly(1))
 			->method('getSystemValueBool')
 			->with('maintenance')
-			->will($this->returnValue(true));
+			->willReturn(true);
+		$this->l10n
+			->expects($this->any())
+			->method('t')
+			->willReturnArgument(0);
 
 		$this->maintenancePlugin->checkMaintenanceMode();
 	}
-
 }

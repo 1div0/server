@@ -11,33 +11,38 @@ namespace Test\Http\Client;
 use GuzzleHttp\Psr7\Response;
 use OC\Http\Client\Client;
 use OC\Security\CertificateManager;
+use OCP\Http\Client\LocalServerException;
 use OCP\ICertificateManager;
 use OCP\IConfig;
+use OCP\ILogger;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Class ClientTest
  */
 class ClientTest extends \Test\TestCase {
-	/** @var \GuzzleHttp\Client|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var \GuzzleHttp\Client|MockObject */
 	private $guzzleClient;
-	/** @var CertificateManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var CertificateManager|MockObject */
 	private $certificateManager;
 	/** @var Client */
 	private $client;
-	/** @var IConfig|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IConfig|MockObject */
 	private $config;
+	/** @var ILogger|MockObject */
+	private $logger;
 	/** @var array */
 	private $defaultRequestOptions;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->config = $this->createMock(IConfig::class);
-		$this->guzzleClient = $this->getMockBuilder(\GuzzleHttp\Client::class)
-			->disableOriginalConstructor()
-			->getMock();
+		$this->logger = $this->createMock(ILogger::class);
+		$this->guzzleClient = $this->createMock(\GuzzleHttp\Client::class);
 		$this->certificateManager = $this->createMock(ICertificateManager::class);
 		$this->client = new Client(
 			$this->config,
+			$this->logger,
 			$this->certificateManager,
 			$this->guzzleClient
 		);
@@ -63,7 +68,15 @@ class ClientTest extends \Test\TestCase {
 			->method('getSystemValue')
 			->with('proxyuserpwd', null)
 			->willReturn(null);
-		$this->assertSame('foo', self::invokePrivate($this->client, 'getProxyUri'));
+		$this->config
+			->expects($this->at(2))
+			->method('getSystemValue')
+			->with('proxyexclude', [])
+			->willReturn([]);
+		$this->assertEquals([
+			'http' => 'foo',
+			'https' => 'foo'
+		], self::invokePrivate($this->client, 'getProxyUri'));
 	}
 
 	public function testGetProxyUriProxyHostWithPassword(): void {
@@ -87,20 +100,184 @@ class ClientTest extends \Test\TestCase {
 				})
 			)
 			->willReturn('username:password');
-		$this->assertSame('username:password@foo', self::invokePrivate($this->client, 'getProxyUri'));
+		$this->config
+			->expects($this->at(2))
+			->method('getSystemValue')
+			->with(
+				$this->equalTo('proxyexclude'),
+				$this->callback(function ($input) {
+					return $input === [];
+				})
+			)
+			->willReturn([]);
+		$this->assertEquals([
+			'http' => 'username:password@foo',
+			'https' => 'username:password@foo'
+		], self::invokePrivate($this->client, 'getProxyUri'));
 	}
 
-	private function setUpDefaultRequestOptions(): void {
+	public function testGetProxyUriProxyHostWithPasswordAndExclude(): void {
 		$this->config
 			->expects($this->at(0))
 			->method('getSystemValue')
-			->with('proxy', null)
+			->with(
+				$this->equalTo('proxy'),
+				$this->callback(function ($input) {
+					return $input === '';
+				})
+			)
 			->willReturn('foo');
 		$this->config
 			->expects($this->at(1))
 			->method('getSystemValue')
+			->with(
+				$this->equalTo('proxyuserpwd'),
+				$this->callback(function ($input) {
+					return $input === '';
+				})
+			)
+			->willReturn('username:password');
+		$this->config
+			->expects($this->at(2))
+			->method('getSystemValue')
+			->with(
+				$this->equalTo('proxyexclude'),
+				$this->callback(function ($input) {
+					return $input === [];
+				})
+			)
+			->willReturn(['bar']);
+		$this->assertEquals([
+			'http' => 'username:password@foo',
+			'https' => 'username:password@foo',
+			'no' => ['bar']
+		], self::invokePrivate($this->client, 'getProxyUri'));
+	}
+
+	public function dataPreventLocalAddress():array {
+		return [
+			['localhost/foo.bar'],
+			['localHost/foo.bar'],
+			['random-host/foo.bar'],
+			['[::1]/bla.blub'],
+			['[::]/bla.blub'],
+			['192.168.0.1'],
+			['172.16.42.1'],
+			['[fdf8:f53b:82e4::53]/secret.ics'],
+			['[fe80::200:5aee:feaa:20a2]/secret.ics'],
+			['[0:0:0:0:0:0:10.0.0.1]/secret.ics'],
+			['[0:0:0:0:0:ffff:127.0.0.0]/secret.ics'],
+			['10.0.0.1'],
+			['another-host.local'],
+			['service.localhost'],
+			['!@#$'], // test invalid url
+		];
+	}
+
+	/**
+	 * @dataProvider dataPreventLocalAddress
+	 * @param string $uri
+	 */
+	public function testPreventLocalAddress(string $uri): void {
+		$this->expectException(LocalServerException::class);
+		self::invokePrivate($this->client, 'preventLocalAddress', ['http://' . $uri, []]);
+	}
+
+	/**
+	 * @dataProvider dataPreventLocalAddress
+	 * @param string $uri
+	 */
+	public function testPreventLocalAddressDisabledByGlobalConfig(string $uri): void {
+		$this->config->expects($this->once())
+			->method('getSystemValueBool')
+			->with('allow_local_remote_servers', false)
+			->willReturn(true);
+
+//		$this->expectException(LocalServerException::class);
+
+		self::invokePrivate($this->client, 'preventLocalAddress', ['http://' . $uri, []]);
+	}
+
+	/**
+	 * @dataProvider dataPreventLocalAddress
+	 * @param string $uri
+	 */
+	public function testPreventLocalAddressDisabledByOption(string $uri): void {
+		$this->config->expects($this->never())
+			->method('getSystemValueBool');
+
+//		$this->expectException(LocalServerException::class);
+
+		self::invokePrivate($this->client, 'preventLocalAddress', ['http://' . $uri, [
+			'nextcloud' => ['allow_local_address' => true],
+		]]);
+	}
+
+	/**
+	 * @dataProvider dataPreventLocalAddress
+	 * @param string $uri
+	 */
+	public function testPreventLocalAddressOnGet(string $uri): void {
+		$this->expectException(LocalServerException::class);
+		$this->client->get('http://' . $uri);
+	}
+
+	/**
+	 * @dataProvider dataPreventLocalAddress
+	 * @param string $uri
+	 */
+	public function testPreventLocalAddressOnHead(string $uri): void {
+		$this->expectException(LocalServerException::class);
+		$this->client->head('http://' . $uri);
+	}
+
+	/**
+	 * @dataProvider dataPreventLocalAddress
+	 * @param string $uri
+	 */
+	public function testPreventLocalAddressOnPost(string $uri): void {
+		$this->expectException(LocalServerException::class);
+		$this->client->post('http://' . $uri);
+	}
+
+	/**
+	 * @dataProvider dataPreventLocalAddress
+	 * @param string $uri
+	 */
+	public function testPreventLocalAddressOnPut(string $uri): void {
+		$this->expectException(LocalServerException::class);
+		$this->client->put('http://' . $uri);
+	}
+
+	/**
+	 * @dataProvider dataPreventLocalAddress
+	 * @param string $uri
+	 */
+	public function testPreventLocalAddressOnDelete(string $uri): void {
+		$this->expectException(LocalServerException::class);
+		$this->client->delete('http://' . $uri);
+	}
+
+	private function setUpDefaultRequestOptions(): void {
+		$this->config->expects($this->once())
+			->method('getSystemValueBool')
+			->with('allow_local_remote_servers', false)
+			->willReturn(true);
+		$this->config
+			->expects($this->at(1))
+			->method('getSystemValue')
+			->with('proxy', null)
+			->willReturn('foo');
+		$this->config
+			->expects($this->at(2))
+			->method('getSystemValue')
 			->with('proxyuserpwd', null)
 			->willReturn(null);
+		$this->config
+			->expects($this->at(3))
+			->method('getSystemValue')
+			->with('proxyexclude', [])
+			->willReturn([]);
 		$this->certificateManager
 			->expects($this->once())
 			->method('getAbsoluteBundlePath')
@@ -109,9 +286,13 @@ class ClientTest extends \Test\TestCase {
 
 		$this->defaultRequestOptions = [
 			'verify' => '/my/path.crt',
-			'proxy' => 'foo',
+			'proxy' => [
+				'http' => 'foo',
+				'https' => 'foo'
+			],
 			'headers' => [
 				'User-Agent' => 'Nextcloud Server Crawler',
+				'Accept-Encoding' => 'gzip',
 			],
 			'timeout' => 30,
 		];
@@ -131,7 +312,10 @@ class ClientTest extends \Test\TestCase {
 
 		$options = array_merge($this->defaultRequestOptions, [
 			'verify' => false,
-			'proxy' => 'bar',
+			'proxy' => [
+				'http' => 'bar',
+				'https' => 'bar'
+			],
 		]);
 
 		$this->guzzleClient->method('request')
@@ -154,7 +338,10 @@ class ClientTest extends \Test\TestCase {
 
 		$options = array_merge($this->defaultRequestOptions, [
 			'verify' => false,
-			'proxy' => 'bar',
+			'proxy' => [
+				'http' => 'bar',
+				'https' => 'bar'
+			],
 		]);
 
 		$this->guzzleClient->method('request')
@@ -177,7 +364,10 @@ class ClientTest extends \Test\TestCase {
 
 		$options = array_merge($this->defaultRequestOptions, [
 			'verify' => false,
-			'proxy' => 'bar',
+			'proxy' => [
+				'http' => 'bar',
+				'https' => 'bar'
+			],
 		]);
 
 		$this->guzzleClient->method('request')
@@ -200,7 +390,10 @@ class ClientTest extends \Test\TestCase {
 
 		$options = array_merge($this->defaultRequestOptions, [
 			'verify' => false,
-			'proxy' => 'bar',
+			'proxy' => [
+				'http' => 'bar',
+				'https' => 'bar'
+			],
 		]);
 
 		$this->guzzleClient->method('request')
@@ -223,7 +416,10 @@ class ClientTest extends \Test\TestCase {
 
 		$options = array_merge($this->defaultRequestOptions, [
 			'verify' => false,
-			'proxy' => 'bar',
+			'proxy' => [
+				'http' => 'bar',
+				'https' => 'bar'
+			],
 		]);
 
 		$this->guzzleClient->method('request')
@@ -246,7 +442,10 @@ class ClientTest extends \Test\TestCase {
 
 		$options = array_merge($this->defaultRequestOptions, [
 			'verify' => false,
-			'proxy' => 'bar',
+			'proxy' => [
+				'http' => 'bar',
+				'https' => 'bar'
+			],
 		]);
 
 		$this->guzzleClient->method('request')
@@ -262,15 +461,14 @@ class ClientTest extends \Test\TestCase {
 			->with('installed', false)
 			->willReturn(false);
 		$this->certificateManager
-			->expects($this->once())
-			->method('listCertificates')
-			->willReturn([]);
+			->expects($this->never())
+			->method('listCertificates');
 
 		$this->assertEquals([
 			'verify' => \OC::$SERVERROOT . '/resources/config/ca-bundle.crt',
-			'proxy' => null,
 			'headers' => [
-				'User-Agent' => 'Nextcloud Server Crawler'
+				'User-Agent' => 'Nextcloud Server Crawler',
+				'Accept-Encoding' => 'gzip',
 			],
 			'timeout' => 30,
 		], self::invokePrivate($this->client, 'buildRequestOptions', [[]]));
@@ -287,6 +485,11 @@ class ClientTest extends \Test\TestCase {
 			->method('getSystemValue')
 			->with('proxyuserpwd', null)
 			->willReturn(null);
+		$this->config
+			->expects($this->at(2))
+			->method('getSystemValue')
+			->with('proxyexclude', [])
+			->willReturn([]);
 		$this->certificateManager
 			->expects($this->once())
 			->method('getAbsoluteBundlePath')
@@ -295,9 +498,50 @@ class ClientTest extends \Test\TestCase {
 
 		$this->assertEquals([
 			'verify' => '/my/path.crt',
-			'proxy' => 'foo',
+			'proxy' => [
+				'http' => 'foo',
+				'https' => 'foo'
+			],
 			'headers' => [
-				'User-Agent' => 'Nextcloud Server Crawler'
+				'User-Agent' => 'Nextcloud Server Crawler',
+				'Accept-Encoding' => 'gzip',
+			],
+			'timeout' => 30,
+		], self::invokePrivate($this->client, 'buildRequestOptions', [[]]));
+	}
+
+	public function testSetDefaultOptionsWithProxyAndExclude(): void {
+		$this->config
+			->expects($this->at(0))
+			->method('getSystemValue')
+			->with('proxy', null)
+			->willReturn('foo');
+		$this->config
+			->expects($this->at(1))
+			->method('getSystemValue')
+			->with('proxyuserpwd', null)
+			->willReturn(null);
+		$this->config
+			->expects($this->at(2))
+			->method('getSystemValue')
+			->with('proxyexclude', [])
+			->willReturn(['bar']);
+		$this->certificateManager
+			->expects($this->once())
+			->method('getAbsoluteBundlePath')
+			->with(null)
+			->willReturn('/my/path.crt');
+
+		$this->assertEquals([
+			'verify' => '/my/path.crt',
+			'proxy' => [
+				'http' => 'foo',
+				'https' => 'foo',
+				'no' => ['bar']
+			],
+			'headers' => [
+				'User-Agent' => 'Nextcloud Server Crawler',
+				'Accept-Encoding' => 'gzip',
 			],
 			'timeout' => 30,
 		], self::invokePrivate($this->client, 'buildRequestOptions', [[]]));

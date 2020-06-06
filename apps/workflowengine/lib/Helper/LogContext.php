@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Arthur Schiwon <blizzz@arthur-schiwon.de>
@@ -40,8 +41,8 @@ class LogContext {
 	public function setScopes(array $scopes): LogContext {
 		$this->details['scopes'] = [];
 		foreach ($scopes as $scope) {
-			if($scope instanceof ScopeContext) {
-				switch($scope->getScope()) {
+			if ($scope instanceof ScopeContext) {
+				switch ($scope->getScope()) {
 					case IManager::SCOPE_ADMIN:
 						$this->details['scopes'][] = ['scope' => 'admin'];
 						break;
@@ -60,7 +61,7 @@ class LogContext {
 	}
 
 	public function setOperation(?IOperation $operation): LogContext {
-		if($operation instanceof IOperation) {
+		if ($operation instanceof IOperation) {
 			$this->details['operation'] = [
 				'class' => get_class($operation),
 				'name' => $operation->getDisplayName(),
@@ -70,7 +71,7 @@ class LogContext {
 	}
 
 	public function setEntity(?IEntity $entity): LogContext {
-		if($entity instanceof IEntity) {
+		if ($entity instanceof IEntity) {
 			$this->details['entity'] = [
 				'class' => get_class($entity),
 				'name' => $entity->getName(),

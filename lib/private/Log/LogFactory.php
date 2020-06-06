@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2018 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Johannes Ernst <jernst@indiecomputing.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -71,7 +72,7 @@ class LogFactory implements ILogFactory {
 
 	protected function buildLogFile(string $logFile = ''):File {
 		$defaultLogFile = $this->systemConfig->getValue('datadirectory', \OC::$SERVERROOT.'/data').'/nextcloud.log';
-		if($logFile === '') {
+		if ($logFile === '') {
 			$logFile = $this->systemConfig->getValue('logfile', $defaultLogFile);
 		}
 		$fallback = $defaultLogFile !== $logFile ? $defaultLogFile : '';

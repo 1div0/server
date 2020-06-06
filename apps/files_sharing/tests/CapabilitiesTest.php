@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -58,7 +59,7 @@ class CapabilitiesTest extends \Test\TestCase {
 	 */
 	private function getResults(array $map) {
 		$config = $this->getMockBuilder(IConfig::class)->disableOriginalConstructor()->getMock();
-		$config->method('getAppValue')->will($this->returnValueMap($map));
+		$config->method('getAppValue')->willReturnMap($map);
 		$cap = new Capabilities($config);
 		$result = $this->getFilesSharingPart($cap->getCapabilities());
 		return $result;
@@ -284,5 +285,4 @@ class CapabilitiesTest extends \Test\TestCase {
 		$this->assertArrayHasKey('federation', $result);
 		$this->assertFalse($result['federation']['outgoing']);
 	}
-
 }

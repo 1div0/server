@@ -2,6 +2,7 @@
 /**
  * @copyright 2017, Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  *
@@ -66,7 +67,7 @@ class CalendarManager {
 	 * @param array $calendars
 	 */
 	private function register(IManager $cm, array $calendars) {
-		foreach($calendars as $calendarInfo) {
+		foreach ($calendars as $calendarInfo) {
 			$calendar = new Calendar($this->backend, $calendarInfo, $this->l10n, $this->config);
 			$cm->registerCalendar(new CalendarImpl(
 				$calendar,

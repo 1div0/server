@@ -53,19 +53,12 @@ class DefaultTokenProvider implements IProvider {
 	/** @var IConfig */
 	private $config;
 
-	/** @var ILogger $logger */
+	/** @var ILogger */
 	private $logger;
 
-	/** @var ITimeFactory $time */
+	/** @var ITimeFactory */
 	private $time;
 
-	/**
-	 * @param DefaultTokenMapper $mapper
-	 * @param ICrypto $crypto
-	 * @param IConfig $config
-	 * @param ILogger $logger
-	 * @param ITimeFactory $time
-	 */
 	public function __construct(DefaultTokenMapper $mapper,
 								ICrypto $crypto,
 								IConfig $config,
@@ -124,7 +117,7 @@ class DefaultTokenProvider implements IProvider {
 	 */
 	public function updateToken(IToken $token) {
 		if (!($token instanceof DefaultToken)) {
-			throw new InvalidTokenException();
+			throw new InvalidTokenException("Invalid token type");
 		}
 		$this->mapper->update($token);
 	}
@@ -137,7 +130,7 @@ class DefaultTokenProvider implements IProvider {
 	 */
 	public function updateTokenActivity(IToken $token) {
 		if (!($token instanceof DefaultToken)) {
-			throw new InvalidTokenException();
+			throw new InvalidTokenException("Invalid token type");
 		}
 		/** @var DefaultToken $token */
 		$now = $this->time->getTime();
@@ -164,7 +157,7 @@ class DefaultTokenProvider implements IProvider {
 		try {
 			$token = $this->mapper->getToken($this->hashToken($tokenId));
 		} catch (DoesNotExistException $ex) {
-			throw new InvalidTokenException();
+			throw new InvalidTokenException("Token does not exist", 0, $ex);
 		}
 
 		if ((int)$token->getExpires() !== 0 && $token->getExpires() < $this->time->getTime()) {
@@ -186,7 +179,7 @@ class DefaultTokenProvider implements IProvider {
 		try {
 			$token = $this->mapper->getTokenById($tokenId);
 		} catch (DoesNotExistException $ex) {
-			throw new InvalidTokenException();
+			throw new InvalidTokenException("Token with ID $tokenId does not exist", 0, $ex);
 		}
 
 		if ((int)$token->getExpires() !== 0 && $token->getExpires() < $this->time->getTime()) {
@@ -248,7 +241,7 @@ class DefaultTokenProvider implements IProvider {
 	 */
 	public function setPassword(IToken $token, string $tokenId, string $password) {
 		if (!($token instanceof DefaultToken)) {
-			throw new InvalidTokenException();
+			throw new InvalidTokenException("Invalid token type");
 		}
 		/** @var DefaultToken $token */
 		$token->setPassword($this->encryptPassword($password, $tokenId));
@@ -293,7 +286,6 @@ class DefaultTokenProvider implements IProvider {
 			$password = $this->getPassword($token, $oldTokenId);
 			$token->setPassword($this->encryptPassword($password, $newTokenId));
 		} catch (PasswordlessTokenException $e) {
-
 		}
 
 		$token->setToken($this->hashToken($newTokenId));
@@ -342,13 +334,13 @@ class DefaultTokenProvider implements IProvider {
 		} catch (Exception $ex) {
 			// Delete the invalid token
 			$this->invalidateToken($token);
-			throw new InvalidTokenException();
+			throw new InvalidTokenException("Can not decrypt token password: " . $ex->getMessage(), 0, $ex);
 		}
 	}
 
 	public function markPasswordInvalid(IToken $token, string $tokenId) {
 		if (!($token instanceof DefaultToken)) {
-			throw new InvalidTokenException();
+			throw new InvalidTokenException("Invalid token type");
 		}
 
 		//No need to mark as invalid. We just invalide default tokens

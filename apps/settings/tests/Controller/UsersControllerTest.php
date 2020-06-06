@@ -107,14 +107,15 @@ class UsersControllerTest extends \Test\TestCase {
 		$this->encryptionManager = $this->createMock(IManager::class);
 
 		$this->l->method('t')
-			->will($this->returnCallback(function ($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 
 		$this->encryptionModule = $this->createMock(IEncryptionModule::class);
 		$this->encryptionManager->expects($this->any())->method('getEncryptionModules')
-			->willReturn(['encryptionModule' => ['callback' => function() { return $this->encryptionModule;}]]);
-
+			->willReturn(['encryptionModule' => ['callback' => function () {
+				return $this->encryptionModule;
+			}]]);
 	}
 
 	/**
@@ -444,12 +445,11 @@ class UsersControllerTest extends \Test\TestCase {
 	 * @dataProvider dataTestGetVerificationCode
 	 */
 	public function testGetVerificationCode($account, $type, $dataBefore, $expectedData, $onlyVerificationCode) {
-
 		$message = 'Use my Federated Cloud ID to share with me: user@nextcloud.com';
 		$signature = 'theSignature';
 
 		$code = $message . ' ' . $signature;
-		if($type === AccountManager::PROPERTY_TWITTER) {
+		if ($type === AccountManager::PROPERTY_TWITTER) {
 			$code = $message . ' ' . md5($signature);
 		}
 
@@ -485,7 +485,6 @@ class UsersControllerTest extends \Test\TestCase {
 	}
 
 	public function dataTestGetVerificationCode() {
-
 		$accountDataBefore = [
 			AccountManager::PROPERTY_WEBSITE => ['value' => 'https://nextcloud.com', 'verified' => AccountManager::NOT_VERIFIED],
 			AccountManager::PROPERTY_TWITTER => ['value' => '@nextclouders', 'verified' => AccountManager::NOT_VERIFIED, 'signature' => 'theSignature'],
@@ -513,7 +512,6 @@ class UsersControllerTest extends \Test\TestCase {
 	 * test get verification code in case no valid user was given
 	 */
 	public function testGetVerificationCodeInvalidUser() {
-
 		$controller = $this->getController();
 		$this->userSession->expects($this->once())->method('getUser')->willReturn(null);
 		$result = $controller->getVerificationCode('account', false);
@@ -540,9 +538,12 @@ class UsersControllerTest extends \Test\TestCase {
 			->willReturn($encryptionEnabled);
 		$this->encryptionManager->expects($this->any())
 			->method('getEncryptionModule')
-			->willReturnCallback(function() use ($encryptionModuleLoaded) {
-				if ($encryptionModuleLoaded) return $this->encryptionModule;
-				else throw new ModuleDoesNotExistsException();
+			->willReturnCallback(function () use ($encryptionModuleLoaded) {
+				if ($encryptionModuleLoaded) {
+					return $this->encryptionModule;
+				} else {
+					throw new ModuleDoesNotExistsException();
+				}
 			});
 		$this->encryptionModule->expects($this->any())
 			->method('needDetailedAccessList')
@@ -565,5 +566,4 @@ class UsersControllerTest extends \Test\TestCase {
 			[false, false, false, true],
 		];
 	}
-
 }

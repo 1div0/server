@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Robin Appelman <robin@icewind.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -29,7 +30,7 @@ namespace OCA\Files_Trashbin\Sabre;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\IFile;
 
-abstract class AbstractTrashFile extends AbstractTrash implements IFile , ITrash{
+abstract class AbstractTrashFile extends AbstractTrash implements IFile, ITrash {
 	public function put($data) {
 		throw new Forbidden();
 	}

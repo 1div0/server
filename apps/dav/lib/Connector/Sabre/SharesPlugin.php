@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -34,11 +35,10 @@ use Sabre\DAV\PropFind;
  * Sabre Plugin to provide share-related properties
  */
 class SharesPlugin extends \Sabre\DAV\ServerPlugin {
-
-	const NS_OWNCLOUD = 'http://owncloud.org/ns';
-	const NS_NEXTCLOUD = 'http://nextcloud.org/ns';
-	const SHARETYPES_PROPERTYNAME = '{http://owncloud.org/ns}share-types';
-	const SHAREES_PROPERTYNAME = '{http://nextcloud.org/ns}sharees';
+	public const NS_OWNCLOUD = 'http://owncloud.org/ns';
+	public const NS_NEXTCLOUD = 'http://nextcloud.org/ns';
+	public const SHARETYPES_PROPERTYNAME = '{http://owncloud.org/ns}share-types';
+	public const SHAREES_PROPERTYNAME = '{http://nextcloud.org/ns}sharees';
 
 	/**
 	 * Reference to main server object
@@ -107,7 +107,7 @@ class SharesPlugin extends \Sabre\DAV\ServerPlugin {
 		$server->protectedProperties[] = self::SHAREES_PROPERTYNAME;
 
 		$this->server = $server;
-		$this->server->on('propFind', array($this, 'handleGetProperties'));
+		$this->server->on('propFind', [$this, 'handleGetProperties']);
 	}
 
 	private function getShare(\OCP\Files\Node $node): array {
@@ -199,14 +199,14 @@ class SharesPlugin extends \Sabre\DAV\ServerPlugin {
 		$propFind->handle(self::SHARETYPES_PROPERTYNAME, function () use ($sabreNode) {
 			$shares = $this->getShares($sabreNode);
 
-			$shareTypes = array_unique(array_map(function(IShare $share) {
+			$shareTypes = array_unique(array_map(function (IShare $share) {
 				return $share->getShareType();
 			}, $shares));
 
 			return new ShareTypeList($shareTypes);
 		});
 
-		$propFind->handle(self::SHAREES_PROPERTYNAME, function() use ($sabreNode) {
+		$propFind->handle(self::SHAREES_PROPERTYNAME, function () use ($sabreNode) {
 			$shares = $this->getShares($sabreNode);
 
 			return new ShareeList($shares);

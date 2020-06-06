@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Robin Appelman <robin@icewind.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -31,10 +32,10 @@ use OCP\Files\Notify\INotifyHandler;
  * @since 9.1.0
  */
 interface INotifyStorage {
-	const NOTIFY_ADDED = 1;
-	const NOTIFY_REMOVED = 2;
-	const NOTIFY_MODIFIED = 3;
-	const NOTIFY_RENAMED = 4;
+	public const NOTIFY_ADDED = 1;
+	public const NOTIFY_REMOVED = 2;
+	public const NOTIFY_MODIFIED = 3;
+	public const NOTIFY_RENAMED = 4;
 
 	/**
 	 * Start listening for update notifications

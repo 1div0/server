@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 EITA Cooperative (eita.org.br)
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Filis Futsarov <filisko@users.noreply.github.com>
  * @author Vinicius Cubas Brand <vinicius@eita.org.br>
  *
@@ -27,12 +28,11 @@ namespace OCA\User_LDAP;
 use OC\User\Backend;
 
 class UserPluginManager {
-
 	public $test = false;
 
 	private $respondToActions = 0;
 
-	private $which = array(
+	private $which = [
 		Backend::CREATE_USER => null,
 		Backend::SET_PASSWORD => null,
 		Backend::GET_HOME => null,
@@ -41,7 +41,7 @@ class UserPluginManager {
 		Backend::PROVIDE_AVATAR => null,
 		Backend::COUNT_USERS => null,
 		'deleteUser' => null
-	);
+	];
 
 	/**
 	 * @return int All implemented actions, except for 'deleteUser'
@@ -59,7 +59,7 @@ class UserPluginManager {
 		$respondToActions = $plugin->respondToActions();
 		$this->respondToActions |= $respondToActions;
 
-		foreach($this->which as $action => $v) {
+		foreach ($this->which as $action => $v) {
 			if (is_int($action) && (bool)($respondToActions & $action)) {
 				$this->which[$action] = $plugin;
 				\OC::$server->getLogger()->debug("Registered action ".$action." to plugin ".get_class($plugin), ['app' => 'user_ldap']);

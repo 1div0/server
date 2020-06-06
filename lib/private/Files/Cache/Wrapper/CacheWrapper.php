@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Ari Selseng <ari@selseng.net>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Jagszent <daniel@jagszent.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -96,7 +97,7 @@ class CacheWrapper extends Cache {
 	 */
 	public function getFolderContentsById($fileId) {
 		$results = $this->getCache()->getFolderContentsById($fileId);
-		return array_map(array($this, 'formatCacheEntry'), $results);
+		return array_map([$this, 'formatCacheEntry'], $results);
 	}
 
 	/**
@@ -223,7 +224,7 @@ class CacheWrapper extends Cache {
 	 */
 	public function search($pattern) {
 		$results = $this->getCache()->search($pattern);
-		return array_map(array($this, 'formatCacheEntry'), $results);
+		return array_map([$this, 'formatCacheEntry'], $results);
 	}
 
 	/**
@@ -234,12 +235,12 @@ class CacheWrapper extends Cache {
 	 */
 	public function searchByMime($mimetype) {
 		$results = $this->getCache()->searchByMime($mimetype);
-		return array_map(array($this, 'formatCacheEntry'), $results);
+		return array_map([$this, 'formatCacheEntry'], $results);
 	}
 
 	public function searchQuery(ISearchQuery $query) {
 		$results = $this->getCache()->searchQuery($query);
-		return array_map(array($this, 'formatCacheEntry'), $results);
+		return array_map([$this, 'formatCacheEntry'], $results);
 	}
 
 	/**
@@ -318,7 +319,7 @@ class CacheWrapper extends Cache {
 	 * @param int $id
 	 * @return array first element holding the storage id, second the path
 	 */
-	static public function getById($id) {
+	public static function getById($id) {
 		return parent::getById($id);
 	}
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright 2018
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Maxence Lange <maxence@artificial-owl.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -26,7 +27,6 @@ declare(strict_types=1);
 
 namespace OCP\FullTextSearch\Model;
 
-
 /**
  * @since 16.0.0
  *
@@ -40,17 +40,17 @@ interface ISearchOption {
 	/**
 	 * @since 16.0.0
 	 */
-	const CHECKBOX = 'checkbox';
+	public const CHECKBOX = 'checkbox';
 
 	/**
 	 * @since 16.0.0
 	 */
-	const INPUT = 'input';
+	public const INPUT = 'input';
 
 	/**
 	 * @since 16.0.0
 	 */
-	const INPUT_SMALL = 'small';
+	public const INPUT_SMALL = 'small';
 
 
 	/**
@@ -163,5 +163,4 @@ interface ISearchOption {
 	 * @return string
 	 */
 	public function getPlaceholder(): string;
-
 }

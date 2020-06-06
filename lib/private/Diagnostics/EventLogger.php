@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Piotr Mrówczyński <mrow4a@yahoo.com>
  * @author Robin Appelman <robin@icewind.nl>
@@ -41,7 +42,7 @@ class EventLogger implements IEventLogger {
 	 * @inheritdoc
 	 */
 	public function start($id, $description) {
-		if ($this->activated){
+		if ($this->activated) {
 			$this->events[$id] = new Event($id, $description, microtime(true));
 		}
 	}

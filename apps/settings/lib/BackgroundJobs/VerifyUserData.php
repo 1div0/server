@@ -29,7 +29,6 @@
 
 namespace OCA\Settings\BackgroundJobs;
 
-
 use OC\Accounts\AccountManager;
 use OC\BackgroundJob\Job;
 use OC\BackgroundJob\JobList;
@@ -101,7 +100,6 @@ class VerifyUserData extends Job {
 	 * @param ILogger|null $logger
 	 */
 	public function execute($jobList, ILogger $logger = null) {
-
 		if ($this->shouldRun($this->argument)) {
 			parent::execute($jobList, $logger);
 			$jobList->remove($this, $this->argument);
@@ -111,14 +109,12 @@ class VerifyUserData extends Job {
 				$this->resetVerificationState();
 			}
 		}
-
 	}
 
 	protected function run($argument) {
-
 		$try = (int)$argument['try'] + 1;
 
-		switch($argument['type']) {
+		switch ($argument['type']) {
 			case AccountManager::PROPERTY_WEBSITE:
 				$result = $this->verifyWebsite($argument);
 				break;
@@ -144,7 +140,6 @@ class VerifyUserData extends Job {
 	 * @return bool true if we could check the verification code, otherwise false
 	 */
 	protected function verifyWebsite(array $argument) {
-
 		$result = false;
 
 		$url = rtrim($argument['data'], '/') . '/.well-known/' . 'CloudIdVerificationCode.txt';
@@ -189,7 +184,7 @@ class VerifyUserData extends Job {
 	 * @return bool true if we could check the verification code, otherwise false
 	 */
 	protected function verifyViaLookupServer(array $argument, $dataType) {
-		if(empty($this->lookupServerUrl) ||
+		if (empty($this->lookupServerUrl) ||
 			$this->config->getAppValue('files_sharing', 'lookupServerUploadEnabled', 'yes') !== 'yes' ||
 			$this->config->getSystemValue('has_internet_connection', true) === false) {
 			return false;
@@ -250,7 +245,6 @@ class VerifyUserData extends Job {
 			if (is_array($body) && isset($body['federationId']) && $body['federationId'] === $cloudId) {
 				return $body;
 			}
-
 		} catch (\Exception $e) {
 			// do nothing, we will just re-try later
 		}
@@ -300,5 +294,4 @@ class VerifyUserData extends Job {
 			$this->accountManager->updateUser($user, $accountData);
 		}
 	}
-
 }

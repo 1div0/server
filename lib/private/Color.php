@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, John Molakvoæ <skjnldsv@protonmail.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  *
  * @license GNU AGPL version 3 or any later version
@@ -24,7 +25,9 @@
 namespace OC;
 
 class Color {
-	public $r, $g, $b;
+	public $r;
+	public $g;
+	public $b;
 	public function __construct($r, $g, $b) {
 		$this->r = $r;
 		$this->g = $g;

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -48,7 +49,7 @@ class DataDisplayResponse extends Response {
 	 * @since 8.1.0
 	 */
 	public function __construct($data='', $statusCode=Http::STATUS_OK,
-	                            $headers=[]) {
+								$headers=[]) {
 		parent::__construct();
 
 		$this->data = $data;
@@ -73,7 +74,7 @@ class DataDisplayResponse extends Response {
 	 * @return DataDisplayResponse Reference to this object
 	 * @since 8.1.0
 	 */
-	public function setData($data){
+	public function setData($data) {
 		$this->data = $data;
 
 		return $this;
@@ -85,8 +86,7 @@ class DataDisplayResponse extends Response {
 	 * @return string the data
 	 * @since 8.1.0
 	 */
-	public function getData(){
+	public function getData() {
 		return $this->data;
 	}
-
 }

@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2018, Michael Weimann <mail@michael-weimann.eu>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Michael Weimann <mail@michael-weimann.eu>
  *
@@ -208,7 +209,7 @@ class UserAvatar extends Avatar {
 			$avatar->delete();
 		}
 		$this->config->setUserValue($this->user->getUID(), 'avatar', 'generated', 'true');
-		if(!$silent) {
+		if (!$silent) {
 			$this->user->triggerChange('avatar', '');
 		}
 	}
@@ -252,7 +253,7 @@ class UserAvatar extends Avatar {
 			$avatar->putContent($data);
 			$ext = 'png';
 
-			$this->folder->newFile('generated');
+			$this->folder->newFile('generated', '');
 			$this->config->setUserValue($this->user->getUID(), 'avatar', 'generated', 'true');
 		}
 
@@ -273,7 +274,6 @@ class UserAvatar extends Avatar {
 				if (!$data = $this->generateAvatarFromSvg($size)) {
 					$data = $this->generateAvatar($this->getDisplayName(), $size);
 				}
-
 			} else {
 				$avatar = new OC_Image();
 				$file = $this->folder->getFile('avatar.' . $ext);
@@ -289,7 +289,6 @@ class UserAvatar extends Avatar {
 				$this->logger->error('Failed to save avatar for ' . $this->user->getUID());
 				throw new NotFoundException();
 			}
-
 		}
 
 		if ($this->config->getUserValue($this->user->getUID(), 'avatar', 'generated', null) === null) {

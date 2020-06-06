@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -72,7 +73,7 @@ class RememberBackupCodesJob extends TimedJob {
 		}
 
 		$providers = $this->registry->getProviderStates($user);
-		$state2fa = array_reduce($providers, function(bool $carry, bool $state) {
+		$state2fa = array_reduce($providers, function (bool $carry, bool $state) {
 			return $carry || $state;
 		}, false);
 

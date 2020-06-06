@@ -2,6 +2,8 @@
 /**
  * @copyright Copyright (c) 2017 Lukas Reschke <lukas@statuscode.ch>
  *
+ * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  *
  * @license GNU AGPL version 3 or any later version
@@ -73,8 +75,8 @@ class BundleFetcher {
 			$this->getBundles(),
 			$this->getDefaultInstallationBundle()
 		);
-		foreach($bundles as $bundle) {
-			if($bundle->getIdentifier() === $identifier) {
+		foreach ($bundles as $bundle) {
+			if ($bundle->getIdentifier() === $identifier) {
 				return $bundle;
 			}
 		}

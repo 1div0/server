@@ -69,12 +69,12 @@ class Manager extends PublicEmitter implements IUserManager {
 	/**
 	 * @var \OCP\UserInterface[] $backends
 	 */
-	private $backends = array();
+	private $backends = [];
 
 	/**
 	 * @var \OC\User\User[] $cachedUsers
 	 */
-	private $cachedUsers = array();
+	private $cachedUsers = [];
 
 	/** @var IConfig */
 	private $config;
@@ -121,7 +121,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * @param \OCP\UserInterface $backend
 	 */
 	public function removeBackend($backend) {
-		$this->cachedUsers = array();
+		$this->cachedUsers = [];
 		if (($i = array_search($backend, $this->backends)) !== false) {
 			unset($this->backends[$i]);
 		}
@@ -131,8 +131,8 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * remove all user backends
 	 */
 	public function clearBackends() {
-		$this->cachedUsers = array();
-		$this->backends = array();
+		$this->cachedUsers = [];
+		$this->backends = [];
 	}
 
 	/**
@@ -241,7 +241,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * @return \OC\User\User[]
 	 */
 	public function search($pattern, $limit = null, $offset = null) {
-		$users = array();
+		$users = [];
 		foreach ($this->backends as $backend) {
 			$backendUsers = $backend->getUsers($pattern, $limit, $offset);
 			if (is_array($backendUsers)) {
@@ -270,7 +270,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * @return \OC\User\User[]
 	 */
 	public function searchDisplayName($pattern, $limit = null, $offset = null) {
-		$users = array();
+		$users = [];
 		foreach ($this->backends as $backend) {
 			$backendUsers = $backend->getDisplayNames($pattern, $limit, $offset);
 			if (is_array($backendUsers)) {
@@ -368,7 +368,7 @@ class Manager extends PublicEmitter implements IUserManager {
 		$this->emit('\OC\User', 'preCreateUser', [$uid, $password]);
 		$this->eventDispatcher->dispatchTyped(new CreateUserEvent($uid, $password));
 		$state = $backend->createUser($uid, $password);
-		if($state === false) {
+		if ($state === false) {
 			throw new \InvalidArgumentException($l->t('Could not create user'));
 		}
 		$user = $this->getUserObject($uid, $backend);
@@ -395,13 +395,13 @@ class Manager extends PublicEmitter implements IUserManager {
 		foreach ($this->backends as $backend) {
 			if ($backend->implementsActions(Backend::COUNT_USERS)) {
 				$backendUsers = $backend->countUsers();
-				if($backendUsers !== false) {
-					if($backend instanceof IUserBackend) {
+				if ($backendUsers !== false) {
+					if ($backend instanceof IUserBackend) {
 						$name = $backend->getBackendName();
 					} else {
 						$name = get_class($backend);
 					}
-					if(isset($userCountStatistics[$name])) {
+					if (isset($userCountStatistics[$name])) {
 						$userCountStatistics[$name] += $backendUsers;
 					} else {
 						$userCountStatistics[$name] = $backendUsers;
@@ -421,8 +421,8 @@ class Manager extends PublicEmitter implements IUserManager {
 	 */
 	public function countUsersOfGroups(array $groups) {
 		$users = [];
-		foreach($groups as $group) {
-			$usersIds = array_map(function($user) {
+		foreach ($groups as $group) {
+			$usersIds = array_map(function ($user) {
 				return $user->getUID();
 			}, $group->getUsers());
 			$users = array_merge($users, $usersIds);
@@ -618,11 +618,11 @@ class Manager extends PublicEmitter implements IUserManager {
 	public function getByEmail($email) {
 		$userIds = $this->config->getUsersForUserValueCaseInsensitive('settings', 'email', $email);
 
-		$users = array_map(function($uid) {
+		$users = array_map(function ($uid) {
 			return $this->get($uid);
 		}, $userIds);
 
-		return array_values(array_filter($users, function($u) {
+		return array_values(array_filter($users, function ($u) {
 			return ($u instanceof IUser);
 		}));
 	}

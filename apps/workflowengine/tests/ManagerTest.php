@@ -21,13 +21,13 @@
 
 namespace OCA\WorkflowEngine\Tests;
 
-
 use OC\L10N\L10N;
 use OCA\WorkflowEngine\Entity\File;
 use OCA\WorkflowEngine\Helper\ScopeContext;
 use OCA\WorkflowEngine\Manager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -67,6 +67,8 @@ class ManagerTest extends TestCase {
 	protected $l;
 	/** @var MockObject|IEventDispatcher */
 	protected $dispatcher;
+	/** @var MockObject|IConfig */
+	protected $config;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -76,14 +78,15 @@ class ManagerTest extends TestCase {
 		/** @var IL10N|MockObject $l */
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->method('t')
-			->will($this->returnCallback(function($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 
 		$this->legacyDispatcher = $this->createMock(EventDispatcherInterface::class);
 		$this->logger = $this->createMock(ILogger::class);
 		$this->session = $this->createMock(IUserSession::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->config = $this->createMock(IConfig::class);
 
 		$this->manager = new Manager(
 			\OC::$server->getDatabaseConnection(),
@@ -92,7 +95,8 @@ class ManagerTest extends TestCase {
 			$this->legacyDispatcher,
 			$this->logger,
 			$this->session,
-			$this->dispatcher
+			$this->dispatcher,
+			$this->config
 		);
 		$this->clearTables();
 	}
@@ -122,7 +126,7 @@ class ManagerTest extends TestCase {
 
 	public function clearTables() {
 		$query = $this->db->getQueryBuilder();
-		foreach(['flow_checks', 'flow_operations', 'flow_operations_scope'] as $table) {
+		foreach (['flow_checks', 'flow_operations', 'flow_operations_scope'] as $table) {
 			$query->delete($table)
 				->execute();
 		}
@@ -270,7 +274,6 @@ class ManagerTest extends TestCase {
 		array_walk($userOps, function ($op) {
 			$this->assertTrue($op['class'] === 'OCA\WFE\TestOp');
 		});
-
 	}
 
 	public function testUpdateOperation() {
@@ -281,9 +284,9 @@ class ManagerTest extends TestCase {
 		$this->container->expects($this->any())
 			->method('query')
 			->willReturnCallback(function ($class) {
-				if(substr($class, -2) === 'Op') {
+				if (substr($class, -2) === 'Op') {
 					return $this->createMock(IOperation::class);
-				} else if($class === File::class) {
+				} elseif ($class === File::class) {
 					return $this->getMockBuilder(File::class)
 						->setConstructorArgs([
 							$this->l,
@@ -327,7 +330,7 @@ class ManagerTest extends TestCase {
 		$this->assertSame('Test02a', $op['name']);
 		$this->assertSame('barfoo', $op['operation']);
 
-		foreach([[$adminScope, $opId2], [$userScope, $opId1]] as $run) {
+		foreach ([[$adminScope, $opId2], [$userScope, $opId1]] as $run) {
 			try {
 				/** @noinspection PhpUnhandledExceptionInspection */
 				$this->manager->updateOperation($run[1], 'Evil', [$check2], 'hackx0r', $run[0], $entity, []);
@@ -357,7 +360,7 @@ class ManagerTest extends TestCase {
 		);
 		$this->invokePrivate($this->manager, 'addScope', [$opId2, $userScope]);
 
-		foreach([[$adminScope, $opId2], [$userScope, $opId1]] as $run) {
+		foreach ([[$adminScope, $opId2], [$userScope, $opId1]] as $run) {
 			try {
 				/** @noinspection PhpUnhandledExceptionInspection */
 				$this->manager->deleteOperation($run[1], $run[0]);
@@ -372,11 +375,11 @@ class ManagerTest extends TestCase {
 		/** @noinspection PhpUnhandledExceptionInspection */
 		$this->manager->deleteOperation($opId2, $userScope);
 
-		foreach([$opId1, $opId2] as $opId) {
+		foreach ([$opId1, $opId2] as $opId) {
 			try {
 				$this->invokePrivate($this->manager, 'getOperation', [$opId]);
 				$this->assertTrue(false, 'UnexpectedValueException not thrown');
-			} catch(\Exception $e) {
+			} catch (\Exception $e) {
 				$this->assertInstanceOf(\UnexpectedValueException::class, $e);
 			}
 		}
@@ -410,7 +413,7 @@ class ManagerTest extends TestCase {
 		$this->legacyDispatcher->expects($this->once())
 			->method('dispatch')
 			->with('OCP\WorkflowEngine::registerEntities', $this->anything())
-			->willReturnCallback(function() use ($extraEntity) {
+			->willReturnCallback(function () use ($extraEntity) {
 				$this->manager->registerEntity($extraEntity);
 			});
 
@@ -419,13 +422,15 @@ class ManagerTest extends TestCase {
 		$this->assertCount(2, $entities);
 
 		$entityTypeCounts = array_reduce($entities, function (array $carry, IEntity $entity) {
-			if($entity instanceof File) $carry[0]++;
-			else if($entity instanceof IEntity) $carry[1]++;
+			if ($entity instanceof File) {
+				$carry[0]++;
+			} elseif ($entity instanceof IEntity) {
+				$carry[1]++;
+			}
 			return $carry;
 		}, [0, 0]);
 
 		$this->assertSame(1, $entityTypeCounts[0]);
 		$this->assertSame(1, $entityTypeCounts[1]);
 	}
-
 }

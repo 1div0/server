@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Morris Jobke <hey@morrisjobke.de>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -45,7 +46,7 @@ class Version17000Date20190514105811 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options) {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
-		if(!$schema->hasTable('filecache_extended')) {
+		if (!$schema->hasTable('filecache_extended')) {
 			$table = $schema->createTable('filecache_extended');
 			$table->addColumn('fileid', Type::BIGINT, [
 				'notnull' => true,

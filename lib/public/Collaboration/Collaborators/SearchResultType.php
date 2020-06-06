@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  *
  * @license GNU AGPL version 3 or any later version
@@ -61,11 +62,11 @@ class SearchResultType {
 	protected function getValidatedType($type) {
 		$type = trim((string)$type);
 
-		if($type === '') {
+		if ($type === '') {
 			throw new \InvalidArgumentException('Type must not be empty');
 		}
 
-		if($type === 'exact') {
+		if ($type === 'exact') {
 			throw new \InvalidArgumentException('Provided type is a reserved word');
 		}
 

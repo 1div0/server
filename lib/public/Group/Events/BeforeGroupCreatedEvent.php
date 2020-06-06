@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace OCP\Group\Events;
 
 use OCP\EventDispatcher\Event;
-use OCP\IGroup;
 
 /**
  * @since 18.0.0
@@ -52,5 +51,4 @@ class BeforeGroupCreatedEvent extends Event {
 	public function getName(): string {
 		return $this->name;
 	}
-
 }

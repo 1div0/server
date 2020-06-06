@@ -4,7 +4,9 @@
  * @copyright 2017 Lukas Reschke <lukas@statuscode.ch>
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
  * @author Georg Ehrke <oc.list@georgehrke.com>
+ * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Tobia De Koninck <tobia@ledfan.be>
@@ -77,7 +79,7 @@ class ContactsStore implements IContactsStore {
 			'EMAIL'
 		]);
 
-		$entries = array_map(function(array $contact) {
+		$entries = array_map(function (array $contact) {
 			return $this->contactArrayToEntry($contact);
 		}, $allContacts);
 		return $this->filterContacts(
@@ -107,12 +109,13 @@ class ContactsStore implements IContactsStore {
 									array $entries,
 									$filter) {
 		$disallowEnumeration = $this->config->getAppValue('core', 'shareapi_allow_share_dialog_user_enumeration', 'yes') !== 'yes';
+		$restrictEnumeration = $this->config->getAppValue('core', 'shareapi_restrict_user_enumeration_to_group', 'no') === 'yes';
 		$excludedGroups = $this->config->getAppValue('core', 'shareapi_exclude_groups', 'no') === 'yes';
 
 		// whether to filter out local users
 		$skipLocal = false;
 		// whether to filter out all users which doesn't have the same group as the current user
-		$ownGroupsOnly = $this->config->getAppValue('core', 'shareapi_only_share_with_group_members', 'no') === 'yes';
+		$ownGroupsOnly = $this->config->getAppValue('core', 'shareapi_only_share_with_group_members', 'no') === 'yes' || $restrictEnumeration;
 
 		$selfGroups = $this->groupManager->getUserGroupIds($self);
 
@@ -129,28 +132,28 @@ class ContactsStore implements IContactsStore {
 
 		$selfUID = $self->getUID();
 
-		return array_values(array_filter($entries, function(IEntry $entry) use ($self, $skipLocal, $ownGroupsOnly, $selfGroups, $selfUID, $disallowEnumeration, $filter) {
+		return array_values(array_filter($entries, function (IEntry $entry) use ($self, $skipLocal, $ownGroupsOnly, $selfGroups, $selfUID, $disallowEnumeration, $filter) {
 			if ($skipLocal && $entry->getProperty('isLocalSystemBook') === true) {
 				return false;
 			}
 
 			// Prevent enumerating local users
-			if($disallowEnumeration && $entry->getProperty('isLocalSystemBook')) {
+			if ($disallowEnumeration && $entry->getProperty('isLocalSystemBook')) {
 				$filterUser = true;
 
 				$mailAddresses = $entry->getEMailAddresses();
-				foreach($mailAddresses as $mailAddress) {
-					if($mailAddress === $filter) {
+				foreach ($mailAddresses as $mailAddress) {
+					if ($mailAddress === $filter) {
 						$filterUser = false;
 						break;
 					}
 				}
 
-				if($entry->getProperty('UID') && $entry->getProperty('UID') === $filter) {
+				if ($entry->getProperty('UID') && $entry->getProperty('UID') === $filter) {
 					$filterUser = false;
 				}
 
-				if($filterUser) {
+				if ($filterUser) {
 					return false;
 				}
 			}
@@ -158,7 +161,7 @@ class ContactsStore implements IContactsStore {
 			if ($ownGroupsOnly && $entry->getProperty('isLocalSystemBook') === true) {
 				$uid = $this->userManager->get($entry->getProperty('UID'));
 
-				if ($uid === NULL) {
+				if ($uid === null) {
 					return false;
 				}
 
@@ -180,7 +183,7 @@ class ContactsStore implements IContactsStore {
 	 * @return IEntry|null
 	 */
 	public function findOne(IUser $user, $shareType, $shareWith) {
-		switch($shareType) {
+		switch ($shareType) {
 			case 0:
 			case 6:
 				$filter = ['UID'];
@@ -194,7 +197,7 @@ class ContactsStore implements IContactsStore {
 
 		$userId = $user->getUID();
 		$allContacts = $this->contactsManager->search($shareWith, $filter);
-		$contacts = array_filter($allContacts, function($contact) use ($userId) {
+		$contacts = array_filter($allContacts, function ($contact) use ($userId) {
 			return $contact['UID'] !== $userId;
 		});
 		$match = null;
@@ -222,7 +225,6 @@ class ContactsStore implements IContactsStore {
 			} else {
 				$match = null;
 			}
-
 		}
 
 		return $match;
@@ -260,5 +262,4 @@ class ContactsStore implements IContactsStore {
 
 		return $entry;
 	}
-
 }

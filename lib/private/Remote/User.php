@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Robin Appelman <robin@icewind.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -23,11 +24,10 @@
 
 namespace OC\Remote;
 
-
 use OCP\Remote\IUser;
 
 class User implements IUser {
-	const EXPECTED_KEYS = [
+	public const EXPECTED_KEYS = [
 		'id',
 		'email',
 		'displayname',

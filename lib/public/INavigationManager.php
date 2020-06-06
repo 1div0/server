@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Julius Härtl <jus@bitgrid.net>
@@ -47,19 +48,19 @@ interface INavigationManager {
 	 * Navigation entries of the app navigation
 	 * @since 16.0.0
 	 */
-	const TYPE_APPS = 'link';
+	public const TYPE_APPS = 'link';
 
 	/**
 	 * Navigation entries of the settings navigation
 	 * @since 16.0.0
 	 */
-	const TYPE_SETTINGS = 'settings';
+	public const TYPE_SETTINGS = 'settings';
 
 	/**
 	 * Navigation entries for public page footer navigation
 	 * @since 16.0.0
 	 */
-	const TYPE_GUEST = 'guest';
+	public const TYPE_GUEST = 'guest';
 
 	/**
 	 * Creates a new navigation entry

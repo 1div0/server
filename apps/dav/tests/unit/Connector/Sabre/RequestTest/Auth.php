@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -78,7 +79,7 @@ class Auth implements BackendInterface {
 	 * @param ResponseInterface $response
 	 * @return array
 	 */
-	function check(RequestInterface $request, ResponseInterface $response) {
+	public function check(RequestInterface $request, ResponseInterface $response) {
 		$userSession = \OC::$server->getUserSession();
 		$result = $userSession->login($this->user, $this->password);
 		if ($result) {
@@ -113,7 +114,7 @@ class Auth implements BackendInterface {
 	 * @param ResponseInterface $response
 	 * @return void
 	 */
-	function challenge(RequestInterface $request, ResponseInterface $response) {
+	public function challenge(RequestInterface $request, ResponseInterface $response) {
 		// TODO: Implement challenge() method.
 	}
 }

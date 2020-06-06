@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018 Robin Appelman <robin@icewind.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -28,7 +29,7 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Driver;
 
 class ReconnectWrapper extends \Doctrine\DBAL\Connection {
-	const CHECK_CONNECTION_INTERVAL = 60;
+	public const CHECK_CONNECTION_INTERVAL = 60;
 
 	private $lastConnectionCheck = null;
 

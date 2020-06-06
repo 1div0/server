@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud GmbH
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Vincent Petry <pvince81@owncloud.com>
  *
@@ -27,7 +28,7 @@ use OCA\Testing\AlternativeHomeUserBackend;
 use OCP\AppFramework\App;
 
 class Application extends App {
-	public function __construct (array $urlParams = array()) {
+	public function __construct(array $urlParams = []) {
 		$appName = 'testing';
 		parent::__construct($appName, $urlParams);
 

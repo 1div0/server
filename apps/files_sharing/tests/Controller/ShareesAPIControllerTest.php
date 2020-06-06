@@ -6,6 +6,7 @@
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
+ * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -237,12 +238,10 @@ class ShareesAPIControllerTest extends TestCase {
 
 		/** @var IConfig|\PHPUnit_Framework_MockObject_MockObject $config */
 		$config = $this->createMock(IConfig::class);
-		$config->expects($this->exactly(3))
+		$config->expects($this->exactly(1))
 			->method('getAppValue')
 			->with($this->anything(), $this->anything(), $this->anything())
 			->willReturnMap([
-				['core', 'shareapi_only_share_with_group_members', 'no', $apiSetting],
-				['core', 'shareapi_allow_share_dialog_user_enumeration', 'yes', $enumSetting],
 				['files_sharing', 'lookupServerEnabled', 'yes', 'yes'],
 			]);
 
@@ -293,18 +292,15 @@ class ShareesAPIControllerTest extends TestCase {
 
 		$this->shareManager->expects($this->any())
 			->method('shareProviderExists')
-			->will($this->returnCallback(function($shareType) use ($emailSharingEnabled) {
+			->willReturnCallback(function ($shareType) use ($emailSharingEnabled) {
 				if ($shareType === \OCP\Share::SHARE_TYPE_EMAIL) {
 					return $emailSharingEnabled;
 				} else {
 					return false;
 				}
-			}));
+			});
 
 		$this->assertInstanceOf(Http\DataResponse::class, $sharees->search($search, $itemType, $page, $perPage, $shareType));
-
-		$this->assertSame($shareWithGroupOnly, $this->invokePrivate($sharees, 'shareWithGroupOnly'));
-		$this->assertSame($shareeEnumeration, $this->invokePrivate($sharees, 'shareeEnumeration'));
 	}
 
 	public function dataSearchInvalid() {

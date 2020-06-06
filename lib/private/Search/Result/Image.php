@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Andrew Brown <andrew@casabrown.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
  *
@@ -31,7 +32,7 @@ class Image extends File {
 
 	/**
 	 * Type name; translated in templates
-	 * @var string 
+	 * @var string
 	 */
 	public $type = 'image';
 	

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -75,7 +76,6 @@ class SettingsControllerTest extends TestCase {
 	private $utilMock;
 
 	protected function setUp(): void {
-
 		parent::setUp();
 
 		$this->requestMock = $this->createMock(IRequest::class);
@@ -85,9 +85,9 @@ class SettingsControllerTest extends TestCase {
 
 		$this->l10nMock->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function($message) {
+			->willReturnCallback(function ($message) {
 				return $message;
-			}));
+			});
 
 		$this->userManagerMock = $this->getMockBuilder(IUserManager::class)
 			->disableOriginalConstructor()->getMock();
@@ -135,7 +135,6 @@ class SettingsControllerTest extends TestCase {
 	 * test updatePrivateKeyPassword() if wrong new password was entered
 	 */
 	public function testUpdatePrivateKeyPasswordWrongNewPassword() {
-
 		$oldPassword = 'old';
 		$newPassword = 'new';
 
@@ -161,7 +160,6 @@ class SettingsControllerTest extends TestCase {
 	 * test updatePrivateKeyPassword() if wrong old password was entered
 	 */
 	public function testUpdatePrivateKeyPasswordWrongOldPassword() {
-
 		$oldPassword = 'old';
 		$newPassword = 'new';
 
@@ -188,7 +186,6 @@ class SettingsControllerTest extends TestCase {
 	 * test updatePrivateKeyPassword() with the correct old and new password
 	 */
 	public function testUpdatePrivateKeyPassword() {
-
 		$oldPassword = 'old';
 		$newPassword = 'new';
 
@@ -248,10 +245,9 @@ class SettingsControllerTest extends TestCase {
 			$data['message']);
 	}
 
-	function testSetEncryptHomeStorage() {
+	public function testSetEncryptHomeStorage() {
 		$value = true;
 		$this->utilMock->expects($this->once())->method('setEncryptHomeStorage')->with($value);
 		$this->controller->setEncryptHomeStorage($value);
 	}
-
 }

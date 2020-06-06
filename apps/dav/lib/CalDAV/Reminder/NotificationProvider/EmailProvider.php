@@ -6,9 +6,10 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2019, Thomas Citharel
  * @copyright Copyright (c) 2019, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -99,7 +100,7 @@ class EmailProvider extends AbstractProvider {
 		$sortedByLanguage = $this->sortEMailAddressesByLanguage($emailAddresses, $fallbackLanguage);
 		$organizer = $this->getOrganizerEMailAndNameFromEvent($vevent);
 
-		foreach($sortedByLanguage as $lang => $emailAddresses) {
+		foreach ($sortedByLanguage as $lang => $emailAddresses) {
 			if (!$this->hasL10NForLang($lang)) {
 				$lang = $fallbackLanguage;
 			}
@@ -212,7 +213,7 @@ class EmailProvider extends AbstractProvider {
 												  string $defaultLanguage):array {
 		$sortedByLanguage = [];
 
-		foreach($emails as $emailAddress => $parameters) {
+		foreach ($emails as $emailAddress => $parameters) {
 			if (isset($parameters['LANG'])) {
 				$lang = $parameters['LANG'];
 			} else {
@@ -260,7 +261,7 @@ class EmailProvider extends AbstractProvider {
 					}
 
 					$emailAddressesOfDelegates = $delegates->getParts();
-					foreach($emailAddressesOfDelegates as $addressesOfDelegate) {
+					foreach ($emailAddressesOfDelegates as $addressesOfDelegate) {
 						if (strcasecmp($addressesOfDelegate, 'mailto:') === 0) {
 							$emailAddresses[substr($addressesOfDelegate, 7)] = [];
 						}
@@ -345,7 +346,7 @@ class EmailProvider extends AbstractProvider {
 	private function getEMailAddressesOfAllUsersWithWriteAccessToCalendar(array $users):array {
 		$emailAddresses = [];
 
-		foreach($users as $user) {
+		foreach ($users as $user) {
 			$emailAddress = $user->getEMailAddress();
 			if ($emailAddress) {
 				$lang = $this->getLangForUser($user);

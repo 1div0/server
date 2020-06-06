@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -34,14 +35,14 @@ class HomeObjectStoreStorage extends ObjectStoreStorage implements \OCP\Files\IH
 	 * @param array $params
 	 */
 	public function __construct($params) {
-		if ( ! isset($params['user']) || ! $params['user'] instanceof User) {
+		if (! isset($params['user']) || ! $params['user'] instanceof User) {
 			throw new \Exception('missing user object in parameters');
 		}
 		$this->user = $params['user'];
 		parent::__construct($params);
 	}
 
-	public function getId () {
+	public function getId() {
 		return 'object::user:' . $this->user->getUID();
 	}
 
@@ -65,6 +66,4 @@ class HomeObjectStoreStorage extends ObjectStoreStorage implements \OCP\Files\IH
 	public function getUser($path = null) {
 		return $this->user;
 	}
-
-
 }

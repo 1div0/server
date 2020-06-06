@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright 2018 Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Citharel <nextcloud@tcit.fr>
@@ -92,7 +93,7 @@ class RefreshWebcalJob extends Job {
 		try {
 			/** @var DateInterval $dateInterval */
 			$dateInterval = DateTimeParser::parseDuration($refreshRate);
-		} catch(InvalidDataException $ex) {
+		} catch (InvalidDataException $ex) {
 			$this->logger->logException($ex);
 			$this->logger->warning("Subscription $subscriptionId could not be refreshed, refreshrate in database is invalid");
 			return;
@@ -142,7 +143,7 @@ class RefreshWebcalJob extends Job {
 			RefreshWebcalService::STRIP_TODOS,
 		];
 
-		foreach($forceInt as $column) {
+		foreach ($forceInt as $column) {
 			if (isset($row[$column])) {
 				$row[$column] = (int) $row[$column];
 			}

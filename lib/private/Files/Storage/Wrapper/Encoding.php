@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Lukas Reschke <lukas@statuscode.ch>
+ * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Vincent Petry <pvince81@owncloud.com>
  *
@@ -533,5 +534,9 @@ class Encoding extends Wrapper {
 	 */
 	public function getMetaData($path) {
 		return $this->storage->getMetaData($this->findPathToUse($path));
+	}
+
+	public function getDirectoryContent($directory): \Traversable {
+		return $this->storage->getDirectoryContent($this->findPathToUse($directory));
 	}
 }

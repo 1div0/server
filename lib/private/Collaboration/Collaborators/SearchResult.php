@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -24,12 +25,10 @@
 
 namespace OC\Collaboration\Collaborators;
 
-
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
 
 class SearchResult implements ISearchResult {
-
 	protected $result = [
 		'exact' => [],
 	];
@@ -38,13 +37,13 @@ class SearchResult implements ISearchResult {
 
 	public function addResultSet(SearchResultType $type, array $matches, array $exactMatches = null) {
 		$type = $type->getLabel();
-		if(!isset($this->result[$type])) {
+		if (!isset($this->result[$type])) {
 			$this->result[$type] = [];
 			$this->result['exact'][$type] = [];
 		}
 
 		$this->result[$type] = array_merge($this->result[$type], $matches);
-		if(is_array($exactMatches)) {
+		if (is_array($exactMatches)) {
 			$this->result['exact'][$type] = array_merge($this->result['exact'][$type], $exactMatches);
 		}
 	}
@@ -59,12 +58,12 @@ class SearchResult implements ISearchResult {
 
 	public function hasResult(SearchResultType $type, $collaboratorId) {
 		$type = $type->getLabel();
-		if(!isset($this->result[$type])) {
+		if (!isset($this->result[$type])) {
 			return false;
 		}
 
 		$resultArrays = [$this->result['exact'][$type], $this->result[$type]];
-		foreach($resultArrays as $resultArray) {
+		foreach ($resultArrays as $resultArray) {
 			foreach ($resultArray as $result) {
 				if ($result['value']['shareWith'] === $collaboratorId) {
 					return true;
@@ -82,7 +81,7 @@ class SearchResult implements ISearchResult {
 	public function unsetResult(SearchResultType $type) {
 		$type = $type->getLabel();
 		$this->result[$type] = [];
-		if(isset($this->result['exact'][$type])) {
+		if (isset($this->result['exact'][$type])) {
 			$this->result['exact'][$type] = [];
 		}
 	}

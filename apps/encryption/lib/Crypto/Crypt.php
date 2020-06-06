@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -28,7 +29,6 @@
  */
 
 namespace OCA\Encryption\Crypto;
-
 
 use OC\Encryption\Exceptions\DecryptionFailedException;
 use OC\Encryption\Exceptions\EncryptionFailedException;
@@ -55,17 +55,16 @@ use OCP\IUserSession;
  * @package OCA\Encryption\Crypto
  */
 class Crypt {
-
-	const DEFAULT_CIPHER = 'AES-256-CTR';
+	public const DEFAULT_CIPHER = 'AES-256-CTR';
 	// default cipher from old Nextcloud versions
-	const LEGACY_CIPHER = 'AES-128-CFB';
+	public const LEGACY_CIPHER = 'AES-128-CFB';
 
 	// default key format, old Nextcloud version encrypted the private key directly
 	// with the user password
-	const LEGACY_KEY_FORMAT = 'password';
+	public const LEGACY_KEY_FORMAT = 'password';
 
-	const HEADER_START = 'HBEGIN';
-	const HEADER_END = 'HEND';
+	public const HEADER_START = 'HBEGIN';
+	public const HEADER_END = 'HEND';
 
 	/** @var ILogger */
 	private $logger;
@@ -110,7 +109,6 @@ class Crypt {
 	 * @return array|bool
 	 */
 	public function createKeyPair() {
-
 		$log = $this->logger;
 		$res = $this->getOpenSSLPKey();
 
@@ -177,7 +175,6 @@ class Crypt {
 	 * @throws EncryptionFailedException
 	 */
 	public function symmetricEncryptFileContent($plainContent, $passPhrase, $version, $position) {
-
 		if (!$plainContent) {
 			$this->logger->error('Encryption Library, symmetrical encryption failed no content given',
 				['app' => 'encryption']);
@@ -208,7 +205,6 @@ class Crypt {
 	 * @throws \InvalidArgumentException
 	 */
 	public function generateHeader($keyFormat = 'hash') {
-
 		if (in_array($keyFormat, $this->supportedKeyFormats, true) === false) {
 			throw new \InvalidArgumentException('key format "' . $keyFormat . '" is not supported');
 		}
@@ -268,8 +264,8 @@ class Crypt {
 		}
 
 		// Workaround for OpenSSL 0.9.8. Fallback to an old cipher that should work.
-		if(OPENSSL_VERSION_NUMBER < 0x1000101f) {
-			if($cipher === 'AES-256-CTR' || $cipher === 'AES-128-CTR') {
+		if (OPENSSL_VERSION_NUMBER < 0x1000101f) {
+			if ($cipher === 'AES-256-CTR' || $cipher === 'AES-128-CTR') {
 				$cipher = self::LEGACY_CIPHER;
 			}
 		}
@@ -285,7 +281,7 @@ class Crypt {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function getKeySize($cipher) {
-		if(isset($this->supportedCiphersAndKeySize[$cipher])) {
+		if (isset($this->supportedCiphersAndKeySize[$cipher])) {
 			return $this->supportedCiphersAndKeySize[$cipher];
 		}
 
@@ -390,7 +386,6 @@ class Crypt {
 	 * @return false|string
 	 */
 	public function decryptPrivateKey($privateKey, $password = '', $uid = '') {
-
 		$header = $this->parseHeader($privateKey);
 
 		if (isset($header['cipher'])) {
@@ -490,7 +485,7 @@ class Crypt {
 
 		if (!$isCorrectHash && $enforceSignature) {
 			throw new GenericEncryptionException('Bad Signature', $this->l->t('Bad Signature'));
-		} else if (!$isCorrectHash && !$enforceSignature) {
+		} elseif (!$isCorrectHash && !$enforceSignature) {
 			$this->logger->info("Signature check skipped", ['app' => 'encryption']);
 		}
 	}

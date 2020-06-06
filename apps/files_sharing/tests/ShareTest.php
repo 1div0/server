@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -33,8 +34,7 @@ namespace OCA\Files_Sharing\Tests;
  * @group DB
  */
 class ShareTest extends TestCase {
-
-	const TEST_FOLDER_NAME = '/folder_share_api_test';
+	public const TEST_FOLDER_NAME = '/folder_share_api_test';
 
 	private static $tempStorage;
 
@@ -127,7 +127,6 @@ class ShareTest extends TestCase {
 	}
 
 	public function testShareWithDifferentShareFolder() {
-
 		$fileinfo = $this->view->getFileInfo($this->filename);
 		$folderinfo = $this->view->getFileInfo($this->folder);
 
@@ -202,7 +201,6 @@ class ShareTest extends TestCase {
 	 * @dataProvider dataProviderTestFileSharePermissions
 	 */
 	public function testFileSharePermissions($permission, $expectedvalid) {
-
 		$pass = true;
 		try {
 			$this->share(
@@ -226,17 +224,16 @@ class ShareTest extends TestCase {
 		$permission5 = \OCP\Constants::PERMISSION_READ | \OCP\Constants::PERMISSION_DELETE;
 		$permission6 = \OCP\Constants::PERMISSION_READ | \OCP\Constants::PERMISSION_UPDATE | \OCP\Constants::PERMISSION_DELETE;
 
-		return array(
-			array($permission1, false),
-			array($permission3, true),
-			array($permission4, true),
-			array($permission5, false),
-			array($permission6, false),
-		);
+		return [
+			[$permission1, false],
+			[$permission3, true],
+			[$permission4, true],
+			[$permission5, false],
+			[$permission6, false],
+		];
 	}
 
 	public function testFileOwner() {
-
 		$this->share(
 			\OCP\Share::SHARE_TYPE_USER,
 			$this->filename,

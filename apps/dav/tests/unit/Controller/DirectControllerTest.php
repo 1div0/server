@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright 2018, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -143,7 +144,7 @@ class DirectControllerTest extends TestCase {
 			});
 
 		$this->urlGenerator->method('getAbsoluteURL')
-			->willReturnCallback(function(string $url) {
+			->willReturnCallback(function (string $url) {
 				return 'https://my.nextcloud/'.$url;
 			});
 

@@ -2,10 +2,11 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
  * @license AGPL-3.0
@@ -53,7 +54,7 @@ class CreateCalendar extends Command {
 	 * @param IGroupManager $groupManager
 	 * @param IDBConnection $dbConnection
 	 */
-	function __construct(IUserManager $userManager, IGroupManager $groupManager, IDBConnection $dbConnection) {
+	public function __construct(IUserManager $userManager, IGroupManager $groupManager, IDBConnection $dbConnection) {
 		parent::__construct();
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;

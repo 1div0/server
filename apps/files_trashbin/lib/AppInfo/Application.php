@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -34,10 +35,9 @@ use OCA\Files_Trashbin\Trash\ITrashManager;
 use OCA\Files_Trashbin\Trash\TrashManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\IAppContainer;
-use OCP\AppFramework\Utility\ITimeFactory;
 
 class Application extends App {
-	public function __construct (array $urlParams = []) {
+	public function __construct(array $urlParams = []) {
 		parent::__construct('files_trashbin', $urlParams);
 
 		$container = $this->getContainer();
@@ -66,7 +66,7 @@ class Application extends App {
 			);
 		});
 
-		$container->registerService(ITrashManager::class, function(IAppContainer $c) {
+		$container->registerService(ITrashManager::class, function (IAppContainer $c) {
 			return new TrashManager();
 		});
 
@@ -79,11 +79,11 @@ class Application extends App {
 		$appManager = $server->getAppManager();
 		/** @var ITrashManager $trashManager */
 		$trashManager = $this->getContainer()->getServer()->query(ITrashManager::class);
-		foreach($appManager->getInstalledApps() as $app) {
+		foreach ($appManager->getInstalledApps() as $app) {
 			$appInfo = $appManager->getAppInfo($app);
 			if (isset($appInfo['trash'])) {
 				$backends = $appInfo['trash'];
-				foreach($backends as $backend) {
+				foreach ($backends as $backend) {
 					$class = $backend['@value'];
 					$for = $backend['@attributes']['for'];
 

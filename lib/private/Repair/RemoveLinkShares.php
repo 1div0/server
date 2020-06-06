@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019, Roeland Jago Douma <roeland@famdouma.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
@@ -210,7 +211,7 @@ class RemoveLinkShares implements IRepairStep {
 		$output->startProgress($total);
 
 		$shareCursor = $this->getShares();
-		while($data = $shareCursor->fetch()) {
+		while ($data = $shareCursor->fetch()) {
 			$this->processShare($data);
 			$output->advance();
 		}

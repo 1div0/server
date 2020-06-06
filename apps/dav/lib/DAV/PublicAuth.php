@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -67,8 +68,7 @@ class PublicAuth implements BackendInterface {
 	 * @param ResponseInterface $response
 	 * @return array
 	 */
-	function check(RequestInterface $request, ResponseInterface $response) {
-
+	public function check(RequestInterface $request, ResponseInterface $response) {
 		if ($this->isRequestPublic($request)) {
 			return [true, "principals/system/public"];
 		}
@@ -78,7 +78,7 @@ class PublicAuth implements BackendInterface {
 	/**
 	 * @inheritdoc
 	 */
-	function challenge(RequestInterface $request, ResponseInterface $response) {
+	public function challenge(RequestInterface $request, ResponseInterface $response) {
 	}
 
 	/**

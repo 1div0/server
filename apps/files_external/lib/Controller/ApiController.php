@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jesús Macias <jmacias@solidgear.es>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -74,7 +75,7 @@ class ApiController extends OCSController {
 			$permissions |= \OCP\Constants::PERMISSION_DELETE;
 		}
 
-		$entry = array(
+		$entry = [
 			'name' => basename($mountPoint),
 			'path' => $path,
 			'type' => 'dir',
@@ -83,7 +84,7 @@ class ApiController extends OCSController {
 			'permissions' => $permissions,
 			'id' => $mountConfig['id'],
 			'class' => $mountConfig['class']
-		);
+		];
 		return $entry;
 	}
 
@@ -99,7 +100,7 @@ class ApiController extends OCSController {
 		$user = $this->userSession->getUser()->getUID();
 
 		$mounts = \OC_Mount_Config::getAbsoluteMountPoints($user);
-		foreach($mounts as $mountPoint => $mount) {
+		foreach ($mounts as $mountPoint => $mount) {
 			$entries[] = $this->formatMount($mountPoint, $mount);
 		}
 

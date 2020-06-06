@@ -108,6 +108,7 @@ OC.L10N.register(
     "Sharing" : "Berbagi",
     "Personal info" : "Info pribadi",
     "Create" : "Buat",
+    "Change" : "Ubah",
     "Unlimited" : "Tak terbatas",
     "Limit to groups" : "Batasi ke grup",
     "Excluded groups" : "Grup yang dikecualikan",
@@ -209,6 +210,7 @@ OC.L10N.register(
     "Common languages" : "Bahasa umum",
     "All languages" : "Semua bahasa",
     "Password change is disabled because the master key is disabled" : "Pengaturan kata sandi dinonaktifkan karena kunci master dinonaktifkan",
+    "Add" : "Masukkan",
     "Your apps" : "Aplikasi anda",
     "Active apps" : "Aplikasi aktif",
     "Disabled apps" : "Matikan Aplikasi",
@@ -350,6 +352,7 @@ OC.L10N.register(
     "Current password" : "Kata sandi saat ini",
     "New password" : "Kata sandi baru",
     "Change password" : "Ubah kata sandi",
+    "Share" : "Bagikan",
     "Afrikaans (Namibia)" : "Afrika (Namibia)",
     "Afrikaans (South Africa)" : "Afrika (Afrika Selatan)",
     "Afrikaans" : "Afrika",
@@ -422,8 +425,6 @@ OC.L10N.register(
     "Official apps are developed by and within the community. They offer central functionality and are ready for production use." : "Aplikasi resmi dikembangkan oleh dan didalam komunitas. Mereka menawarkan fungsi sentral dan siap untuk penggunaan produksi.",
     "Official" : "Resmi",
     "The backend does not support changing the display name" : "Backend tidak mendukung pergantian tampilan nama",
-    "Store credentials" : "Simpan kredensial",
-    "Set default expiration date" : "Atur tanggal kadaluarsa default",
-    "Share" : "Bagikan"
+    "Set default expiration date" : "Atur tanggal kadaluarsa default"
 },
 "nplurals=1; plural=0;");

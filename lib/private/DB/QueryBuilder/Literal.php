@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  *
  * @license AGPL-3.0
@@ -24,7 +25,7 @@ namespace OC\DB\QueryBuilder;
 
 use OCP\DB\QueryBuilder\ILiteral;
 
-class Literal implements ILiteral{
+class Literal implements ILiteral {
 	/** @var mixed */
 	protected $literal;
 

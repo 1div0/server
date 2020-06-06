@@ -6,8 +6,8 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright 2018 John Molakvoæ <skjnldsv@protonmail.com>
  *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Christopher Schäpers <kondou@ts.unde.re>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
@@ -17,6 +17,7 @@ declare(strict_types=1);
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
+ * @author Sergey Shliakhov <husband.sergey@gmail.com>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
  * @license AGPL-3.0
@@ -232,7 +233,7 @@ abstract class Avatar implements IAvatar {
 		$x = intval(($xi - $xr) / 2);
 		$y = intval(($yi + $yr) / 2);
 
-		return array($x, $y);
+		return [$x, $y];
 	}
 
 	/**
@@ -242,7 +243,7 @@ abstract class Avatar implements IAvatar {
 	 * @return array [r,g,b] steps for each color to go from $steps to $ends
 	 */
 	private function stepCalc($steps, $ends) {
-		$step = array();
+		$step = [];
 		$step[0] = ($ends[1]->r - $ends[0]->r) / $steps;
 		$step[1] = ($ends[1]->g - $ends[0]->g) / $steps;
 		$step[2] = ($ends[1]->b - $ends[0]->b) / $steps;
@@ -256,7 +257,7 @@ abstract class Avatar implements IAvatar {
 	 * @return int[] between 0 and $maximum
 	 */
 	private function mixPalette($steps, $color1, $color2) {
-		$palette = array($color1);
+		$palette = [$color1];
 		$step = $this->stepCalc($steps, [$color1, $color2]);
 		for ($i = 1; $i < $steps; $i++) {
 			$r = intval($color1->r + ($step[0] * $i));
@@ -275,7 +276,7 @@ abstract class Avatar implements IAvatar {
 	 */
 	private function hashToInt($hash, $maximum) {
 		$final = 0;
-		$result = array();
+		$result = [];
 
 		// Splitting evenly the string
 		for ($i = 0; $i < strlen($hash); $i++) {
@@ -299,7 +300,7 @@ abstract class Avatar implements IAvatar {
 		$hash = strtolower($hash);
 
 		// Already a md5 hash?
-		if( preg_match('/^([0-9a-f]{4}-?){8}$/', $hash, $matches) !== 1 ) {
+		if (preg_match('/^([0-9a-f]{4}-?){8}$/', $hash, $matches) !== 1) {
 			$hash = md5($hash);
 		}
 

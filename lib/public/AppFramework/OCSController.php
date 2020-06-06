@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Donquixote <marjunebatac@gmail.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -63,7 +64,7 @@ abstract class OCSController extends ApiController {
 								IRequest $request,
 								$corsMethods='PUT, POST, GET, DELETE, PATCH',
 								$corsAllowedHeaders='Authorization, Content-Type, Accept',
-								$corsMaxAge=1728000){
+								$corsMaxAge=1728000) {
 		parent::__construct($appName, $request, $corsMethods,
 							$corsAllowedHeaders, $corsMaxAge);
 		$this->registerResponder('json', function ($data) {
@@ -110,5 +111,4 @@ abstract class OCSController extends ApiController {
 		}
 		return new \OC\AppFramework\OCS\V2Response($data, $format);
 	}
-
 }

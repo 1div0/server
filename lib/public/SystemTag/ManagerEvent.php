@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -37,10 +38,9 @@ use OCP\EventDispatcher\Event;
  * @since 9.0.0
  */
 class ManagerEvent extends Event {
-
-	const EVENT_CREATE = 'OCP\SystemTag\ISystemTagManager::createTag';
-	const EVENT_UPDATE = 'OCP\SystemTag\ISystemTagManager::updateTag';
-	const EVENT_DELETE = 'OCP\SystemTag\ISystemTagManager::deleteTag';
+	public const EVENT_CREATE = 'OCP\SystemTag\ISystemTagManager::createTag';
+	public const EVENT_UPDATE = 'OCP\SystemTag\ISystemTagManager::updateTag';
+	public const EVENT_DELETE = 'OCP\SystemTag\ISystemTagManager::deleteTag';
 
 	/** @var string */
 	protected $event;

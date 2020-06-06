@@ -156,7 +156,7 @@
     "Transfer {path} to {userid}" : "Transferir {path} cara a {userid}",
     "Invalid path selected" : "Seleccionou unha ruta incorrecta.",
     "Ownership transfer request sent" : "Enviouse solicitude de transferencia da propiedade",
-    "Cannot transfter ownership of a file or folder you don't own" : "Non é posíbel transferir a propiedade dun ficheiro ou cartafol que non é de seu",
+    "Cannot transfer ownership of a file or folder you don't own" : "Non é posíbel transferir a propiedade dun ficheiro ou cartafol que non é de seu",
     "Tags" : "Etiquetas",
     "Error while loading the file data" : "Produciuse un erro ao cargar os datos do ficheiro",
     "Unable to change the favourite state of the file" : "Non é posíbel cambiar o estado favorito do ficheiro",
@@ -166,7 +166,7 @@
     "Settings" : "Axustes",
     "Show hidden files" : "Amosar os ficheiros agochados",
     "WebDAV" : "WebDAV",
-    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Empregue este enderezo <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">acceder á súa aplicación Ficheiros mediante WebDAV</a>",
+    "Use this address to access your Files via WebDAV" : "Empregue este enderezo para acceder ao seu Ficheiros mediante WebDAV",
     "Toggle grid view" : "Alternar a vista como grella",
     "No files in here" : "Aquí non hai ficheiros",
     "Upload some content or sync with your devices!" : "Envíe algún contido ou sincronice cos seus dispositivos!",
@@ -185,7 +185,7 @@
     "Pending shares" : "Comparticións pendentes",
     "Text file" : "Ficheiro de texto",
     "New text file.txt" : "Novo ficheiro de texto.txt",
-    "%s of %s used" : "%s de %s utilizado",
-    "%1$s%% of %2$s used" : "%1$s%% de %2$s utilizado"
+    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Empregue este enderezo <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">acceder á súa aplicación Ficheiros mediante WebDAV</a>",
+    "Cannot transfter ownership of a file or folder you don't own" : "Non é posíbel transferir a propiedade dun ficheiro ou cartafol que non é de seu"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

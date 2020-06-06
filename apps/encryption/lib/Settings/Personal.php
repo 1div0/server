@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2017 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,7 +24,6 @@
 
 namespace OCA\Encryption\Settings;
 
-
 use OCA\Encryption\Session;
 use OCA\Encryption\Util;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -31,7 +31,7 @@ use OCP\IConfig;
 use OCP\IUserSession;
 use OCP\Settings\ISettings;
 
-class Personal implements  ISettings {
+class Personal implements ISettings {
 
 	/** @var IConfig */
 	private $config;

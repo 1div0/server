@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Andreas Fischer <bantu@owncloud.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
@@ -40,10 +41,10 @@ use OC\SystemConfig;
  */
 class ConnectionFactory {
 	/** @var string default database name */
-	const DEFAULT_DBNAME = 'owncloud';
+	public const DEFAULT_DBNAME = 'owncloud';
 
 	/** @var string default database table prefix */
-	const DEFAULT_DBTABLEPREFIX = 'oc_';
+	public const DEFAULT_DBTABLEPREFIX = 'oc_';
 
 	/**
 	 * @var array
@@ -106,9 +107,9 @@ class ConnectionFactory {
 		// \PDO::MYSQL_ATTR_FOUND_ROWS may not be defined, e.g. when the MySQL
 		// driver is missing. In this case, we won't be able to connect anyway.
 		if ($normalizedType === 'mysql' && defined('\PDO::MYSQL_ATTR_FOUND_ROWS')) {
-			$result['driverOptions'] = array(
+			$result['driverOptions'] = [
 				\PDO::MYSQL_ATTR_FOUND_ROWS => true,
-			);
+			];
 		}
 		return $result;
 	}

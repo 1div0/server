@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -125,9 +126,8 @@ class Storage {
 	 * @return string|null either the storage id string or null if the numeric id is not known
 	 */
 	public static function getStorageId($numericId) {
-
 		$sql = 'SELECT `id` FROM `*PREFIX*storages` WHERE `numeric_id` = ?';
-		$result = \OC_DB::executeAudited($sql, array($numericId));
+		$result = \OC_DB::executeAudited($sql, [$numericId]);
 		if ($row = $result->fetchRow()) {
 			return $row['id'];
 		} else {
@@ -194,11 +194,11 @@ class Storage {
 		$storageId = self::adjustStorageId($storageId);
 		$numericId = self::getNumericStorageId($storageId);
 		$sql = 'DELETE FROM `*PREFIX*storages` WHERE `id` = ?';
-		\OC_DB::executeAudited($sql, array($storageId));
+		\OC_DB::executeAudited($sql, [$storageId]);
 
 		if (!is_null($numericId)) {
 			$sql = 'DELETE FROM `*PREFIX*filecache` WHERE `storage` = ?';
-			\OC_DB::executeAudited($sql, array($numericId));
+			\OC_DB::executeAudited($sql, [$numericId]);
 		}
 	}
 }

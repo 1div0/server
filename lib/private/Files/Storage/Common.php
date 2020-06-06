@@ -5,6 +5,7 @@
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Greta Doci <gretadoci@gmail.com>
  * @author hkjolhede <hkjolhede@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
@@ -75,7 +76,6 @@ use OCP\Lock\LockedException;
  * in classes which extend it, e.g. $this->stat() .
  */
 abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
-
 	use LocalTempFileTrait;
 
 	protected $cache;
@@ -103,7 +103,7 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 	protected function remove($path) {
 		if ($this->is_dir($path)) {
 			return $this->rmdir($path);
-		} else if ($this->is_file($path)) {
+		} elseif ($this->is_file($path)) {
 			return $this->unlink($path);
 		} else {
 			return false;
@@ -234,7 +234,7 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 		} else {
 			$source = $this->fopen($path1, 'r');
 			$target = $this->fopen($path2, 'w');
-			list(, $result) = \OC_Helper::streamCopy($source, $target);
+			[, $result] = \OC_Helper::streamCopy($source, $target);
 			if (!$result) {
 				\OC::$server->getLogger()->warning("Failed to write data while copying $path1 to $path2");
 			}
@@ -296,11 +296,13 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 	 * @return array
 	 */
 	protected function searchInDir($query, $dir = '') {
-		$files = array();
+		$files = [];
 		$dh = $this->opendir($dir);
 		if (is_resource($dh)) {
 			while (($item = readdir($dh)) !== false) {
-				if (\OC\Files\Filesystem::isIgnoredDir($item)) continue;
+				if (\OC\Files\Filesystem::isIgnoredDir($item)) {
+					continue;
+				}
 				if (strstr(strtolower($item), strtolower($query)) !== false) {
 					$files[] = $dir . '/' . $item;
 				}
@@ -434,11 +436,11 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 			$path = '/' . $path;
 		}
 
-		$output = array();
+		$output = [];
 		foreach (explode('/', $path) as $chunk) {
 			if ($chunk == '..') {
 				array_pop($output);
-			} else if ($chunk == '.') {
+			} elseif ($chunk == '.') {
 			} else {
 				$output[] = $chunk;
 			}
@@ -624,7 +626,7 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 			// are not the same as the original one.Once this is fixed we also
 			// need to adjust the encryption wrapper.
 			$target = $this->fopen($targetInternalPath, 'w');
-			list(, $result) = \OC_Helper::streamCopy($source, $target);
+			[, $result] = \OC_Helper::streamCopy($source, $target);
 			if ($result and $preserveMtime) {
 				$this->touch($targetInternalPath, $sourceStorage->filemtime($sourceInternalPath));
 			}
@@ -717,6 +719,7 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 		$data['etag'] = $this->getETag($path);
 		$data['storage_mtime'] = $data['mtime'];
 		$data['permissions'] = $permissions;
+		$data['name'] = basename($path);
 
 		return $data;
 	}
@@ -857,9 +860,25 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 		if (!$target) {
 			return 0;
 		}
-		list($count, $result) = \OC_Helper::streamCopy($stream, $target);
-		fclose($stream);
-		fclose($target);
+		try {
+			[$count, $result] = \OC_Helper::streamCopy($stream, $target);
+		} finally {
+			fclose($target);
+			fclose($stream);
+		}
 		return $count;
+	}
+
+	public function getDirectoryContent($directory): \Traversable {
+		$dh = $this->opendir($directory);
+		if (is_resource($dh)) {
+			$basePath = rtrim($directory, '/');
+			while (($file = readdir($dh)) !== false) {
+				if (!Filesystem::isIgnoredDir($file) && !Filesystem::isFileBlacklisted($file)) {
+					$childPath = $basePath . '/' . trim($file, '/');
+					yield $this->getMetaData($childPath);
+				}
+			}
+		}
 	}
 }

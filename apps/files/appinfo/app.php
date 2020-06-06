@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
@@ -36,7 +37,7 @@ $app = \OC::$server->query(Application::class);
 // t('Files')
 $l = \OC::$server->getL10N('files');
 
-\OC::$server->getSearch()->registerProvider(File::class, array('apps' => array('files')));
+\OC::$server->getSearch()->registerProvider(File::class, ['apps' => ['files']]);
 
 $templateManager = \OC_Helper::getFileTemplateManager();
 $templateManager->registerTemplate('application/vnd.oasis.opendocument.presentation', 'core/templates/filetemplates/template.odp');

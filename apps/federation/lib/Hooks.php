@@ -22,8 +22,6 @@
 
 namespace OCA\Federation;
 
-
-
 class Hooks {
 
 	/** @var TrustedServers */
@@ -46,5 +44,4 @@ class Hooks {
 			$this->trustedServers->addServer($params['server']);
 		}
 	}
-
 }

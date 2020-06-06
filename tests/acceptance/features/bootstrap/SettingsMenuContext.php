@@ -25,7 +25,6 @@
 use Behat\Behat\Context\Context;
 
 class SettingsMenuContext implements Context, ActorAwareInterface {
-
 	use ActorAware;
 
 	/**
@@ -103,7 +102,7 @@ class SettingsMenuContext implements Context, ActorAwareInterface {
 	}
 
 	/**
-	 * @return array 
+	 * @return array
 	 */
 	public function menuItems() {
 		return $this->actor->find(self::settingsMenu(), 10)
@@ -217,5 +216,4 @@ class SettingsMenuContext implements Context, ActorAwareInterface {
 		} catch (NoSuchElementException $exception) {
 		}
 	}
-
 }

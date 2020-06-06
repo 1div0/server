@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -26,7 +27,6 @@
  */
 
 namespace OCA\Encryption\Tests;
-
 
 use OC\Files\View;
 use OCA\Encryption\Crypto\Crypt;
@@ -75,7 +75,7 @@ class UtilTest extends TestCase {
 	public function testUserHasFiles() {
 		$this->filesMock->expects($this->once())
 			->method('file_exists')
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->assertTrue($this->instance->userHasFiles('admin'));
 	}
@@ -111,11 +111,11 @@ class UtilTest extends TestCase {
 
 		$this->configMock->expects($this->any())
 			->method('getUserValue')
-			->will($this->returnCallback([$this, 'getValueTester']));
+			->willReturnCallback([$this, 'getValueTester']);
 
 		$this->configMock->expects($this->any())
 			->method('setUserValue')
-			->will($this->returnCallback([$this, 'setValueTester']));
+			->willReturnCallback([$this, 'setValueTester']);
 
 		$this->instance = new Util($this->filesMock, $cryptMock, $loggerMock, $userSessionMock, $this->configMock, $this->userManagerMock);
 	}
@@ -216,5 +216,4 @@ class UtilTest extends TestCase {
 
 		$this->assertEquals($return, $this->instance->getStorage($path));
 	}
-
 }

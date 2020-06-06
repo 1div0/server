@@ -4,6 +4,7 @@
  *
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -51,7 +52,7 @@ class InvitationResponseServer {
 		$this->server = new \OCA\DAV\Connector\Sabre\Server(new CachingTree($root));
 
 		// Add maintenance plugin
-		$this->server->addPlugin(new \OCA\DAV\Connector\Sabre\MaintenancePlugin(\OC::$server->getConfig()));
+		$this->server->addPlugin(new \OCA\DAV\Connector\Sabre\MaintenancePlugin(\OC::$server->getConfig(), \OC::$server->getL10N('dav')));
 
 		// Set URL explicitly due to reverse-proxy situations
 		$this->server->httpRequest->setUrl($baseUri);
@@ -84,7 +85,7 @@ class InvitationResponseServer {
 		// calendar plugins
 		$this->server->addPlugin(new \OCA\DAV\CalDAV\Plugin());
 		$this->server->addPlugin(new \Sabre\CalDAV\ICSExportPlugin());
-		$this->server->addPlugin(new \OCA\DAV\CalDAV\Schedule\Plugin());
+		$this->server->addPlugin(new \OCA\DAV\CalDAV\Schedule\Plugin(\OC::$server->getConfig()));
 		$this->server->addPlugin(new \Sabre\CalDAV\Subscriptions\Plugin());
 		$this->server->addPlugin(new \Sabre\CalDAV\Notifications\Plugin());
 		//$this->server->addPlugin(new \OCA\DAV\DAV\Sharing\Plugin($authBackend, \OC::$server->getRequest()));
@@ -94,7 +95,7 @@ class InvitationResponseServer {
 		));
 
 		// wait with registering these until auth is handled and the filesystem is setup
-		$this->server->on('beforeMethod', function () use ($root) {
+		$this->server->on('beforeMethod:*', function () use ($root) {
 			// register plugins from apps
 			$pluginManager = new PluginManager(
 				\OC::$server,

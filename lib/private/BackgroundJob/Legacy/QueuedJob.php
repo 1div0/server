@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  *
@@ -28,8 +29,8 @@ class QueuedJob extends \OC\BackgroundJob\QueuedJob {
 		$class = $argument['klass'];
 		$method = $argument['method'];
 		$parameters = $argument['parameters'];
-		if (is_callable(array($class, $method))) {
-			call_user_func(array($class, $method), $parameters);
+		if (is_callable([$class, $method])) {
+			call_user_func([$class, $method], $parameters);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Arthur Schiwon <blizzz@arthur-schiwon.de>
@@ -27,8 +28,11 @@ namespace OCA\WorkflowEngine\Settings;
 use OCP\WorkflowEngine\IManager;
 
 class Personal extends ASettings {
-
-	function getScope(): int {
+	public function getScope(): int {
 		return IManager::SCOPE_USER;
+	}
+
+	public function getSection() {
+		return $this->manager->isUserScopeEnabled() ? 'workflow' : null;
 	}
 }

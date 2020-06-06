@@ -6,9 +6,10 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2019, Thomas Citharel
  * @copyright Copyright (c) 2019, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -111,7 +112,7 @@ class ReminderService {
 	public function processReminders():void {
 		$reminders = $this->backend->getRemindersToProcess();
 
-		foreach($reminders as $reminder) {
+		foreach ($reminders as $reminder) {
 			$calendarData = is_resource($reminder['calendardata'])
 				? stream_get_contents($reminder['calendardata'])
 				: $reminder['calendardata'];
@@ -163,7 +164,7 @@ class ReminderService {
 			return;
 		}
 
-		switch($action) {
+		switch ($action) {
 			case '\OCA\DAV\CalDAV\CalDavBackend::createCalendarObject':
 				$this->onCalendarObjectCreate($objectData);
 				break;
@@ -206,14 +207,14 @@ class ReminderService {
 		$now = $this->timeFactory->getDateTime();
 		$isRecurring = $masterItem ? $this->isRecurring($masterItem) : false;
 
-		foreach($recurrenceExceptions as $recurrenceException) {
+		foreach ($recurrenceExceptions as $recurrenceException) {
 			$eventHash = $this->getEventHash($recurrenceException);
 
 			if (!isset($recurrenceException->VALARM)) {
 				continue;
 			}
 
-			foreach($recurrenceException->VALARM as $valarm) {
+			foreach ($recurrenceException->VALARM as $valarm) {
 				/** @var VAlarm $valarm */
 				$alarmHash = $this->getAlarmHash($valarm);
 				$triggerTime = $valarm->getEffectiveTriggerTime();
@@ -237,7 +238,7 @@ class ReminderService {
 				return;
 			}
 
-			foreach($masterItem->VALARM as $valarm) {
+			foreach ($masterItem->VALARM as $valarm) {
 				$masterAlarms[] = $this->getAlarmHash($valarm);
 			}
 
@@ -250,7 +251,7 @@ class ReminderService {
 				return;
 			}
 
-			while($iterator->valid() && count($processedAlarms) < count($masterAlarms)) {
+			while ($iterator->valid() && count($processedAlarms) < count($masterAlarms)) {
 				$event = $iterator->getEventObject();
 
 				// Recurrence-exceptions are handled separately, so just ignore them here
@@ -259,7 +260,7 @@ class ReminderService {
 					continue;
 				}
 
-				foreach($event->VALARM as $valarm) {
+				foreach ($event->VALARM as $valarm) {
 					/** @var VAlarm $valarm */
 					$alarmHash = $this->getAlarmHash($valarm);
 					if (\in_array($alarmHash, $processedAlarms, true)) {
@@ -365,7 +366,7 @@ class ReminderService {
 		];
 
 		$repeat = isset($valarm->REPEAT) ? (int) $valarm->REPEAT->getValue() : 0;
-		for($i = 0; $i < $repeat; $i++) {
+		for ($i = 0; $i < $repeat; $i++) {
 			if ($valarm->DURATION === null) {
 				continue;
 			}
@@ -394,7 +395,7 @@ class ReminderService {
 	 * @param array $reminders
 	 */
 	private function writeRemindersToDatabase(array $reminders): void {
-		foreach($reminders as $reminder) {
+		foreach ($reminders as $reminder) {
 			$this->backend->insertReminder(
 				(int) $reminder['calendar_id'],
 				(int) $reminder['object_id'],
@@ -422,7 +423,6 @@ class ReminderService {
 			!$reminder['is_recurring'] ||
 			!$reminder['is_relative'] ||
 			$reminder['is_recurrence_exception']) {
-
 			$this->backend->removeReminder($reminder['id']);
 			return;
 		}
@@ -440,7 +440,7 @@ class ReminderService {
 			return;
 		}
 
-		while($iterator->valid()) {
+		while ($iterator->valid()) {
 			$event = $iterator->getEventObject();
 
 			// Recurrence-exceptions are handled separately, so just ignore them here
@@ -455,7 +455,7 @@ class ReminderService {
 				continue;
 			}
 
-			foreach($event->VALARM as $valarm) {
+			foreach ($event->VALARM as $valarm) {
 				/** @var VAlarm $valarm */
 				$alarmHash = $this->getAlarmHash($valarm);
 				if ($alarmHash !== $reminder['alarm_hash']) {
@@ -511,7 +511,7 @@ class ReminderService {
 					$users[] = $user;
 					$userIds[] = $principal[2];
 				}
-			} else if ($principal[1] === 'groups') {
+			} elseif ($principal[1] === 'groups') {
 				$groups[] = $principal[2];
 			}
 		}
@@ -608,7 +608,7 @@ class ReminderService {
 
 		// Handle recurrence-exceptions first, because recurrence-expansion is expensive
 		if ($isRecurrenceException) {
-			foreach($recurrenceExceptions as $recurrenceException) {
+			foreach ($recurrenceExceptions as $recurrenceException) {
 				if ($this->getEffectiveRecurrenceIdOfVEvent($recurrenceException) === $recurrenceId) {
 					return $recurrenceException;
 				}
@@ -678,7 +678,7 @@ class ReminderService {
 		try {
 			return VObject\Reader::read($calendarData,
 				VObject\Reader::OPTION_FORGIVING);
-		} catch(ParseException $ex) {
+		} catch (ParseException $ex) {
 			return null;
 		}
 	}
@@ -707,7 +707,7 @@ class ReminderService {
 	private function getAllVEventsFromVCalendar(VObject\Component\VCalendar $vcalendar):array {
 		$vevents = [];
 
-		foreach($vcalendar->children() as $child) {
+		foreach ($vcalendar->children() as $child) {
 			if (!($child instanceof VObject\Component)) {
 				continue;
 			}
@@ -727,7 +727,7 @@ class ReminderService {
 	 * @return VObject\Component\VEvent[]
 	 */
 	private function getRecurrenceExceptionFromListOfVEvents(array $vevents):array {
-		return array_values(array_filter($vevents, function(VEvent $vevent) {
+		return array_values(array_filter($vevents, function (VEvent $vevent) {
 			return $vevent->{'RECURRENCE-ID'} !== null;
 		}));
 	}
@@ -737,7 +737,7 @@ class ReminderService {
 	 * @return VEvent|null
 	 */
 	private function getMasterItemFromListOfVEvents(array $vevents):?VEvent {
-		$elements = array_values(array_filter($vevents, function(VEvent $vevent) {
+		$elements = array_values(array_filter($vevents, function (VEvent $vevent) {
 			return $vevent->{'RECURRENCE-ID'} === null;
 		}));
 

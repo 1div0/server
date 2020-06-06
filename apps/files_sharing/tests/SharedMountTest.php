@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -28,6 +29,7 @@
  */
 
 namespace OCA\Files_Sharing\Tests;
+
 use OCP\IGroupManager;
 use OCP\IUserManager;
 
@@ -184,7 +186,7 @@ class SharedMountTest extends TestCase {
 	 * share file with a group if a user renames the file the filename should not change
 	 * for the other users
 	 */
-	public function testMoveGroupShare () {
+	public function testMoveGroupShare() {
 		$testGroup = $this->groupManager->createGroup('testGroup');
 		$user1 = $this->userManager->get(self::TEST_FILES_SHARING_API_USER1);
 		$user2 = $this->userManager->get(self::TEST_FILES_SHARING_API_USER2);
@@ -251,20 +253,20 @@ class SharedMountTest extends TestCase {
 	}
 
 	public function dataProviderTestStripUserFilesPath() {
-		return array(
-			array('/user/files/foo.txt', '/foo.txt', false),
-			array('/user/files/folder/foo.txt', '/folder/foo.txt', false),
-			array('/data/user/files/foo.txt', null, true),
-			array('/data/user/files/', null, true),
-			array('/files/foo.txt', null, true),
-			array('/foo.txt', null, true),
-		);
+		return [
+			['/user/files/foo.txt', '/foo.txt', false],
+			['/user/files/folder/foo.txt', '/folder/foo.txt', false],
+			['/data/user/files/foo.txt', null, true],
+			['/data/user/files/', null, true],
+			['/files/foo.txt', null, true],
+			['/foo.txt', null, true],
+		];
 	}
 
 	public function dataPermissionMovedGroupShare() {
 		$data = [];
 
-		$powerset = function($permissions) {
+		$powerset = function ($permissions) {
 			$results = [\OCP\Constants::PERMISSION_READ];
 
 			foreach ($permissions as $permission) {
@@ -285,7 +287,9 @@ class SharedMountTest extends TestCase {
 
 		foreach ($allPermissions as $before) {
 			foreach ($allPermissions as $after) {
-				if ($before === $after) { continue; }
+				if ($before === $after) {
+					continue;
+				}
 
 				$data[] = [
 					'file',
@@ -307,7 +311,9 @@ class SharedMountTest extends TestCase {
 
 		foreach ($allPermissions as $before) {
 			foreach ($allPermissions as $after) {
-				if ($before === $after) { continue; }
+				if ($before === $after) {
+					continue;
+				}
 
 				$data[] = [
 					'folder',
@@ -329,10 +335,9 @@ class SharedMountTest extends TestCase {
 	 * @dataProvider dataPermissionMovedGroupShare
 	 */
 	public function testPermissionMovedGroupShare($type, $beforePerm, $afterPerm) {
-
 		if ($type === 'file') {
 			$path = $this->filename;
-		} else if ($type === 'folder') {
+		} elseif ($type === 'folder') {
 			$path = $this->folder;
 		}
 
@@ -454,11 +459,10 @@ class SharedMountTest extends TestCase {
 		$testGroup->removeUser($user2);
 		$testGroup->removeUser($user3);
 	}
-
 }
 
 class DummyTestClassSharedMount extends \OCA\Files_Sharing\SharedMount {
-	public function __construct($storage, $mountpoint, $arguments = null, $loader = null){
+	public function __construct($storage, $mountpoint, $arguments = null, $loader = null) {
 		// noop
 	}
 

@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Pierre Ozoux <pierre@ozoux.net>
@@ -57,13 +58,13 @@ class LastSeen extends Command {
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$user = $this->userManager->get($input->getArgument('uid'));
-		if(is_null($user)) {
+		if (is_null($user)) {
 			$output->writeln('<error>User does not exist</error>');
 			return;
 		}
 
 		$lastLogin = $user->getLastLogin();
-		if($lastLogin === 0) {
+		if ($lastLogin === 0) {
 			$output->writeln('User ' . $user->getUID() .
 				' has never logged in, yet.');
 		} else {

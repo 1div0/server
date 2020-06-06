@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
@@ -67,7 +68,7 @@ class NullCache extends Cache implements \OCP\IMemcache {
 		return true;
 	}
 
-	static public function isAvailable() {
+	public static function isAvailable() {
 		return true;
 	}
 }

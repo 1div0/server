@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
@@ -112,7 +113,7 @@ class Share implements \OCP\Share\IShare {
 			$id = (string)$id;
 		}
 
-		if(!is_string($id)) {
+		if (!is_string($id)) {
 			throw new \InvalidArgumentException('String expected.');
 		}
 
@@ -145,7 +146,7 @@ class Share implements \OCP\Share\IShare {
 	 * @inheritdoc
 	 */
 	public function setProviderId($id) {
-		if(!is_string($id)) {
+		if (!is_string($id)) {
 			throw new \InvalidArgumentException('String expected.');
 		}
 
@@ -172,14 +173,13 @@ class Share implements \OCP\Share\IShare {
 	 */
 	public function getNode() {
 		if ($this->node === null) {
-
 			if ($this->shareOwner === null || $this->fileId === null) {
 				throw new NotFoundException();
 			}
 
 			// for federated shares the owner can be a remote user, in this
 			// case we use the initiator
-			if($this->userManager->userExists($this->shareOwner)) {
+			if ($this->userManager->userExists($this->shareOwner)) {
 				$userFolder = $this->rootFolder->getUserFolder($this->shareOwner);
 			} else {
 				$userFolder = $this->rootFolder->getUserFolder($this->sharedBy);

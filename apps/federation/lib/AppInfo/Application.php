@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -57,7 +58,6 @@ class Application extends App {
 	 * list of trusted servers.
 	 */
 	public function registerHooks() {
-
 		$container = $this->getContainer();
 		$hooksManager = $container->query(Hooks::class);
 
@@ -69,7 +69,7 @@ class Application extends App {
 		);
 
 		$dispatcher = $container->getServer()->getEventDispatcher();
-		$dispatcher->addListener('OCA\DAV\Connector\Sabre::authInit', function($event) use($container) {
+		$dispatcher->addListener('OCA\DAV\Connector\Sabre::authInit', function ($event) use ($container) {
 			if ($event instanceof SabrePluginEvent) {
 				$server = $event->getServer();
 				if ($server instanceof Server) {
@@ -81,5 +81,4 @@ class Application extends App {
 			}
 		});
 	}
-
 }

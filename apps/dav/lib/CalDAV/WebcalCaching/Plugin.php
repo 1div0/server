@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright 2018 Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -43,7 +44,7 @@ class Plugin extends ServerPlugin {
 	 *
 	 * @var string[]
 	 */
-	const ENABLE_FOR_CLIENTS = [];
+	public const ENABLE_FOR_CLIENTS = [];
 
 	/**
 	 * @var bool
@@ -83,7 +84,7 @@ class Plugin extends ServerPlugin {
 	 */
 	public function initialize(Server $server) {
 		$this->server = $server;
-		$server->on('beforeMethod', [$this, 'beforeMethod']);
+		$server->on('beforeMethod:*', [$this, 'beforeMethod']);
 	}
 
 	/**
@@ -111,7 +112,7 @@ class Plugin extends ServerPlugin {
 			}
 
 			$calendarHome->enableCachedSubscriptionsForThisRequest();
-		} catch(NotFound $ex) {
+		} catch (NotFound $ex) {
 			return;
 		}
 	}

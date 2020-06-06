@@ -6,9 +6,10 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2019, Thomas Citharel
  * @copyright Copyright (c) 2019, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -110,7 +111,7 @@ class Notifier implements INotifier {
 		$this->l10n = $this->l10nFactory->get('dav', $languageCode);
 
 		// Handle notifier subjects
-		switch($notification->getSubject()) {
+		switch ($notification->getSubject()) {
 			case 'calendar_reminder':
 				return $this->prepareReminderNotification($notification);
 

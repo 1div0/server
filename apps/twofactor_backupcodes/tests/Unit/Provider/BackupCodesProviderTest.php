@@ -74,7 +74,7 @@ class BackupCodesProviderTest extends TestCase {
 		$this->l10n->expects($this->once())
 			->method('t')
 			->with('Backup code')
-			->will($this->returnValue('l10n backup code'));
+			->willReturn('l10n backup code');
 		$this->assertSame('l10n backup code', $this->provider->getDisplayName());
 	}
 
@@ -82,7 +82,7 @@ class BackupCodesProviderTest extends TestCase {
 		$this->l10n->expects($this->once())
 			->method('t')
 			->with('Use backup code')
-			->will($this->returnValue('l10n use backup code'));
+			->willReturn('l10n use backup code');
 		$this->assertSame('l10n use backup code', $this->provider->getDescription());
 	}
 
@@ -100,7 +100,7 @@ class BackupCodesProviderTest extends TestCase {
 		$this->storage->expects($this->once())
 			->method('validateCode')
 			->with($user, $challenge)
-			->will($this->returnValue(false));
+			->willReturn(false);
 
 		$this->assertFalse($this->provider->verifyChallenge($user, $challenge));
 	}
@@ -111,7 +111,7 @@ class BackupCodesProviderTest extends TestCase {
 		$this->storage->expects($this->once())
 			->method('hasBackupCodes')
 			->with($user)
-			->will($this->returnValue(true));
+			->willReturn(true);
 
 		$this->assertTrue($this->provider->isTwoFactorAuthEnabledForUser($user));
 	}
@@ -125,13 +125,13 @@ class BackupCodesProviderTest extends TestCase {
 			->willReturn([
 				'twofactor_backupcodes',
 				'mail',
-		]);
+			]);
 		$this->appManager->expects($this->once())
 			->method('getAppInfo')
 			->with('mail')
 			->willReturn([
 				'two-factor-providers' => [],
-		]);
+			]);
 
 		$this->assertFalse($this->provider->isActive($user));
 	}
@@ -145,7 +145,7 @@ class BackupCodesProviderTest extends TestCase {
 			->willReturn([
 				'twofactor_backupcodes',
 				'twofactor_u2f',
-		]);
+			]);
 		$this->appManager->expects($this->once())
 			->method('getAppInfo')
 			->with('twofactor_u2f')
@@ -153,9 +153,8 @@ class BackupCodesProviderTest extends TestCase {
 				'two-factor-providers' => [
 					'OCA\TwoFactorU2F\Provider\U2FProvider',
 				],
-		]);
+			]);
 
 		$this->assertTrue($this->provider->isActive($user));
 	}
-
 }

@@ -2,7 +2,9 @@
 /**
  * @copyright Copyright (c) 2018 Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
+ * @author Nils Wittenbrink <nilswittenbrink@web.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
@@ -77,7 +79,7 @@ class AppleProvisioningPluginTest extends TestCase {
 			$this->themingDefaults,
 			$this->request,
 			$this->l10n,
-			function() {
+			function () {
 				return 'generated-uuid';
 			}
 		);
@@ -91,7 +93,8 @@ class AppleProvisioningPluginTest extends TestCase {
 
 		$plugin = new AppleProvisioningPlugin($this->userSession,
 			$this->urlGenerator, $this->themingDefaults, $this->request, $this->l10n,
-			function() {});
+			function () {
+			});
 
 		$server->expects($this->at(0))
 			->method('on')
@@ -158,10 +161,9 @@ class AppleProvisioningPluginTest extends TestCase {
 			->method('getServerProtocol')
 			->wilLReturn('https');
 
-		$this->sabreRequest->expects($this->at(1))
-			->method('getAbsoluteUrl')
-			->with()
-			->willReturn('https://nextcloud.tld/nextcloud/remote.php/dav/provisioning/apple-provisioning.mobileconfig');
+		$this->urlGenerator->expects($this->once())
+			->method('getBaseUrl')
+			->willReturn('https://nextcloud.tld/nextcloud');
 
 		$this->themingDefaults->expects($this->at(0))
 			->method('getName')
@@ -266,5 +268,4 @@ EOF
 
 		$this->assertFalse($returnValue);
 	}
-
 }

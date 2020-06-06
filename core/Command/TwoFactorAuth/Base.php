@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -54,7 +55,7 @@ class Base extends \OC\Core\Command\Base {
 	 */
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
 		if ($argumentName === 'uid') {
-			return array_map(function(IUser $user) {
+			return array_map(function (IUser $user) {
 				return $user->getUID();
 			}, $this->userManager->search($context->getCurrentWord(), 100));
 		}

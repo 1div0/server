@@ -4,6 +4,7 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Ole Ostergaard <ole.c.ostergaard@gmail.com>
  * @author Ole Ostergaard <ole.ostergaard@knime.com>
@@ -26,8 +27,6 @@
 
 namespace OC\DB;
 
-use Doctrine\DBAL\DBALException;
-
 class AdapterPgSql extends Adapter {
 	protected $compatModePre9_5 = null;
 
@@ -35,10 +34,10 @@ class AdapterPgSql extends Adapter {
 		return $this->conn->fetchColumn('SELECT lastval()');
 	}
 
-	const UNIX_TIMESTAMP_REPLACEMENT = 'cast(extract(epoch from current_timestamp) as integer)';
+	public const UNIX_TIMESTAMP_REPLACEMENT = 'cast(extract(epoch from current_timestamp) as integer)';
 	public function fixupStatement($statement) {
-		$statement = str_replace( '`', '"', $statement );
-		$statement = str_ireplace( 'UNIX_TIMESTAMP()', self::UNIX_TIMESTAMP_REPLACEMENT, $statement );
+		$statement = str_replace('`', '"', $statement);
+		$statement = str_ireplace('UNIX_TIMESTAMP()', self::UNIX_TIMESTAMP_REPLACEMENT, $statement);
 		return $statement;
 	}
 
@@ -46,7 +45,7 @@ class AdapterPgSql extends Adapter {
 	 * @suppress SqlInjectionChecker
 	 */
 	public function insertIgnoreConflict(string $table,array $values) : int {
-		if($this->isPre9_5CompatMode() === true) {
+		if ($this->isPre9_5CompatMode() === true) {
 			return parent::insertIgnoreConflict($table, $values);
 		}
 
@@ -62,7 +61,7 @@ class AdapterPgSql extends Adapter {
 	}
 
 	protected function isPre9_5CompatMode(): bool {
-		if($this->compatModePre9_5 !== null) {
+		if ($this->compatModePre9_5 !== null) {
 			return $this->compatModePre9_5;
 		}
 

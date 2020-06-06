@@ -31,7 +31,7 @@ OC.L10N.register(
     "Actions" : "Действия",
     "Rename" : "Переименовать",
     "Copy" : "Копировать",
-    "Choose target folder" : "Выберите каталога назначения",
+    "Choose target folder" : "Выбор папки назначения",
     "Open" : "Открыть",
     "Delete file" : "Удалить файл",
     "Delete folder" : "Удалить каталог",
@@ -158,6 +158,7 @@ OC.L10N.register(
     "Transfer {path} to {userid}" : "Передать {path} пользователю {userid}",
     "Invalid path selected" : "Указан некорректный путь",
     "Ownership transfer request sent" : "Запрос на передачу прав владения отправлен",
+    "Cannot transfer ownership of a file or folder you don't own" : "Изменение владельца возможно только для своих файлов и папок",
     "Tags" : "Метки",
     "Error while loading the file data" : "Не удалось загрузить данные файла",
     "Unable to change the favourite state of the file" : "Не удалось изменить состояние «избранный» этого файла.",
@@ -167,7 +168,7 @@ OC.L10N.register(
     "Settings" : "Настройки",
     "Show hidden files" : "Показывать скрытые файлы",
     "WebDAV" : "WebDAV",
-    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Используйте этот адрес для <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">доступа к своим файлам по протоколу WebDAV</a>",
+    "Use this address to access your Files via WebDAV" : "Используйте этот адрес для подключения WebDAV",
     "Toggle grid view" : "Включить или отключить режим просмотра сеткой",
     "No files in here" : "Здесь нет файлов",
     "Upload some content or sync with your devices!" : "Загрузите что-нибудь или синхронизируйте со своими устройствами!",
@@ -186,7 +187,7 @@ OC.L10N.register(
     "Pending shares" : "Ожидающие общие ресурсы",
     "Text file" : "Текстовый файл",
     "New text file.txt" : "Новый текстовый файл.txt",
-    "%s of %s used" : "использовано %s из %s",
-    "%1$s%% of %2$s used" : "использовано %1$s%% из %2$s"
+    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Используйте этот адрес для <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">доступа к своим файлам по протоколу WebDAV</a>",
+    "Cannot transfter ownership of a file or folder you don't own" : "Изменение владельца возможно только для своих файлов и папок"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

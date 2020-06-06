@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin McCorkell <robin@mccorkell.me.uk>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -32,8 +33,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateDB extends Command {
-
-	const DEFAULT_MIMETYPE = 'application/octet-stream';
+	public const DEFAULT_MIMETYPE = 'application/octet-stream';
 
 	/** @var IMimeTypeDetector */
 	protected $mimetypeDetector;

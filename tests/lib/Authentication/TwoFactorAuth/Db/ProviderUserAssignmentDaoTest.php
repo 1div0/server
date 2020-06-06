@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -158,5 +159,4 @@ class ProviderUserAssignmentDaoTest extends TestCase {
 		$this->assertCount(1, $statesUser1);
 		$this->assertCount(0, $statesUser2);
 	}
-
 }

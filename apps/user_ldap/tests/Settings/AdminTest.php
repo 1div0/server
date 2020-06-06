@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -27,7 +28,6 @@
 namespace OCA\User_LDAP\Tests\Settings;
 
 use OCA\User_LDAP\Configuration;
-use OCA\User_LDAP\Helper;
 use OCA\User_LDAP\Settings\Admin;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IL10N;
@@ -73,7 +73,7 @@ class AdminTest extends TestCase {
 		// assign default values
 		$config = new Configuration('', false);
 		$defaults = $config->getDefaults();
-		foreach($defaults as $key => $default) {
+		foreach ($defaults as $key => $default) {
 			$parameters[$key.'_default'] = $default;
 		}
 

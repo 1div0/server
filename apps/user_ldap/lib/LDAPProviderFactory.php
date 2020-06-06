@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, Roger Szabo (roger.szabo@web.de)
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Roger Szabo <roger.szabo@web.de>
  * @author root <root@localhost.localdomain>
@@ -56,7 +57,7 @@ class LDAPProviderFactory implements ILDAPProviderFactory {
 		$dbConnection = $this->serverContainer->getDatabaseConnection();
 		$userMapping = new UserMapping($dbConnection);
 		return new LDAPProvider($this->serverContainer, new Helper($this->serverContainer->getConfig()),
-					new DeletedUsersIndex($this->serverContainer->getConfig(), 
+					new DeletedUsersIndex($this->serverContainer->getConfig(),
 					$dbConnection, $userMapping));
 	}
 }

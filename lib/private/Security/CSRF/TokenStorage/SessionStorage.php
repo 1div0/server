@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -60,7 +61,7 @@ class SessionStorage {
 	 */
 	public function getToken(): string {
 		$token = $this->session->get('requesttoken');
-		if(empty($token)) {
+		if (empty($token)) {
 			throw new \Exception('Session does not contain a requesttoken');
 		}
 

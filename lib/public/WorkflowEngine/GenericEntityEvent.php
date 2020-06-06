@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2019 Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Härtl <jus@bitgrid.net>
  *
  * @license GNU AGPL version 3 or any later version
@@ -47,10 +48,10 @@ class GenericEntityEvent implements IEntityEvent {
 	 * @since 18.0.0
 	 */
 	public function __construct(string $displayName, string $eventName) {
-		if(trim($displayName) === '') {
+		if (trim($displayName) === '') {
 			throw new \InvalidArgumentException('DisplayName must not be empty');
 		}
-		if(trim($eventName) === '') {
+		if (trim($eventName) === '') {
 			throw new \InvalidArgumentException('EventName must not be empty');
 		}
 

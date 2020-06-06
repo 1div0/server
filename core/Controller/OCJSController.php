@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Joas Schilling <coding@schilljs.com>
+ * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -37,6 +38,7 @@ use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\Defaults;
 use OCP\IConfig;
 use OCP\IGroupManager;
+use OCP\IInitialStateService;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;
@@ -63,6 +65,7 @@ class OCJSController extends Controller {
 	 * @param IniGetWrapper $iniWrapper
 	 * @param IURLGenerator $urlGenerator
 	 * @param CapabilitiesManager $capabilitiesManager
+	 * @param IInitialStateService $initialStateService
 	 */
 	public function __construct($appName,
 								IRequest $request,
@@ -75,7 +78,8 @@ class OCJSController extends Controller {
 								IGroupManager $groupManager,
 								IniGetWrapper $iniWrapper,
 								IURLGenerator $urlGenerator,
-								CapabilitiesManager $capabilitiesManager) {
+								CapabilitiesManager $capabilitiesManager,
+								IInitialStateService $initialStateService) {
 		parent::__construct($appName, $request);
 
 		$this->helper = new JSConfigHelper(
@@ -88,7 +92,8 @@ class OCJSController extends Controller {
 			$groupManager,
 			$iniWrapper,
 			$urlGenerator,
-			$capabilitiesManager
+			$capabilitiesManager,
+			$initialStateService
 		);
 	}
 

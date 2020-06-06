@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright 2018, Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -172,7 +173,7 @@ class InvitationResponseController extends Controller {
 		$stmt = $query->execute();
 		$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-		if(!$row) {
+		if (!$row) {
 			return null;
 		}
 

@@ -3,7 +3,8 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Brandon Kirsch <brandonkirsch@github.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -37,6 +38,7 @@ use OCA\DAV\Files\BrowserErrorPagePlugin;
 use OCP\Files\Mount\IMountManager;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IPreview;
 use OCP\IRequest;
@@ -65,6 +67,8 @@ class ServerFactory {
 	private $previewManager;
 	/** @var EventDispatcherInterface */
 	private $eventDispatcher;
+	/** @var IL10N */
+	private $l10n;
 
 	/**
 	 * @param IConfig $config
@@ -85,7 +89,8 @@ class ServerFactory {
 		ITagManager $tagManager,
 		IRequest $request,
 		IPreview $previewManager,
-		EventDispatcherInterface $eventDispatcher
+		EventDispatcherInterface $eventDispatcher,
+		IL10N $l10n
 	) {
 		$this->config = $config;
 		$this->logger = $logger;
@@ -96,6 +101,7 @@ class ServerFactory {
 		$this->request = $request;
 		$this->previewManager = $previewManager;
 		$this->eventDispatcher = $eventDispatcher;
+		$this->l10n = $l10n;
 	}
 
 	/**
@@ -117,7 +123,7 @@ class ServerFactory {
 		$server->setBaseUri($baseUri);
 
 		// Load plugins
-		$server->addPlugin(new \OCA\DAV\Connector\Sabre\MaintenancePlugin($this->config));
+		$server->addPlugin(new \OCA\DAV\Connector\Sabre\MaintenancePlugin($this->config, $this->l10n));
 		$server->addPlugin(new \OCA\DAV\Connector\Sabre\BlockLegacyClientPlugin($this->config));
 		$server->addPlugin(new \OCA\DAV\Connector\Sabre\AnonymousOptionsPlugin());
 		$server->addPlugin($authPlugin);
@@ -127,10 +133,10 @@ class ServerFactory {
 		$server->addPlugin(new \OCA\DAV\Connector\Sabre\LockPlugin());
 		// Some WebDAV clients do require Class 2 WebDAV support (locking), since
 		// we do not provide locking we emulate it using a fake locking plugin.
-		if($this->request->isUserAgent([
-				'/WebDAVFS/',
-				'/OneNote/',
-				'/Microsoft-WebDAV-MiniRedir/',
+		if ($this->request->isUserAgent([
+			'/WebDAVFS/',
+			'/OneNote/',
+			'/Microsoft-WebDAV-MiniRedir/',
 		])) {
 			$server->addPlugin(new \OCA\DAV\Connector\Sabre\FakeLockerPlugin());
 		}
@@ -140,7 +146,7 @@ class ServerFactory {
 		}
 
 		// wait with registering these until auth is handled and the filesystem is setup
-		$server->on('beforeMethod', function () use ($server, $objectTree, $viewCallBack) {
+		$server->on('beforeMethod:*', function () use ($server, $objectTree, $viewCallBack) {
 			// ensure the skeleton is copied
 			$userFolder = \OC::$server->getUserFolder();
 
@@ -172,7 +178,7 @@ class ServerFactory {
 			);
 			$server->addPlugin(new \OCA\DAV\Connector\Sabre\QuotaPlugin($view, true));
 
-			if($this->userSession->isLoggedIn()) {
+			if ($this->userSession->isLoggedIn()) {
 				$server->addPlugin(new \OCA\DAV\Connector\Sabre\TagsPlugin($objectTree, $this->tagManager));
 				$server->addPlugin(new \OCA\DAV\Connector\Sabre\SharesPlugin(
 					$objectTree,
@@ -195,7 +201,7 @@ class ServerFactory {
 				// custom properties plugin must be the last one
 				$server->addPlugin(
 					new \Sabre\DAV\PropertyStorage\Plugin(
-						new \OCA\DAV\Connector\Sabre\CustomPropertiesBackend(
+						new \OCA\DAV\DAV\CustomPropertiesBackend(
 							$objectTree,
 							$this->databaseConnection,
 							$this->userSession->getUser()
@@ -215,7 +221,6 @@ class ServerFactory {
 			foreach ($pluginManager->getAppPlugins() as $appPlugin) {
 				$server->addPlugin($appPlugin);
 			}
-
 		}, 30); // priority 30: after auth (10) and acl(20), before lock(50) and handling the request
 		return $server;
 	}

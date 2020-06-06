@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  *
@@ -32,10 +33,9 @@ class PrivateKeyMissingException extends GenericEncryptionException {
 	 * @param string $userId
 	 */
 	public function __construct($userId) {
-		if(empty($userId)) {
+		if (empty($userId)) {
 			$userId = "<no-user-id-given>";
 		}
 		parent::__construct("Private Key missing for user: $userId");
 	}
-
 }

@@ -61,7 +61,7 @@ use OCP\ILogger;
  * @package OC\Files\Utils
  */
 class Scanner extends PublicEmitter {
-	const MAX_ENTRIES_TO_COMMIT = 10000;
+	public const MAX_ENTRIES_TO_COMMIT = 10000;
 
 	/** @var string $user */
 	private $user;
@@ -131,19 +131,19 @@ class Scanner extends PublicEmitter {
 	protected function attachListener($mount) {
 		$scanner = $mount->getStorage()->getScanner();
 		$scanner->listen('\OC\Files\Cache\Scanner', 'scanFile', function ($path) use ($mount) {
-			$this->emit('\OC\Files\Utils\Scanner', 'scanFile', array($mount->getMountPoint() . $path));
+			$this->emit('\OC\Files\Utils\Scanner', 'scanFile', [$mount->getMountPoint() . $path]);
 			$this->dispatcher->dispatchTyped(new BeforeFileScannedEvent($mount->getMountPoint() . $path));
 		});
 		$scanner->listen('\OC\Files\Cache\Scanner', 'scanFolder', function ($path) use ($mount) {
-			$this->emit('\OC\Files\Utils\Scanner', 'scanFolder', array($mount->getMountPoint() . $path));
+			$this->emit('\OC\Files\Utils\Scanner', 'scanFolder', [$mount->getMountPoint() . $path]);
 			$this->dispatcher->dispatchTyped(new BeforeFolderScannedEvent($mount->getMountPoint() . $path));
 		});
 		$scanner->listen('\OC\Files\Cache\Scanner', 'postScanFile', function ($path) use ($mount) {
-			$this->emit('\OC\Files\Utils\Scanner', 'postScanFile', array($mount->getMountPoint() . $path));
+			$this->emit('\OC\Files\Utils\Scanner', 'postScanFile', [$mount->getMountPoint() . $path]);
 			$this->dispatcher->dispatchTyped(new FileScannedEvent($mount->getMountPoint() . $path));
 		});
 		$scanner->listen('\OC\Files\Cache\Scanner', 'postScanFolder', function ($path) use ($mount) {
-			$this->emit('\OC\Files\Utils\Scanner', 'postScanFolder', array($mount->getMountPoint() . $path));
+			$this->emit('\OC\Files\Utils\Scanner', 'postScanFolder', [$mount->getMountPoint() . $path]);
 			$this->dispatcher->dispatchTyped(new FolderScannedEvent($mount->getMountPoint() . $path));
 		});
 	}
@@ -223,7 +223,6 @@ class Scanner extends PublicEmitter {
 				} else {// if the root exists in neither the cache nor the storage the user isn't setup yet
 					break;
 				}
-
 			}
 
 			// don't scan received local shares, these can be scanned when scanning the owner's storage

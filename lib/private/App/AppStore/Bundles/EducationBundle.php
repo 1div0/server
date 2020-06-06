@@ -37,16 +37,12 @@ class EducationBundle extends Bundle {
 	 */
 	public function getAppIdentifiers() {
 		return [
-			'zenodo',
 			'dashboard',
 			'circles',
 			'groupfolders',
 			'announcementcenter',
-			'admin_notifications',
 			'quota_warning',
-			'orcid',
 			'user_saml',
 		];
 	}
-
 }

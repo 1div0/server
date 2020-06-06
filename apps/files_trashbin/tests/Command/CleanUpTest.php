@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -24,7 +25,6 @@
  */
 
 namespace OCA\Files_Trashbin\Tests\Command;
-
 
 use OC\User\Manager;
 use OCA\Files_Trashbin\Command\CleanUp;
@@ -81,12 +81,12 @@ class CleanUpTest extends TestCase {
 		$query->delete($this->trashTable)->execute();
 		for ($i = 0; $i < 10; $i++) {
 			$query->insert($this->trashTable)
-				->values(array(
+				->values([
 					'id' => $query->expr()->literal('file'.$i),
 					'timestamp' => $query->expr()->literal($i),
 					'location' => $query->expr()->literal('.'),
 					'user' => $query->expr()->literal('user'.$i%2)
-				))->execute();
+				])->execute();
 		}
 		$getAllQuery = $this->dbConnection->getQueryBuilder();
 		$result = $getAllQuery->select('id')
@@ -106,7 +106,7 @@ class CleanUpTest extends TestCase {
 			->method('nodeExists')
 			->with('/' . $this->user0 . '/files_trashbin')
 			->willReturn($nodeExists);
-		if($nodeExists) {
+		if ($nodeExists) {
 			$this->rootFolder->expects($this->once())
 				->method('get')
 				->with('/' . $this->user0 . '/files_trashbin')
@@ -140,13 +140,12 @@ class CleanUpTest extends TestCase {
 				->fetchAll();
 			$this->assertSame(10, count($result));
 		}
-
 	}
 	public function dataTestRemoveDeletedFiles() {
-		return array(
-			array(true),
-			array(false)
-		);
+		return [
+			[true],
+			[false]
+		];
 	}
 
 	/**
@@ -239,5 +238,4 @@ class CleanUpTest extends TestCase {
 
 		$this->invokePrivate($this->cleanup, 'execute', [$inputInterface, $outputInterface]);
 	}
-
 }

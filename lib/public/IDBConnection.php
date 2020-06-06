@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Ole Ostergaard <ole.c.ostergaard@gmail.com>
@@ -37,6 +38,7 @@
 // This means that they should be used by apps instead of the internal ownCloud classes
 
 namespace OCP;
+
 use Doctrine\DBAL\Schema\Schema;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
@@ -47,9 +49,10 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
  * @since 6.0.0
  */
 interface IDBConnection {
-
-	const ADD_MISSING_INDEXES_EVENT = self::class . '::ADD_MISSING_INDEXES';
-	const CHECK_MISSING_INDEXES_EVENT = self::class . '::CHECK_MISSING_INDEXES';
+	public const ADD_MISSING_INDEXES_EVENT = self::class . '::ADD_MISSING_INDEXES';
+	public const CHECK_MISSING_INDEXES_EVENT = self::class . '::CHECK_MISSING_INDEXES';
+	public const ADD_MISSING_COLUMNS_EVENT = self::class . '::ADD_MISSING_COLUMNS';
+	public const CHECK_MISSING_COLUMNS_EVENT = self::class . '::CHECK_MISSING_COLUMNS';
 
 	/**
 	 * Gets the QueryBuilder for the connection.
@@ -81,7 +84,7 @@ interface IDBConnection {
 	 * @return \Doctrine\DBAL\Driver\Statement The executed statement.
 	 * @since 8.0.0
 	 */
-	public function executeQuery($query, array $params = array(), $types = array());
+	public function executeQuery($query, array $params = [], $types = []);
 
 	/**
 	 * Executes an SQL INSERT/UPDATE/DELETE query with the given parameters
@@ -95,7 +98,7 @@ interface IDBConnection {
 	 * @return integer The number of affected rows.
 	 * @since 8.0.0
 	 */
-	public function executeUpdate($query, array $params = array(), array $types = array());
+	public function executeUpdate($query, array $params = [], array $types = []);
 
 	/**
 	 * Used to get the id of the just inserted element

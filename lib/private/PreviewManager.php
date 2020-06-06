@@ -2,8 +2,10 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
+ * @author Julius Härtl <jus@bitgrid.net>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Olivier Paroz <github@oparoz.com>
  * @author Robin Appelman <robin@icewind.nl>
@@ -151,6 +153,22 @@ class PreviewManager implements IPreview {
 		return !empty($this->providers);
 	}
 
+	private function getGenerator(): Generator {
+		if ($this->generator === null) {
+			$this->generator = new Generator(
+				$this->config,
+				$this,
+				$this->appData,
+				new GeneratorHelper(
+					$this->rootFolder,
+					$this->config
+				),
+				$this->eventDispatcher
+			);
+		}
+		return $this->generator;
+	}
+
 	/**
 	 * Returns a preview of a file
 	 *
@@ -169,20 +187,22 @@ class PreviewManager implements IPreview {
 	 * @since 11.0.0 - \InvalidArgumentException was added in 12.0.0
 	 */
 	public function getPreview(File $file, $width = -1, $height = -1, $crop = false, $mode = IPreview::MODE_FILL, $mimeType = null) {
-		if ($this->generator === null) {
-			$this->generator = new Generator(
-				$this->config,
-				$this,
-				$this->appData,
-				new GeneratorHelper(
-					$this->rootFolder,
-					$this->config
-				),
-				$this->eventDispatcher
-			);
-		}
+		return $this->getGenerator()->getPreview($file, $width, $height, $crop, $mode, $mimeType);
+	}
 
-		return $this->generator->getPreview($file, $width, $height, $crop, $mode, $mimeType);
+	/**
+	 * Generates previews of a file
+	 *
+	 * @param File $file
+	 * @param array $specifications
+	 * @param string $mimeType
+	 * @return ISimpleFile the last preview that was generated
+	 * @throws NotFoundException
+	 * @throws \InvalidArgumentException if the preview would be invalid (in case the original image is invalid)
+	 * @since 19.0.0
+	 */
+	public function generatePreviews(File $file, array $specifications, $mimeType = null) {
+		return $this->getGenerator()->generatePreviews($file, $specifications, $mimeType);
 	}
 
 	/**
@@ -229,7 +249,7 @@ class PreviewManager implements IPreview {
 		}
 
 		$mount = $file->getMountPoint();
-		if ($mount and !$mount->getOption('previews', true)){
+		if ($mount and !$mount->getOption('previews', true)) {
 			return false;
 		}
 
@@ -293,13 +313,15 @@ class PreviewManager implements IPreview {
 			Preview\GIF::class,
 			Preview\BMP::class,
 			Preview\HEIC::class,
-			Preview\XBitmap::class
+			Preview\XBitmap::class,
+			Preview\Krita::class,
 		];
 
 		$this->defaultProviders = $this->config->getSystemValue('enabledPreviewProviders', array_merge([
 			Preview\MarkDown::class,
 			Preview\MP3::class,
 			Preview\TXT::class,
+			Preview\OpenDocument::class,
 		], $imageProviders));
 
 		if (in_array(Preview\Image::class, $this->defaultProviders)) {
@@ -339,7 +361,9 @@ class PreviewManager implements IPreview {
 		$this->registerCoreProvider(Preview\GIF::class, '/image\/gif/');
 		$this->registerCoreProvider(Preview\BMP::class, '/image\/bmp/');
 		$this->registerCoreProvider(Preview\XBitmap::class, '/image\/x-xbitmap/');
+		$this->registerCoreProvider(Preview\Krita::class, '/application\/x-krita/');
 		$this->registerCoreProvider(Preview\MP3::class, '/audio\/mpeg/');
+		$this->registerCoreProvider(Preview\OpenDocument::class, '/application\/vnd.oasis.opendocument.*/');
 
 		// SVG, Office and Bitmap require imagick
 		if (extension_loaded('imagick')) {

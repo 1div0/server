@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -25,6 +26,7 @@
  */
 
 namespace OCP\Encryption\Exceptions;
+
 use OC\HintException;
 
 /**
@@ -48,5 +50,4 @@ class GenericEncryptionException extends HintException {
 		}
 		parent::__construct($message, $hint, $code, $previous);
 	}
-
 }

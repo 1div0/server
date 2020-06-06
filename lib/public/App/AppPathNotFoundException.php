@@ -2,8 +2,8 @@
 /**
  * @copyright Copyright (c) 2016 Julius Härtl <jus@bitgrid.net>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Haertl <jus@bitgrid.net>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -30,4 +30,5 @@ namespace OCP\App;
  * @package OCP\App
  * @since 11.0.0
  */
-class AppPathNotFoundException extends \Exception {}
+class AppPathNotFoundException extends \Exception {
+}

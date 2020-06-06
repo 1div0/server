@@ -216,7 +216,7 @@
 		<div v-if="showConfig.showLastLogin" />
 
 		<div class="userActions">
-			<div v-if="OC.currentUser !== user.id && user.id !== 'admin' && !loading.all"
+			<div v-if="!loading.all"
 				class="toggleUserActions">
 				<Actions>
 					<ActionButton icon="icon-checkmark"
@@ -224,7 +224,7 @@
 						{{ t('settings', 'Done') }}
 					</ActionButton>
 				</Actions>
-				<div class="userPopoverMenuWrapper" v-click-outside="hideMenu">
+				<div v-click-outside="hideMenu" class="userPopoverMenuWrapper">
 					<div class="icon-more"
 						@click="toggleMenu" />
 					<div :class="{ 'open': openedMenu }" class="popovermenu">

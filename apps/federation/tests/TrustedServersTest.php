@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -25,7 +26,6 @@
  */
 
 namespace OCA\Federation\Tests;
-
 
 use OCA\Federation\DbHandler;
 use OCA\Federation\TrustedServers;
@@ -101,7 +101,6 @@ class TrustedServersTest extends TestCase {
 			$this->dispatcher,
 			$this->timeFactory
 		);
-
 	}
 
 	/**
@@ -217,7 +216,7 @@ class TrustedServersTest extends TestCase {
 			->willReturn($server);
 		$this->dispatcher->expects($this->once())->method('dispatch')
 			->willReturnCallback(
-				function($eventId, $event) {
+				function ($eventId, $event) {
 					$this->assertSame($eventId, 'OCP\Federation\TrustedServerEvent::remove');
 					$this->assertInstanceOf('Symfony\Component\EventDispatcher\GenericEvent', $event);
 					/** @var \Symfony\Component\EventDispatcher\GenericEvent $event */
@@ -268,7 +267,6 @@ class TrustedServersTest extends TestCase {
 	 * @param bool $expected
 	 */
 	public function testIsOwnCloudServer($statusCode, $isValidOwnCloudVersion, $expected) {
-
 		$server = 'server1';
 
 		/** @var \PHPUnit_Framework_MockObject_MockObject | TrustedServers $trustedServers */
@@ -307,7 +305,6 @@ class TrustedServersTest extends TestCase {
 		$this->assertSame($expected,
 			$trustedServers->isOwnCloudServer($server)
 		);
-
 	}
 
 	public function dataTestIsOwnCloudServer() {

@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018, Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -47,7 +48,7 @@ class OutboxTest extends TestCase {
 		$this->config->expects($this->once())
 			->method('getAppValue')
 			->with('dav', 'disableFreeBusy', 'no')
-			->will($this->returnValue('no'));
+			->willReturn('no');
 
 		$this->assertEquals([
 			[
@@ -82,7 +83,7 @@ class OutboxTest extends TestCase {
 		$this->config->expects($this->once())
 			->method('getAppValue')
 			->with('dav', 'disableFreeBusy', 'no')
-			->will($this->returnValue('yes'));
+			->willReturn('yes');
 
 		$this->assertEquals([
 			[

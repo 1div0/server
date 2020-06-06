@@ -2,12 +2,13 @@
 /**
  *
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <tcit@tcit.fr>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  * @author Vinicius Cubas Brand <vinicius@eita.org.br>
  *
@@ -52,8 +53,7 @@ use Test\TestCase;
  * @package OCA\DAV\Tests\unit\CalDAV
  */
 class PublicCalendarRootTest extends TestCase {
-
-	const UNIT_TEST_USER = '';
+	public const UNIT_TEST_USER = '';
 	/** @var CalDavBackend */
 	private $backend;
 	/** @var PublicCalendarRoot */
@@ -136,7 +136,6 @@ class PublicCalendarRootTest extends TestCase {
 	}
 
 	public function testGetChild() {
-
 		$calendar = $this->createPublicCalendar();
 
 		$publicCalendars = $this->backend->getPublicCalendars();
@@ -170,5 +169,4 @@ class PublicCalendarRootTest extends TestCase {
 
 		return $calendar;
 	}
-
 }

@@ -158,6 +158,7 @@ OC.L10N.register(
     "Transfer {path} to {userid}" : "Трансфер {path} до {userid}",
     "Invalid path selected" : "Избрана невалидна патека",
     "Ownership transfer request sent" : "Испратено барање за трансфер на сопственост",
+    "Cannot transfer ownership of a file or folder you don't own" : "Неможете да направите трансвер на сопственот на папка која не е ваша",
     "Tags" : "Ознаки",
     "Error while loading the file data" : "Грешка при вчитување на податоците од датотеката",
     "Unable to change the favourite state of the file" : "Неможе да се промени статусот на омимени на датотеката",
@@ -167,7 +168,7 @@ OC.L10N.register(
     "Settings" : "Параметри",
     "Show hidden files" : "Прикажи сокриени датотеки",
     "WebDAV" : "WebDAV",
-    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Користи ја оваа адреса за <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">пристап преку WebDAV</a>",
+    "Use this address to access your Files via WebDAV" : "Користи ја оваа адреса за пристап до вашите датотеки преку WebDAV",
     "Toggle grid view" : "Промена во мрежа",
     "No files in here" : "Тука нема датотеки",
     "Upload some content or sync with your devices!" : "Прикачете некоја содржина или синхронизирајте со вашите уреди!",
@@ -186,7 +187,7 @@ OC.L10N.register(
     "Pending shares" : "Споделувања на чекање",
     "Text file" : "Текстуална датотека",
     "New text file.txt" : "Нова текстуална датотека file.txt",
-    "%s of %s used" : "искорестени %s од %s ",
-    "%1$s%% of %2$s used" : "искористено %1$s%% од %2$s"
+    "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Користи ја оваа адреса за <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">пристап преку WebDAV</a>",
+    "Cannot transfter ownership of a file or folder you don't own" : "Неможете да направите трансвер на сопственот на датотека која не е ваша"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

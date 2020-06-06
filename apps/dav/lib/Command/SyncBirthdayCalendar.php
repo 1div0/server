@@ -2,7 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -52,7 +52,7 @@ class SyncBirthdayCalendar extends Command {
 	 * @param IConfig $config
 	 * @param BirthdayService $birthdayService
 	 */
-	function __construct(IUserManager $userManager, IConfig $config,
+	public function __construct(IUserManager $userManager, IConfig $config,
 						 BirthdayService $birthdayService) {
 		parent::__construct();
 		$this->birthdayService = $birthdayService;
@@ -96,7 +96,7 @@ class SyncBirthdayCalendar extends Command {
 		$output->writeln("Start birthday calendar sync for all users ...");
 		$p = new ProgressBar($output);
 		$p->start();
-		$this->userManager->callForSeenUsers(function($user) use ($p)  {
+		$this->userManager->callForSeenUsers(function ($user) use ($p) {
 			$p->advance();
 
 			$userId = $user->getUID();
@@ -113,7 +113,7 @@ class SyncBirthdayCalendar extends Command {
 		$output->writeln('');
 	}
 
-	protected function verifyEnabled () {
+	protected function verifyEnabled() {
 		$isEnabled = $this->config->getAppValue('dav', 'generateBirthdayCalendar', 'yes');
 
 		if ($isEnabled !== 'yes') {

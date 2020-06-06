@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -100,11 +101,11 @@ class DeleteOrphanedSharesJobTest extends \Test\TestCase {
 
 		$userManager = \OC::$server->getUserManager();
 		$user1 = $userManager->get($this->user1);
-		if($user1) {
+		if ($user1) {
 			$user1->delete();
 		}
 		$user2 = $userManager->get($this->user2);
-		if($user2) {
+		if ($user2) {
 			$user2->delete();
 		}
 

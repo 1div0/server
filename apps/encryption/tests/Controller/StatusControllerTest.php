@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -25,7 +26,6 @@
  */
 
 namespace OCA\Encryption\Tests\Controller;
-
 
 use OCA\Encryption\Controller\StatusController;
 use OCA\Encryption\Session;
@@ -52,7 +52,6 @@ class StatusControllerTest extends TestCase {
 	protected $controller;
 
 	protected function setUp(): void {
-
 		parent::setUp();
 
 		$this->sessionMock = $this->getMockBuilder(Session::class)
@@ -63,9 +62,9 @@ class StatusControllerTest extends TestCase {
 			->disableOriginalConstructor()->getMock();
 		$this->l10nMock->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function($message) {
+			->willReturnCallback(function ($message) {
 				return $message;
-			}));
+			});
 		$this->encryptionManagerMock = $this->createMock(IManager::class);
 
 		$this->controller = new StatusController('encryptionTest',
@@ -73,7 +72,6 @@ class StatusControllerTest extends TestCase {
 			$this->l10nMock,
 			$this->sessionMock,
 			$this->encryptionManagerMock);
-
 	}
 
 	/**

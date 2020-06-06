@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -36,7 +37,7 @@ class ParamFilter implements XmlDeserializable {
 	 * @throws BadRequest
 	 * @return string
 	 */
-	static function xmlDeserialize(Reader $reader) {
+	public static function xmlDeserialize(Reader $reader) {
 		$att = $reader->parseAttributes();
 		$property = $att['property'];
 		$parameter = $att['name'];
@@ -45,7 +46,6 @@ class ParamFilter implements XmlDeserializable {
 
 		if (!is_string($property)) {
 			throw new BadRequest('The {' . SearchPlugin::NS_Nextcloud . '}param-filter requires a valid property attribute');
-
 		}
 		if (!is_string($parameter)) {
 			throw new BadRequest('The {' . SearchPlugin::NS_Nextcloud . '}param-filter requires a valid parameter attribute');

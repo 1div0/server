@@ -5,7 +5,6 @@
  * @author Bart Visscher <bartv@thisnet.nl>
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Felix Epp <work@felixepp.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
@@ -73,7 +72,7 @@ class Router implements IRouter {
 	public function __construct(ILogger $logger) {
 		$this->logger = $logger;
 		$baseUrl = \OC::$WEBROOT;
-		if(!(\OC::$server->getConfig()->getSystemValue('htaccess.IgnoreFrontController', false) === true || getenv('front_controller_active') === 'true')) {
+		if (!(\OC::$server->getConfig()->getSystemValue('htaccess.IgnoreFrontController', false) === true || getenv('front_controller_active') === 'true')) {
 			$baseUrl = \OC::$server->getURLGenerator()->linkTo('', 'index.php');
 		}
 		if (!\OC::$CLI && isset($_SERVER['REQUEST_METHOD'])) {
@@ -99,7 +98,7 @@ class Router implements IRouter {
 			$this->routingFiles = [];
 			foreach (\OC_APP::getEnabledApps() as $app) {
 				$appPath = \OC_App::getAppPath($app);
-				if($appPath !== false) {
+				if ($appPath !== false) {
 					$file = $appPath . '/appinfo/routes.php';
 					if (file_exists($file)) {
 						$this->routingFiles[$app] = $file;
@@ -116,7 +115,7 @@ class Router implements IRouter {
 	 * @param null|string $app
 	 */
 	public function loadRoutes($app = null) {
-		if(is_string($app)) {
+		if (is_string($app)) {
 			$app = \OC_App::cleanAppId($app);
 		}
 
@@ -151,7 +150,6 @@ class Router implements IRouter {
 				$this->useCollection($app);
 				$this->requireRouteFile($file, $app);
 				$collection = $this->getCollection($app);
-				$collection->addPrefix('/apps/' . $app);
 				$this->root->addCollection($collection);
 
 				// Also add the OCS collection
@@ -251,16 +249,16 @@ class Router implements IRouter {
 			$app = \OC_App::cleanAppId($app);
 			\OC::$REQUESTEDAPP = $app;
 			$this->loadRoutes($app);
-		} else if (substr($url, 0, 13) === '/ocsapp/apps/') {
+		} elseif (substr($url, 0, 13) === '/ocsapp/apps/') {
 			// empty string / 'ocsapp' / 'apps' / $app / rest of the route
 			list(, , , $app,) = explode('/', $url, 5);
 
 			$app = \OC_App::cleanAppId($app);
 			\OC::$REQUESTEDAPP = $app;
 			$this->loadRoutes($app);
-		} else if (substr($url, 0, 10) === '/settings/') {
+		} elseif (substr($url, 0, 10) === '/settings/') {
 			$this->loadRoutes('settings');
-		} else if (substr($url, 0, 6) === '/core/') {
+		} elseif (substr($url, 0, 6) === '/core/') {
 			\OC::$REQUESTEDAPP = $url;
 			if (!\OC::$server->getConfig()->getSystemValueBool('maintenance') && !Util::needUpgrade()) {
 				\OC_App::loadApps();
@@ -336,11 +334,40 @@ class Router implements IRouter {
 			if ($absolute === false) {
 				$referenceType = UrlGenerator::ABSOLUTE_PATH;
 			}
+			$name = $this->fixLegacyRootName($name);
 			return $this->getGenerator()->generate($name, $parameters, $referenceType);
 		} catch (RouteNotFoundException $e) {
 			$this->logger->logException($e);
 			return '';
 		}
+	}
+
+	protected function fixLegacyRootName(string $routeName): string {
+		if ($routeName === 'files.viewcontroller.showFile') {
+			return 'files.View.showFile';
+		}
+		if ($routeName === 'files_sharing.sharecontroller.showShare') {
+			return 'files_sharing.Share.showShare';
+		}
+		if ($routeName === 'files_sharing.sharecontroller.showAuthenticate') {
+			return 'files_sharing.Share.showAuthenticate';
+		}
+		if ($routeName === 'files_sharing.sharecontroller.authenticate') {
+			return 'files_sharing.Share.authenticate';
+		}
+		if ($routeName === 'files_sharing.sharecontroller.downloadShare') {
+			return 'files_sharing.Share.downloadShare';
+		}
+		if ($routeName === 'files_sharing.publicpreview.directLink') {
+			return 'files_sharing.PublicPreview.directLink';
+		}
+		if ($routeName === 'cloud_federation_api.requesthandlercontroller.addShare') {
+			return 'cloud_federation_api.RequestHandler.addShare';
+		}
+		if ($routeName === 'cloud_federation_api.requesthandlercontroller.receiveNotification') {
+			return 'cloud_federation_api.RequestHandler.receiveNotification';
+		}
+		return $routeName;
 	}
 
 	/**

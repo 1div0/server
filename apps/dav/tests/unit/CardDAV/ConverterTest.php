@@ -29,13 +29,12 @@ namespace OCA\DAV\Tests\unit\CardDAV;
 
 use OC\Accounts\AccountManager;
 use OCA\DAV\CardDAV\Converter;
-use OCP\IDBConnection;
 use OCP\IImage;
 use OCP\IUser;
 use PHPUnit_Framework_MockObject_MockObject;
 use Test\TestCase;
 
-class ConverterTest extends  TestCase {
+class ConverterTest extends TestCase {
 
 	/** @var  AccountManager | PHPUnit_Framework_MockObject_MockObject */
 	private $accountManager;
@@ -104,23 +103,23 @@ class ConverterTest extends  TestCase {
 			$this->assertInstanceOf('Sabre\VObject\Component\VCard', $vCard);
 			$cardData = $vCard->jsonSerialize();
 			$this->compareData($expectedVCard, $cardData);
-
 		} else {
 			$this->assertSame($expectedVCard, $vCard);
 		}
-
 	}
 
 	protected function compareData($expected, $data) {
 		foreach ($expected as $key => $value) {
 			$found = false;
 			foreach ($data[1] as $d) {
-				if($d[0] === $key && $d[3] === $value) {
+				if ($d[0] === $key && $d[3] === $value) {
 					$found = true;
 					break;
 				}
 			}
-			if (!$found) $this->assertTrue(false, 'Expected data: ' . $key . ' not found.');
+			if (!$found) {
+				$this->assertTrue(false, 'Expected data: ' . $key . ' not found.');
+			}
 		}
 	}
 
@@ -184,7 +183,6 @@ class ConverterTest extends  TestCase {
 	 * @param $fullName
 	 */
 	public function testNameSplitter($expected, $fullName) {
-
 		$converter = new Converter($this->accountManager);
 		$r = $converter->splitFullName($fullName);
 		$r = implode(';', $r);
@@ -193,9 +191,9 @@ class ConverterTest extends  TestCase {
 
 	public function providesNames() {
 		return [
-				['Sauron;;;;', 'Sauron'],
-				['Baggins;Bilbo;;;', 'Bilbo Baggins'],
-				['Tolkien;John;Ronald Reuel;;', 'John Ronald Reuel Tolkien'],
+			['Sauron;;;;', 'Sauron'],
+			['Baggins;Bilbo;;;', 'Bilbo Baggins'],
+			['Tolkien;John;Ronald Reuel;;', 'John Ronald Reuel Tolkien'],
 		];
 	}
 

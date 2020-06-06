@@ -20,7 +20,8 @@
   -->
 
 <template>
-	<form method="post"
+	<form ref="loginForm"
+		method="post"
 		name="login"
 		:action="OC.generateUrl('login')"
 		@submit="submit">
@@ -58,6 +59,7 @@
 					v-model="user"
 					type="text"
 					name="user"
+					autocapitalize="off"
 					:autocomplete="autoCompleteAllowed ? 'on' : 'off'"
 					:placeholder="t('core', 'Username or email')"
 					:aria-label="t('core', 'Username or email')"
@@ -84,19 +86,7 @@
 				</a>
 			</p>
 
-			<div id="submit-wrapper">
-				<input id="submit-form"
-					type="submit"
-					class="login primary"
-					title=""
-					:value="!loading ? t('core', 'Log in') : t('core', 'Logging in …')">
-				<div class="submit-icon"
-					:class="{
-						'icon-confirm-white': !loading,
-						'icon-loading-small': loading && invertedColors,
-						'icon-loading-small-dark': loading && !invertedColors,
-					}" />
-			</div>
+			<LoginButton :loading="loading" :inverted-colors="invertedColors" />
 
 			<p v-if="invalidPassword"
 				class="warning wrongPasswordMsg">
@@ -135,9 +125,11 @@
 
 <script>
 import jstz from 'jstimezonedetect'
+import LoginButton from './LoginButton'
 
 export default {
 	name: 'LoginForm',
+	components: { LoginButton },
 	props: {
 		username: {
 			type: String,

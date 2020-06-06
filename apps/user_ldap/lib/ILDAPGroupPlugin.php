@@ -23,7 +23,6 @@
 
 namespace OCA\User_LDAP;
 
-
 interface ILDAPGroupPlugin {
 
 	/**
@@ -82,5 +81,4 @@ interface ILDAPGroupPlugin {
 	 * @return array|false
 	 */
 	public function getGroupDetails($gid);
-
 }

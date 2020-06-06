@@ -24,7 +24,6 @@
 
 namespace OC\Encryption;
 
-
 use OC\Files\Filesystem;
 use OC\Files\Storage\Wrapper\Encryption;
 use OC\Files\View;
@@ -83,7 +82,6 @@ class EncryptionWrapper {
 		];
 
 		if (!$storage->instanceOfStorage(Storage\IDisableEncryptionStorage::class)) {
-
 			$user = \OC::$server->getUserSession()->getUser();
 			$mountManager = Filesystem::getMountManager();
 			$uid = $user ? $user->getUID() : null;
@@ -120,5 +118,4 @@ class EncryptionWrapper {
 			return $storage;
 		}
 	}
-
 }

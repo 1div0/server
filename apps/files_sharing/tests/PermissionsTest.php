@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -137,7 +138,7 @@ class PermissionsTest extends TestCase {
 	/**
 	 * Test that the permissions of shared directory are returned correctly
 	 */
-	function testGetPermissions() {
+	public function testGetPermissions() {
 		$sharedDirPerms = $this->sharedStorage->getPermissions('');
 		$this->assertEquals(31, $sharedDirPerms);
 		$sharedDirPerms = $this->sharedStorage->getPermissions('textfile.txt');
@@ -151,7 +152,7 @@ class PermissionsTest extends TestCase {
 	/**
 	 * Test that the permissions of shared directory are returned correctly
 	 */
-	function testGetDirectoryPermissions() {
+	public function testGetDirectoryPermissions() {
 		$contents = $this->secondView->getDirectoryContent('files/shareddir');
 		$this->assertEquals('subdir', $contents[0]['name']);
 		$this->assertEquals(31, $contents[0]['permissions']);

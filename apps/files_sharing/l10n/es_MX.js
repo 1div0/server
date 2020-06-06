@@ -12,6 +12,7 @@ OC.L10N.register(
     "Files and folders you share by link will show up here" : "Los archivos y carpetas que compartas por ligas se mostrarán aquí",
     "Shares" : "Elementos compartidos",
     "Restore" : "Restaurar",
+    "error" : "error",
     "Move or copy" : "Mover o copiar",
     "Download" : "Descargar",
     "Delete" : "Borrar",
@@ -101,6 +102,7 @@ OC.L10N.register(
     "group" : "grupo",
     "remote" : "remoto",
     "guest" : "invitado",
+    "Link copied" : "Vinculo copiado",
     "Copy to clipboard" : "Copiar al portapapeles",
     "Password protection" : "Protección con contraseña",
     "Enter a password" : "Ingresa una contraseña",
@@ -132,8 +134,8 @@ OC.L10N.register(
     "Upload files to %s" : "Cargar archivos a %s",
     "Note" : "Nota",
     "Select or drop files" : "Selecciona o suelta los archivos",
-    "Uploading files…" : "Cargando archivos...",
     "Uploaded files:" : "Archivos cargados:",
-    "could not delete share" : "no fue posible borrar el elemento compartido"
+    "could not delete share" : "no fue posible borrar el elemento compartido",
+    "Uploading files…" : "Cargando archivos..."
 },
 "nplurals=2; plural=(n != 1);");

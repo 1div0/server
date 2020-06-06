@@ -9,7 +9,6 @@
  * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -109,7 +108,7 @@ class Updater extends BasicEmitter {
 
 		$wasMaintenanceModeEnabled = $this->config->getSystemValueBool('maintenance');
 
-		if(!$wasMaintenanceModeEnabled) {
+		if (!$wasMaintenanceModeEnabled) {
 			$this->config->setSystemValue('maintenance', true);
 			$this->emit('\OC\Updater', 'maintenanceEnabled');
 		}
@@ -124,24 +123,24 @@ class Updater extends BasicEmitter {
 		$installedVersion = $this->config->getSystemValue('version', '0.0.0');
 		$currentVersion = implode('.', \OCP\Util::getVersion());
 
-		$this->log->debug('starting upgrade from ' . $installedVersion . ' to ' . $currentVersion, array('app' => 'core'));
+		$this->log->debug('starting upgrade from ' . $installedVersion . ' to ' . $currentVersion, ['app' => 'core']);
 
 		$success = true;
 		try {
 			$this->doUpgrade($currentVersion, $installedVersion);
 		} catch (HintException $exception) {
 			$this->log->logException($exception, ['app' => 'core']);
-			$this->emit('\OC\Updater', 'failure', array($exception->getMessage() . ': ' .$exception->getHint()));
+			$this->emit('\OC\Updater', 'failure', [$exception->getMessage() . ': ' .$exception->getHint()]);
 			$success = false;
 		} catch (\Exception $exception) {
 			$this->log->logException($exception, ['app' => 'core']);
-			$this->emit('\OC\Updater', 'failure', array(get_class($exception) . ': ' .$exception->getMessage()));
+			$this->emit('\OC\Updater', 'failure', [get_class($exception) . ': ' .$exception->getMessage()]);
 			$success = false;
 		}
 
-		$this->emit('\OC\Updater', 'updateEnd', array($success));
+		$this->emit('\OC\Updater', 'updateEnd', [$success]);
 
-		if(!$wasMaintenanceModeEnabled && $success) {
+		if (!$wasMaintenanceModeEnabled && $success) {
 			$this->config->setSystemValue('maintenance', false);
 			$this->emit('\OC\Updater', 'maintenanceDisabled');
 		} else {
@@ -279,7 +278,7 @@ class Updater extends BasicEmitter {
 		$this->config->setAppValue('core', 'lastupdatedat', 0);
 
 		// Check for code integrity if not disabled
-		if(\OC::$server->getIntegrityCodeChecker()->isCodeCheckEnforced()) {
+		if (\OC::$server->getIntegrityCodeChecker()->isCodeCheckEnforced()) {
 			$this->emit('\OC\Updater', 'startCheckCodeIntegrity');
 			$this->checker->runInstanceVerification();
 			$this->emit('\OC\Updater', 'finishedCheckCodeIntegrity');
@@ -324,7 +323,7 @@ class Updater extends BasicEmitter {
 					$this->includePreUpdate($appId);
 				}
 				if (file_exists(\OC_App::getAppPath($appId) . '/appinfo/database.xml')) {
-					$this->emit('\OC\Updater', 'appSimulateUpdate', array($appId));
+					$this->emit('\OC\Updater', 'appSimulateUpdate', [$appId]);
 					\OC_DB::simulateUpdateDbFromStructure(\OC_App::getAppPath($appId) . '/appinfo/database.xml');
 				}
 			}
@@ -349,15 +348,15 @@ class Updater extends BasicEmitter {
 	 */
 	protected function doAppUpgrade() {
 		$apps = \OC_App::getEnabledApps();
-		$priorityTypes = array('authentication', 'filesystem', 'logging');
+		$priorityTypes = ['authentication', 'filesystem', 'logging'];
 		$pseudoOtherType = 'other';
-		$stacks = array($pseudoOtherType => array());
+		$stacks = [$pseudoOtherType => []];
 
 		foreach ($apps as $appId) {
 			$priorityType = false;
 			foreach ($priorityTypes as $type) {
-				if(!isset($stacks[$type])) {
-					$stacks[$type] = array();
+				if (!isset($stacks[$type])) {
+					$stacks[$type] = [];
 				}
 				if (\OC_App::isType($appId, [$type])) {
 					$stacks[$type][] = $appId;
@@ -376,7 +375,7 @@ class Updater extends BasicEmitter {
 					\OC_App::updateApp($appId);
 					$this->emit('\OC\Updater', 'appUpgrade', [$appId, \OC_App::getAppVersion($appId)]);
 				}
-				if($type !== $pseudoOtherType) {
+				if ($type !== $pseudoOtherType) {
 					// load authentication, filesystem and logging apps after
 					// upgrading them. Other apps my need to rely on modifying
 					// user and/or filesystem aspects.
@@ -404,12 +403,12 @@ class Updater extends BasicEmitter {
 		foreach ($apps as $app) {
 			// check if the app is compatible with this version of ownCloud
 			$info = OC_App::getAppInfo($app);
-			if($info === null || !OC_App::isAppCompatible($version, $info)) {
+			if ($info === null || !OC_App::isAppCompatible($version, $info)) {
 				if ($appManager->isShipped($app)) {
 					throw new \UnexpectedValueException('The files of the app "' . $app . '" were not correctly replaced before running the update');
 				}
 				\OC::$server->getAppManager()->disableApp($app, true);
-				$this->emit('\OC\Updater', 'incompatibleAppDisabled', array($app));
+				$this->emit('\OC\Updater', 'incompatibleAppDisabled', [$app]);
 			}
 			// no need to disable any app in case this is a non-core upgrade
 			if (!$isCoreUpgrade) {
@@ -445,7 +444,7 @@ class Updater extends BasicEmitter {
 	 * @throws \Exception
 	 */
 	private function upgradeAppStoreApps(array $disabledApps, $reenable = false) {
-		foreach($disabledApps as $app) {
+		foreach ($disabledApps as $app) {
 			try {
 				$this->emit('\OC\Updater', 'checkAppStoreAppBefore', [$app]);
 				if ($this->installer->isUpdateAvailable($app)) {
@@ -495,20 +494,20 @@ class Updater extends BasicEmitter {
 		$log = $this->log;
 
 		$dispatcher = \OC::$server->getEventDispatcher();
-		$dispatcher->addListener('\OC\DB\Migrator::executeSql', function($event) use ($log) {
+		$dispatcher->addListener('\OC\DB\Migrator::executeSql', function ($event) use ($log) {
 			if (!$event instanceof GenericEvent) {
 				return;
 			}
 			$log->info('\OC\DB\Migrator::executeSql: ' . $event->getSubject() . ' (' . $event->getArgument(0) . ' of ' . $event->getArgument(1) . ')', ['app' => 'updater']);
 		});
-		$dispatcher->addListener('\OC\DB\Migrator::checkTable', function($event) use ($log) {
+		$dispatcher->addListener('\OC\DB\Migrator::checkTable', function ($event) use ($log) {
 			if (!$event instanceof GenericEvent) {
 				return;
 			}
 			$log->info('\OC\DB\Migrator::checkTable: ' . $event->getSubject() . ' (' . $event->getArgument(0) . ' of ' . $event->getArgument(1) . ')', ['app' => 'updater']);
 		});
 
-		$repairListener = function($event) use ($log) {
+		$repairListener = function ($event) use ($log) {
 			if (!$event instanceof GenericEvent) {
 				return;
 			}
@@ -551,44 +550,44 @@ class Updater extends BasicEmitter {
 		$dispatcher->addListener('\OC\Repair::error', $repairListener);
 
 
-		$this->listen('\OC\Updater', 'maintenanceEnabled', function () use($log) {
+		$this->listen('\OC\Updater', 'maintenanceEnabled', function () use ($log) {
 			$log->info('\OC\Updater::maintenanceEnabled: Turned on maintenance mode', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'maintenanceDisabled', function () use($log) {
+		$this->listen('\OC\Updater', 'maintenanceDisabled', function () use ($log) {
 			$log->info('\OC\Updater::maintenanceDisabled: Turned off maintenance mode', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'maintenanceActive', function () use($log) {
+		$this->listen('\OC\Updater', 'maintenanceActive', function () use ($log) {
 			$log->info('\OC\Updater::maintenanceActive: Maintenance mode is kept active', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'updateEnd', function ($success) use($log) {
+		$this->listen('\OC\Updater', 'updateEnd', function ($success) use ($log) {
 			if ($success) {
 				$log->info('\OC\Updater::updateEnd: Update successful', ['app' => 'updater']);
 			} else {
 				$log->error('\OC\Updater::updateEnd: Update failed', ['app' => 'updater']);
 			}
 		});
-		$this->listen('\OC\Updater', 'dbUpgradeBefore', function () use($log) {
+		$this->listen('\OC\Updater', 'dbUpgradeBefore', function () use ($log) {
 			$log->info('\OC\Updater::dbUpgradeBefore: Updating database schema', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'dbUpgrade', function () use($log) {
+		$this->listen('\OC\Updater', 'dbUpgrade', function () use ($log) {
 			$log->info('\OC\Updater::dbUpgrade: Updated database', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'dbSimulateUpgradeBefore', function () use($log) {
+		$this->listen('\OC\Updater', 'dbSimulateUpgradeBefore', function () use ($log) {
 			$log->info('\OC\Updater::dbSimulateUpgradeBefore: Checking whether the database schema can be updated (this can take a long time depending on the database size)', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'dbSimulateUpgrade', function () use($log) {
+		$this->listen('\OC\Updater', 'dbSimulateUpgrade', function () use ($log) {
 			$log->info('\OC\Updater::dbSimulateUpgrade: Checked database schema update', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'incompatibleAppDisabled', function ($app) use($log) {
+		$this->listen('\OC\Updater', 'incompatibleAppDisabled', function ($app) use ($log) {
 			$log->info('\OC\Updater::incompatibleAppDisabled: Disabled incompatible app: ' . $app, ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'checkAppStoreAppBefore', function ($app) use($log) {
+		$this->listen('\OC\Updater', 'checkAppStoreAppBefore', function ($app) use ($log) {
 			$log->info('\OC\Updater::checkAppStoreAppBefore: Checking for update of app "' . $app . '" in appstore', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'upgradeAppStoreApp', function ($app) use($log) {
+		$this->listen('\OC\Updater', 'upgradeAppStoreApp', function ($app) use ($log) {
 			$log->info('\OC\Updater::upgradeAppStoreApp: Update app "' . $app . '" from appstore', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'checkAppStoreApp', function ($app) use($log) {
+		$this->listen('\OC\Updater', 'checkAppStoreApp', function ($app) use ($log) {
 			$log->info('\OC\Updater::checkAppStoreApp: Checked for update of app "' . $app . '" in appstore', ['app' => 'updater']);
 		});
 		$this->listen('\OC\Updater', 'appUpgradeCheckBefore', function () use ($log) {
@@ -606,22 +605,20 @@ class Updater extends BasicEmitter {
 		$this->listen('\OC\Updater', 'appUpgrade', function ($app, $version) use ($log) {
 			$log->info('\OC\Updater::appUpgrade: Updated <' . $app . '> to ' . $version, ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'failure', function ($message) use($log) {
+		$this->listen('\OC\Updater', 'failure', function ($message) use ($log) {
 			$log->error('\OC\Updater::failure: ' . $message, ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'setDebugLogLevel', function () use($log) {
+		$this->listen('\OC\Updater', 'setDebugLogLevel', function () use ($log) {
 			$log->info('\OC\Updater::setDebugLogLevel: Set log level to debug', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'resetLogLevel', function ($logLevel, $logLevelName) use($log) {
+		$this->listen('\OC\Updater', 'resetLogLevel', function ($logLevel, $logLevelName) use ($log) {
 			$log->info('\OC\Updater::resetLogLevel: Reset log level to ' . $logLevelName . '(' . $logLevel . ')', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'startCheckCodeIntegrity', function () use($log) {
+		$this->listen('\OC\Updater', 'startCheckCodeIntegrity', function () use ($log) {
 			$log->info('\OC\Updater::startCheckCodeIntegrity: Starting code integrity check...', ['app' => 'updater']);
 		});
-		$this->listen('\OC\Updater', 'finishedCheckCodeIntegrity', function () use($log) {
+		$this->listen('\OC\Updater', 'finishedCheckCodeIntegrity', function () use ($log) {
 			$log->info('\OC\Updater::finishedCheckCodeIntegrity: Finished code integrity check', ['app' => 'updater']);
 		});
-
 	}
-
 }

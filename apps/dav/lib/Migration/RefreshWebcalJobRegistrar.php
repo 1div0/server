@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright 2018 Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -68,7 +69,7 @@ class RefreshWebcalJobRegistrar implements IRepairStep {
 		$stmt = $query->execute();
 
 		$count = 0;
-		while($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+		while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 			$args = [
 				'principaluri' => $row['principaluri'],
 				'uri' => $row['uri'],

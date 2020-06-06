@@ -21,7 +21,6 @@
 
 namespace OCA\WorkflowEngine\Check;
 
-
 use OCA\WorkflowEngine\Entity\File;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\Storage\IStorage;
@@ -63,7 +62,6 @@ class FileMimeType extends AbstractStringCheck implements IFileCheck {
 		$this->_setFileInfo($storage, $path, $isDir);
 		if (!isset($this->mimeType[$this->storage->getId()][$this->path])
 			|| $this->mimeType[$this->storage->getId()][$this->path] === '') {
-
 			if ($isDir) {
 				$this->mimeType[$this->storage->getId()][$this->path] = 'httpd/unix-directory';
 			} else {

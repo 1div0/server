@@ -7,6 +7,7 @@ declare(strict_types=1);
  *
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
  * @author Bjoern Schiessle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -46,7 +47,7 @@ class ControllerMethodReflector implements IControllerMethodReflector {
 	 * @param object $object an object or classname
 	 * @param string $method the method which we want to inspect
 	 */
-	public function reflect($object, string $method){
+	public function reflect($object, string $method) {
 		$reflection = new \ReflectionMethod($object, $method);
 		$docs = $reflection->getDocComment();
 
@@ -82,7 +83,7 @@ class ControllerMethodReflector implements IControllerMethodReflector {
 			}
 
 			$default = null;
-			if($param->isOptional()) {
+			if ($param->isOptional()) {
 				$default = $param->getDefaultValue();
 			}
 			$this->parameters[$param->name] = $default;
@@ -97,7 +98,7 @@ class ControllerMethodReflector implements IControllerMethodReflector {
 	 * would return int or null if not existing
 	 */
 	public function getType(string $parameter) {
-		if(array_key_exists($parameter, $this->types)) {
+		if (array_key_exists($parameter, $this->types)) {
 			return $this->types[$parameter];
 		}
 
@@ -128,7 +129,7 @@ class ControllerMethodReflector implements IControllerMethodReflector {
 	 * @return string
 	 */
 	public function getAnnotationParameter(string $name, string $key): string {
-		if(isset($this->annotations[$name][$key])) {
+		if (isset($this->annotations[$name][$key])) {
 			return $this->annotations[$name][$key];
 		}
 

@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -60,7 +61,6 @@ class SyncFederationAddressBooks {
 	 * @param \Closure $callback
 	 */
 	public function syncThemAll(\Closure $callback) {
-
 		$trustedServers = $this->dbHandler->getAllServer();
 		foreach ($trustedServers as $trustedServer) {
 			$url = $trustedServer['url'];
@@ -78,7 +78,7 @@ class SyncFederationAddressBooks {
 			$targetBookId = $trustedServer['url_hash'];
 			$targetPrincipal = "principals/system/system";
 			$targetBookProperties = [
-					'{DAV:}displayname' => $url
+				'{DAV:}displayname' => $url
 			];
 			try {
 				$newToken = $this->syncService->syncRemoteAddressBook($url, $cardDavUser, $addressBookUrl, $sharedSecret, $syncToken, $targetBookId, $targetPrincipal, $targetBookProperties);

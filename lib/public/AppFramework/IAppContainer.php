@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -62,5 +63,5 @@ interface IAppContainer extends IContainer {
 	 * @param string $serviceName e.g. 'OCA\Files\Capabilities'
 	 * @since 8.2.0
 	 */
-	 public function registerCapability($serviceName);
+	public function registerCapability($serviceName);
 }

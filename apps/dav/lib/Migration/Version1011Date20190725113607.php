@@ -27,7 +27,6 @@ declare(strict_types=1);
  */
 namespace OCA\DAV\Migration;
 
-use Closure;
 use Doctrine\DBAL\Types\Type;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
@@ -50,7 +49,7 @@ class Version1011Date20190725113607 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$types = ['resource', 'room'];
-		foreach($types as $type) {
+		foreach ($types as $type) {
 			if (!$schema->hasTable($this->getMetadataTableName($type))) {
 				$table = $schema->createTable($this->getMetadataTableName($type));
 

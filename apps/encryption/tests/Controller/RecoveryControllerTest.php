@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -24,7 +25,6 @@
  */
 
 namespace OCA\Encryption\Tests\Controller;
-
 
 use OCA\Encryption\Controller\RecoveryController;
 use OCA\Encryption\Recovery;
@@ -65,8 +65,6 @@ class RecoveryControllerTest extends TestCase {
 	 * @param $expectedStatus
 	 */
 	public function testAdminRecovery($recoveryPassword, $passConfirm, $enableRecovery, $expectedMessage, $expectedStatus) {
-
-
 		$this->recoveryMock->expects($this->any())
 			->method('enableAdminRecovery')
 			->willReturn(true);
@@ -82,8 +80,6 @@ class RecoveryControllerTest extends TestCase {
 
 		$this->assertEquals($expectedMessage, $response->getData()['data']['message']);
 		$this->assertEquals($expectedStatus, $response->getStatus());
-
-
 	}
 
 	public function changeRecoveryPasswordProvider() {
@@ -108,10 +104,10 @@ class RecoveryControllerTest extends TestCase {
 		$this->recoveryMock->expects($this->any())
 			->method('changeRecoveryKeyPassword')
 			->with($password, $oldPassword)
-			->will($this->returnValueMap([
+			->willReturnMap([
 				['test', 'oldTestFail', false],
 				['test', 'oldtest', true]
-			]));
+			]);
 
 		$response = $this->controller->changeRecoveryPassword($password,
 			$oldPassword,
@@ -119,8 +115,6 @@ class RecoveryControllerTest extends TestCase {
 
 		$this->assertEquals($expectedMessage, $response->getData()['data']['message']);
 		$this->assertEquals($expectedStatus, $response->getStatus());
-
-
 	}
 
 	public function userSetRecoveryProvider() {
@@ -140,17 +134,16 @@ class RecoveryControllerTest extends TestCase {
 		$this->recoveryMock->expects($this->any())
 			->method('setRecoveryForUser')
 			->with($enableRecovery)
-			->will($this->returnValueMap([
+			->willReturnMap([
 				['1', true],
 				['0', false]
-			]));
+			]);
 
 
 		$response = $this->controller->userSetRecovery($enableRecovery);
 
 		$this->assertEquals($expectedMessage, $response->getData()['data']['message']);
 		$this->assertEquals($expectedStatus, $response->getStatus());
-
 	}
 
 	protected function setUp(): void {
@@ -183,5 +176,4 @@ class RecoveryControllerTest extends TestCase {
 			$this->l10nMock,
 			$this->recoveryMock);
 	}
-
 }

@@ -6,7 +6,10 @@ declare(strict_types=1);
  * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Joas Schilling <coding@schilljs.com>
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Sascha Wiswedel <sascha.wiswedel@nextcloud.com>
+ * @author Tobia De Koninck <LEDfan@users.noreply.github.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -34,6 +37,7 @@ use OCA\Files\Exception\TransferOwnershipException;
 use OCP\Encryption\IManager as IEncryptionManager;
 use OCP\Files\FileInfo;
 use OCP\Files\IHomeStorage;
+use OCP\Files\InvalidPathException;
 use OCP\Files\Mount\IMountManager;
 use OCP\IUser;
 use OCP\Share\IManager as IShareManager;
@@ -92,18 +96,31 @@ class OwnershipTransferService {
 			throw new TransferOwnershipException("The target user is not ready to accept files. The user has at least to have logged in once.", 2);
 		}
 
-		if ($move) {
-			$finalTarget = "$destinationUid/files/";
-		} else {
-			$date = date('Y-m-d H-i-s');
-			$finalTarget = "$destinationUid/files/transferred from $sourceUid on $date";
-		}
-
 		// setup filesystem
 		Filesystem::initMountPoints($sourceUid);
 		Filesystem::initMountPoints($destinationUid);
 
 		$view = new View();
+
+		if ($move) {
+			$finalTarget = "$destinationUid/files/";
+		} else {
+			$date = date('Y-m-d H-i-s');
+
+			// Remove some characters which are prone to cause errors
+			$cleanUserName = str_replace(['\\', '/', ':', '.', '?', '#', '\'', '"'], '-', $sourceUser->getDisplayName());
+			// Replace multiple dashes with one dash
+			$cleanUserName = preg_replace('/-{2,}/s', '-', $cleanUserName);
+			$cleanUserName = $cleanUserName ?: $sourceUid;
+
+			$finalTarget = "$destinationUid/files/transferred from $cleanUserName on $date";
+			try {
+				$view->verifyPath(dirname($finalTarget), basename($finalTarget));
+			} catch (InvalidPathException $e) {
+				$finalTarget = "$destinationUid/files/transferred from $sourceUid on $date";
+			}
+		}
+
 		if (!($view->is_dir($sourcePath) || $view->is_file($sourcePath))) {
 			throw new TransferOwnershipException("Unknown path provided: $path", 1);
 		}
@@ -301,5 +318,4 @@ class OwnershipTransferService {
 		$progress->finish();
 		$output->writeln('');
 	}
-
 }

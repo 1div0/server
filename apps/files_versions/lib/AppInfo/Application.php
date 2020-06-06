@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -42,8 +43,7 @@ use OCP\AppFramework\IAppContainer;
 use OCP\EventDispatcher\IEventDispatcher;
 
 class Application extends App {
-
-	const APP_ID = 'files_versions';
+	public const APP_ID = 'files_versions';
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_ID, $urlParams);
@@ -75,7 +75,7 @@ class Application extends App {
 			);
 		});
 
-		$container->registerService(IVersionManager::class, function(IAppContainer $c) {
+		$container->registerService(IVersionManager::class, function (IAppContainer $c) {
 			return new VersionManager();
 		});
 
@@ -95,11 +95,11 @@ class Application extends App {
 	public function registerVersionBackends() {
 		$server = $this->getContainer()->getServer();
 		$appManager = $server->getAppManager();
-		foreach($appManager->getInstalledApps() as $app) {
+		foreach ($appManager->getInstalledApps() as $app) {
 			$appInfo = $appManager->getAppInfo($app);
 			if (isset($appInfo['versions'])) {
 				$backends = $appInfo['versions'];
-				foreach($backends as $backend) {
+				foreach ($backends as $backend) {
 					if (isset($backend['@value'])) {
 						$this->loadBackend($backend);
 					} else {
@@ -131,5 +131,4 @@ class Application extends App {
 		$dispatcher->addServiceListener(LoadAdditionalScriptsEvent::class, LoadAdditionalListener::class);
 		$dispatcher->addServiceListener(LoadSidebar::class, LoadSidebarListener::class);
 	}
-
 }

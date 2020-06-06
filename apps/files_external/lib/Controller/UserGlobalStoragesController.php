@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Juan Pablo Villafáñez <jvillafanez@solidgear.es>
  * @author Robin Appelman <robin@icewind.nl>
@@ -85,7 +86,7 @@ class UserGlobalStoragesController extends StoragesController {
 	 * @NoAdminRequired
 	 */
 	public function index() {
-		$storages = $this->service->getUniqueStorages();
+		$storages = $this->formatStoragesForUI($this->service->getUniqueStorages());
 
 		// remove configuration data, this must be kept private
 		foreach ($storages as $storage) {
@@ -124,7 +125,7 @@ class UserGlobalStoragesController extends StoragesController {
 		} catch (NotFoundException $e) {
 			return new DataResponse(
 				[
-					'message' => (string)$this->l10n->t('Storage with ID "%d" not found', array($id))
+					'message' => (string)$this->l10n->t('Storage with ID "%d" not found', [$id])
 				],
 				Http::STATUS_NOT_FOUND
 			);
@@ -133,7 +134,7 @@ class UserGlobalStoragesController extends StoragesController {
 		$this->sanitizeStorage($storage);
 
 		return new DataResponse(
-			$storage,
+			$this->formatStorageForUI($storage),
 			Http::STATUS_OK
 		);
 	}
@@ -164,7 +165,7 @@ class UserGlobalStoragesController extends StoragesController {
 			} else {
 				return new DataResponse(
 					[
-						'message' => (string)$this->l10n->t('Storage with ID "%d" is not user editable', array($id))
+						'message' => (string)$this->l10n->t('Storage with ID "%d" is not user editable', [$id])
 					],
 					Http::STATUS_FORBIDDEN
 				);
@@ -172,7 +173,7 @@ class UserGlobalStoragesController extends StoragesController {
 		} catch (NotFoundException $e) {
 			return new DataResponse(
 				[
-					'message' => (string)$this->l10n->t('Storage with ID "%d" not found', array($id))
+					'message' => (string)$this->l10n->t('Storage with ID "%d" not found', [$id])
 				],
 				Http::STATUS_NOT_FOUND
 			);
@@ -182,10 +183,9 @@ class UserGlobalStoragesController extends StoragesController {
 		$this->sanitizeStorage($storage);
 
 		return new DataResponse(
-			$storage,
+			$this->formatStorageForUI($storage),
 			Http::STATUS_OK
 		);
-
 	}
 
 	/**
@@ -205,5 +205,4 @@ class UserGlobalStoragesController extends StoragesController {
 			}
 		}
 	}
-
 }

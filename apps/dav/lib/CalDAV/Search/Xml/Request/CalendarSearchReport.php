@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Georg Ehrke <oc.list@georgehrke.com>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -84,7 +85,7 @@ class CalendarSearchReport implements XmlDeserializable {
 	 * @param Reader $reader
 	 * @return mixed
 	 */
-	static function xmlDeserialize(Reader $reader) {
+	public static function xmlDeserialize(Reader $reader) {
 		$elems = $reader->parseInnerTree([
 			'{http://nextcloud.com/ns}comp-filter'  => 'OCA\\DAV\\CalDAV\\Search\\Xml\\Filter\\CompFilter',
 			'{http://nextcloud.com/ns}prop-filter'  => 'OCA\\DAV\\CalDAV\\Search\\Xml\\Filter\\PropFilter',

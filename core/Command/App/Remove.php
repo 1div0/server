@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018, Patrik Kernstock <info@pkern.at>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Patrik Kernstock <info@pkern.at>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -96,7 +97,7 @@ class Remove extends Command implements CompletionAwareInterface {
 			try {
 				$this->manager->disableApp($appId);
 				$output->writeln($appId . ' disabled');
-			} catch(Throwable $e) {
+			} catch (Throwable $e) {
 				$output->writeln('<error>Error: ' . $e->getMessage() . '</error>');
 				$this->logger->logException($e, [
 					'app' => 'CLI',
@@ -109,7 +110,7 @@ class Remove extends Command implements CompletionAwareInterface {
 		// Let's try to remove the app...
 		try {
 			$result = $this->installer->removeApp($appId);
-		} catch(Throwable $e) {
+		} catch (Throwable $e) {
 			$output->writeln('<error>Error: ' . $e->getMessage() . '</error>');
 			$this->logger->logException($e, [
 				'app' => 'CLI',
@@ -118,7 +119,7 @@ class Remove extends Command implements CompletionAwareInterface {
 			return 1;
 		}
 
-		if($result === false) {
+		if ($result === false) {
 			$output->writeln($appId . ' could not be removed');
 			return 1;
 		}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Lukas Reschke <lukas@statuscode.ch>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -75,7 +76,7 @@ class MemoryCache implements IBackend {
 		}
 
 		$cachedAttempts = json_decode($cachedAttempts, true);
-		if(\is_array($cachedAttempts)) {
+		if (\is_array($cachedAttempts)) {
 			return $cachedAttempts;
 		}
 
@@ -95,7 +96,7 @@ class MemoryCache implements IBackend {
 		$currentTime = $this->timeFactory->getTime();
 		/** @var array $existingAttempts */
 		foreach ($existingAttempts as $attempt) {
-			if(($attempt + $seconds) > $currentTime) {
+			if (($attempt + $seconds) > $currentTime) {
 				$count++;
 			}
 		}
@@ -115,7 +116,7 @@ class MemoryCache implements IBackend {
 
 		// Unset all attempts older than $period
 		foreach ($existingAttempts as $key => $attempt) {
-			if(($attempt + $period) < $currentTime) {
+			if (($attempt + $period) < $currentTime) {
 				unset($existingAttempts[$key]);
 			}
 		}

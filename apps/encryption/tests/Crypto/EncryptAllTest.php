@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Kenneth Newwood <kenneth@newwood.name>
  * @author Morris Jobke <hey@morrisjobke.de>
@@ -26,7 +27,6 @@
  */
 
 namespace OCA\Encryption\Tests\Crypto;
-
 
 use OC\Files\View;
 use OCA\Encryption\Crypto\EncryptAll;
@@ -169,7 +169,6 @@ class EncryptAllTest extends TestCase {
 		$encryptAll->expects($this->at(2))->method('encryptAllUsersFiles')->with();
 
 		$encryptAll->encryptAll($this->inputInterface, $this->outputInterface);
-
 	}
 
 	public function testEncryptAllWithMasterKey() {
@@ -199,7 +198,6 @@ class EncryptAllTest extends TestCase {
 		$encryptAll->expects($this->never())->method('outputPasswords');
 
 		$encryptAll->encryptAll($this->inputInterface, $this->outputInterface);
-
 	}
 
 	public function testCreateKeyPairs() {
@@ -281,7 +279,6 @@ class EncryptAllTest extends TestCase {
 		$encryptAll->expects($this->at(1))->method('encryptUsersFiles')->with('user2');
 
 		$this->invokePrivate($encryptAll, 'encryptAllUsersFiles');
-
 	}
 
 	public function testEncryptUsersFiles() {
@@ -323,7 +320,7 @@ class EncryptAllTest extends TestCase {
 
 		$this->view->expects($this->any())->method('is_dir')
 			->willReturnCallback(
-				function($path) {
+				function ($path) {
 					if ($path === '/user1/files/foo') {
 						return true;
 					}
@@ -340,7 +337,6 @@ class EncryptAllTest extends TestCase {
 		$progressBar = new ProgressBar($this->outputInterface);
 
 		$this->invokePrivate($encryptAll, 'encryptUsersFiles', ['user1', $progressBar, '']);
-
 	}
 
 	public function testGenerateOneTimePassword() {
@@ -365,7 +361,7 @@ class EncryptAllTest extends TestCase {
 			->willReturn($fileInfo);
 
 
-		if($isEncrypted) {
+		if ($isEncrypted) {
 			$this->view->expects($this->never())->method('copy');
 			$this->view->expects($this->never())->method('rename');
 		} else {
@@ -384,5 +380,4 @@ class EncryptAllTest extends TestCase {
 			[false],
 		];
 	}
-
 }

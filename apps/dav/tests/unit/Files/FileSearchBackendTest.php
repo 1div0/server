@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2017 Robin Appelman <robin@icewind.nl>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -43,10 +44,7 @@ use OCP\Share\IManager;
 use SearchDAV\Backend\SearchPropertyDefinition;
 use SearchDAV\Query\Limit;
 use SearchDAV\Query\Query;
-use SearchDAV\XML\BasicSearch;
-use SearchDAV\XML\Literal;
 use SearchDAV\XML\Operator;
-use SearchDAV\XML\Scope;
 use Test\TestCase;
 
 class FileSearchBackendTest extends TestCase {
@@ -133,9 +131,9 @@ class FileSearchBackendTest extends TestCase {
 				[],
 				$this->user
 			))
-			->will($this->returnValue([
+			->willReturn([
 				new \OC\Files\Node\Folder($this->rootFolder, $this->view, '/test/path')
-			]));
+			]);
 
 		$query = $this->getBasicQuery(\SearchDAV\Query\Operator::OPERATION_EQUAL, '{DAV:}displayname', 'foo');
 		$result = $this->search->search($query);
@@ -162,9 +160,9 @@ class FileSearchBackendTest extends TestCase {
 				[],
 				$this->user
 			))
-			->will($this->returnValue([
+			->willReturn([
 				new \OC\Files\Node\Folder($this->rootFolder, $this->view, '/test/path')
-			]));
+			]);
 
 		$query = $this->getBasicQuery(\SearchDAV\Query\Operator::OPERATION_EQUAL, '{DAV:}getcontenttype', 'foo');
 		$result = $this->search->search($query);
@@ -191,9 +189,9 @@ class FileSearchBackendTest extends TestCase {
 				[],
 				$this->user
 			))
-			->will($this->returnValue([
+			->willReturn([
 				new \OC\Files\Node\Folder($this->rootFolder, $this->view, '/test/path')
-			]));
+			]);
 
 		$query = $this->getBasicQuery(\SearchDAV\Query\Operator::OPERATION_GREATER_THAN, FilesPlugin::SIZE_PROPERTYNAME, 10);
 		$result = $this->search->search($query);
@@ -220,9 +218,9 @@ class FileSearchBackendTest extends TestCase {
 				[],
 				$this->user
 			))
-			->will($this->returnValue([
+			->willReturn([
 				new \OC\Files\Node\Folder($this->rootFolder, $this->view, '/test/path')
-			]));
+			]);
 
 		$query = $this->getBasicQuery(\SearchDAV\Query\Operator::OPERATION_GREATER_THAN, '{DAV:}getlastmodified', 10);
 		$result = $this->search->search($query);
@@ -249,9 +247,9 @@ class FileSearchBackendTest extends TestCase {
 				[],
 				$this->user
 			))
-			->will($this->returnValue([
+			->willReturn([
 				new \OC\Files\Node\Folder($this->rootFolder, $this->view, '/test/path')
-			]));
+			]);
 
 		$query = $this->getBasicQuery(\SearchDAV\Query\Operator::OPERATION_IS_COLLECTION, 'yes');
 		$result = $this->search->search($query);
@@ -320,12 +318,12 @@ class FileSearchBackendTest extends TestCase {
 		$receivedQuery = null;
 		$this->searchFolder
 			->method('search')
-			->will($this->returnCallback(function ($query) use (&$receivedQuery) {
+			->willReturnCallback(function ($query) use (&$receivedQuery) {
 				$receivedQuery = $query;
 				return [
 					new \OC\Files\Node\Folder($this->rootFolder, $this->view, '/test/path')
 				];
-			}));
+			});
 
 		$query = $this->getBasicQuery(\SearchDAV\Query\Operator::OPERATION_EQUAL, FilesPlugin::OWNER_ID_PROPERTYNAME, $this->user->getUID());
 		$this->search->search($query);
@@ -349,12 +347,12 @@ class FileSearchBackendTest extends TestCase {
 		$receivedQuery = null;
 		$this->searchFolder
 			->method('search')
-			->will($this->returnCallback(function ($query) use (&$receivedQuery) {
+			->willReturnCallback(function ($query) use (&$receivedQuery) {
 				$receivedQuery = $query;
 				return [
 					new \OC\Files\Node\Folder($this->rootFolder, $this->view, '/test/path')
 				];
-			}));
+			});
 
 		$query = $this->getBasicQuery(\SearchDAV\Query\Operator::OPERATION_EQUAL, FilesPlugin::OWNER_ID_PROPERTYNAME, $this->user->getUID());
 		$query->where = new \SearchDAV\Query\Operator(

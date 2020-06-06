@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -46,7 +47,7 @@ class MountProviderCollection implements IMountProviderCollection, Emitter {
 	/**
 	 * @var \OCP\Files\Config\IMountProvider[]
 	 */
-	private $providers = array();
+	private $providers = [];
 
 	/**
 	 * @var \OCP\Files\Storage\IStorageFactory
@@ -86,7 +87,7 @@ class MountProviderCollection implements IMountProviderCollection, Emitter {
 		});
 		$mounts = array_reduce($mounts, function (array $mounts, array $providerMounts) {
 			return array_merge($mounts, $providerMounts);
-		}, array());
+		}, []);
 		return $this->filterMounts($user, $mounts);
 	}
 

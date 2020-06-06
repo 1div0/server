@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2018 Georg Ehrke
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Georg Ehrke <oc.list@georgehrke.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -26,11 +27,8 @@ namespace OCA\DAV\Tests\unit\CalDAV;
 
 use OCA\DAV\CalDAV\CachedSubscriptionObject;
 use OCA\DAV\CalDAV\CalDavBackend;
-use OCA\DAV\CalDAV\Calendar;
-use OCA\DAV\CalDAV\CalendarImpl;
 
 class CachedSubscriptionObjectTest extends \Test\TestCase {
-
 	public function testGet() {
 		$backend = $this->createMock(CalDavBackend::class);
 		$calendarInfo = [
@@ -46,9 +44,9 @@ class CachedSubscriptionObjectTest extends \Test\TestCase {
 		$backend->expects($this->once())
 			->method('getCalendarObject')
 			->with(666, 'foo123', 1)
-			->will($this->returnValue([
+			->willReturn([
 				'calendardata' => 'BEGIN...',
-			]));
+			]);
 
 		$calendarObject = new CachedSubscriptionObject($backend, $calendarInfo, $objectData);
 		$this->assertEquals('BEGIN...', $calendarObject->get());
@@ -93,5 +91,4 @@ class CachedSubscriptionObjectTest extends \Test\TestCase {
 		$calendarObject = new CachedSubscriptionObject($backend, $calendarInfo, $objectData);
 		$calendarObject->delete();
 	}
-
 }

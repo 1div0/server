@@ -5,6 +5,7 @@
  *
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Bart Visscher <bartv@thisnet.nl>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Jakob Sack <mail@jakobsack.de>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
@@ -284,7 +285,7 @@ class AppConfig implements IAppConfig {
 			return $this->getAppValues($app);
 		} else {
 			$appIds = $this->getApps();
-			$values = array_map(function($appId) use ($key) {
+			$values = array_map(function ($appId) use ($key) {
 				return isset($this->cache[$appId][$key]) ? $this->cache[$appId][$key] : null;
 			}, $appIds);
 			$result = array_combine($appIds, $values);

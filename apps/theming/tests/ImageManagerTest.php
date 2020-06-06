@@ -2,6 +2,7 @@
 /**
  * @copyright Copyright (c) 2016 Julius Härtl <jus@bitgrid.net>
  *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Haertl <jus@bitgrid.net>
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Michael Weimann <mail@michael-weimann.eu>
@@ -27,7 +28,6 @@
 namespace OCA\Theming\Tests;
 
 use OCA\Theming\ImageManager;
-use OCA\Theming\ThemingDefaults;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -70,7 +70,7 @@ class ImageManagerTest extends TestCase {
 	}
 
 	private function checkImagick() {
-		if(!extension_loaded('imagick')) {
+		if (!extension_loaded('imagick')) {
 			$this->markTestSkipped('Imagemagick is required for dynamic icon generation.');
 		}
 		$checkImagick = new \Imagick();
@@ -173,7 +173,6 @@ class ImageManagerTest extends TestCase {
 			->method('getAbsoluteUrl')
 			->willReturn('url-to-image-absolute?v=0');
 		$this->assertEquals('url-to-image-absolute?v=0', $this->imageManager->getImageUrlAbsolute('logo', false));
-
 	}
 
 	public function testGetImage() {
@@ -305,7 +304,7 @@ class ImageManagerTest extends TestCase {
 			$this->createMock(ISimpleFolder::class),
 			$this->createMock(ISimpleFolder::class),
 			$this->createMock(ISimpleFolder::class)
-			];
+		];
 		foreach ($folders as $index=>$folder) {
 			$folder->expects($this->any())
 				->method('getName')
@@ -327,5 +326,4 @@ class ImageManagerTest extends TestCase {
 			->willReturn($folders[2]);
 		$this->imageManager->cleanup();
 	}
-
 }

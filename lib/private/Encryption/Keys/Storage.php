@@ -4,6 +4,7 @@
  *
  * @author Bjoern Schiessle <bjoern@schiessle.org>
  * @author Björn Schießle <bjoern@schiessle.org>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Joas Schilling <coding@schilljs.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Thomas Müller <thomas.mueller@tmit.eu>
@@ -36,7 +37,7 @@ use OCP\Encryption\Keys\IStorage;
 class Storage implements IStorage {
 
 	// hidden file which indicate that the folder is a valid key storage
-	const KEY_STORAGE_MARKER = '.oc_key_storage';
+	public const KEY_STORAGE_MARKER = '.oc_key_storage';
 
 	/** @var View */
 	private $view;
@@ -188,7 +189,6 @@ class Storage implements IStorage {
 	 * @return string
 	 */
 	protected function constructUserKeyPath($encryptionModuleId, $keyId, $uid) {
-
 		if ($uid === null) {
 			$path = $this->root_dir . '/' . $this->encryption_base_dir . '/' . $encryptionModuleId . '/' . $keyId;
 		} else {
@@ -206,7 +206,6 @@ class Storage implements IStorage {
 	 * @return string
 	 */
 	private function getKey($path) {
-
 		$key = '';
 
 		if ($this->view->file_exists($path)) {
@@ -250,7 +249,6 @@ class Storage implements IStorage {
 	 * @return string
 	 */
 	private function getFileKeyDir($encryptionModuleId, $path) {
-
 		list($owner, $filename) = $this->util->getUidAndFilename($path);
 
 		// in case of system wide mount points the keys are stored directly in the data directory
@@ -271,7 +269,6 @@ class Storage implements IStorage {
 	 * @return boolean
 	 */
 	public function renameKeys($source, $target) {
-
 		$sourcePath = $this->getPathToKeys($source);
 		$targetPath = $this->getPathToKeys($target);
 
@@ -294,7 +291,6 @@ class Storage implements IStorage {
 	 * @return boolean
 	 */
 	public function copyKeys($source, $target) {
-
 		$sourcePath = $this->getPathToKeys($source);
 		$targetPath = $this->getPathToKeys($target);
 
@@ -375,5 +371,4 @@ class Storage implements IStorage {
 			}
 		}
 	}
-
 }
